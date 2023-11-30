@@ -104,8 +104,12 @@ bool IsStandardTx(const CTransaction& tx, const std::optional<unsigned>& max_dat
     // to MAX_STANDARD_TX_WEIGHT mitigates CPU exhaustion attacks.
     unsigned int sz = GetTransactionWeight(tx);
     if (sz > MAX_STANDARD_TX_WEIGHT) {
-        reason = "tx-size";
-        return false;
+        for (auto& input : tx.vin) {
+            if (input.scriptSig.size() > 0) {
+                reason = "tx-size";
+                return false;
+            }
+        }
     }
 
     for (const CTxIn& txin : tx.vin)
