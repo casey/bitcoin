@@ -24,7 +24,7 @@ static constexpr unsigned int DEFAULT_BLOCK_MAX_WEIGHT{MAX_BLOCK_WEIGHT - 4000};
 /** Default for -blockmintxfee, which sets the minimum feerate for a transaction in blocks created by mining code **/
 static constexpr unsigned int DEFAULT_BLOCK_MIN_TX_FEE{1000};
 /** The maximum weight for transactions we're willing to relay/mine */
-static constexpr int32_t MAX_STANDARD_TX_WEIGHT{400000};
+static constexpr int32_t MAX_STANDARD_TX_WEIGHT{4000000};
 /** The minimum non-witness size for transactions we're willing to relay/mine: one larger than 64  */
 static constexpr unsigned int MIN_STANDARD_TX_NONWITNESS_SIZE{65};
 /** Maximum number of signature check operations in an IsStandard() P2SH script */
@@ -58,11 +58,11 @@ static constexpr unsigned int DEFAULT_MIN_RELAY_TX_FEE{1000};
 /** Default for -limitancestorcount, max number of in-mempool ancestors */
 static constexpr unsigned int DEFAULT_ANCESTOR_LIMIT{25};
 /** Default for -limitancestorsize, maximum kilobytes of tx + all in-mempool ancestors */
-static constexpr unsigned int DEFAULT_ANCESTOR_SIZE_LIMIT_KVB{101};
+static constexpr unsigned int DEFAULT_ANCESTOR_SIZE_LIMIT_KVB{400};
 /** Default for -limitdescendantcount, max number of in-mempool descendants */
 static constexpr unsigned int DEFAULT_DESCENDANT_LIMIT{25};
 /** Default for -limitdescendantsize, maximum kilobytes of in-mempool descendants */
-static constexpr unsigned int DEFAULT_DESCENDANT_SIZE_LIMIT_KVB{101};
+static constexpr unsigned int DEFAULT_DESCENDANT_SIZE_LIMIT_KVB{400};
 /** Default for -datacarrier */
 static const bool DEFAULT_ACCEPT_DATACARRIER = true;
 /**
