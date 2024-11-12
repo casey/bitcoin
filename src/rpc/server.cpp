@@ -69,6 +69,38 @@ struct RPCCommandExecution
     }
 };
 
+UniValue CRPCTable::api() const
+{
+    // todo:
+    // - should hidden commands be hidden?
+    // - are there any other commands that should be hidden?
+    // - get rid of cast to RpcMethodFnType
+    //
+    // later:
+    // - examples should be stored in a structured form so they
+    //   can be returned in a structured form
+    // - descriptions should not contain wrapping newlines
+
+    UniValue value(UniValue::VOBJ);
+
+    UniValue commands(UniValue::VOBJ);
+
+    for (const auto& entry: mapCommands) {
+        UniValue aliases(UniValue::VARR);
+
+        for (const auto& entry: entry.second) {
+            RPCHelpMan man = ((RpcMethodFnType)entry->unique_id)();
+            aliases.push_back(man.ToDescriptionValue());
+        }
+
+        commands.pushKV(entry.first, aliases);
+    }
+
+    value.pushKV("commands", commands);
+
+    return value;
+}
+
 std::string CRPCTable::help(const std::string& strCommand, const JSONRPCRequest& helpreq) const
 {
     std::string strRet;
@@ -122,6 +154,22 @@ std::string CRPCTable::help(const std::string& strCommand, const JSONRPCRequest&
         strRet = strprintf("help: unknown command: %s\n", strCommand);
     strRet = strRet.substr(0,strRet.size()-1);
     return strRet;
+}
+
+static RPCHelpMan api()
+{
+    return RPCHelpMan{"api",
+                "\nReturn JSON description of RPC API.\n",
+                {},
+                {
+                    RPCResult{RPCResult::Type::OBJ, "", "FOO"},
+                },
+                RPCExamples{""},
+        [&](const RPCHelpMan& self, const JSONRPCRequest& jsonRequest) -> UniValue
+{
+    return tableRPC.api();
+},
+    };
 }
 
 static RPCHelpMan help()
@@ -244,6 +292,7 @@ static RPCHelpMan getrpcinfo()
 
 static const CRPCCommand vRPCCommands[]{
     /* Overall control/query calls */
+    {"control", &api},
     {"control", &getrpcinfo},
     {"control", &help},
     {"control", &stop},
@@ -262,6 +311,10 @@ void CRPCTable::appendCommand(const std::string& name, const CRPCCommand* pcmd)
     CHECK_NONFATAL(!IsRPCRunning()); // Only add commands before rpc is running
 
     mapCommands[name].push_back(pcmd);
+
+    if (mapCommands[name].size() > 1) {
+        LogWarning("%s%d\n", name, mapCommands[name].size());
+    }
 }
 
 bool CRPCTable::removeCommand(const std::string& name, const CRPCCommand* pcmd)

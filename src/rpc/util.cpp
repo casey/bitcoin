@@ -649,9 +649,25 @@ std::string RPCResults::ToDescriptionString() const
     return result;
 }
 
+UniValue RPCResults::ToDescriptionValue() const
+{
+    UniValue value(UniValue::VARR);
+
+    for (const auto& result : m_results) {
+        value.push_back(result.ToDescriptionValue());
+    }
+
+    return value;
+}
+
 std::string RPCExamples::ToDescriptionString() const
 {
     return m_examples.empty() ? m_examples : "\nExamples:\n" + m_examples;
+}
+
+UniValue RPCExamples::ToDescriptionValue() const
+{
+    return UniValue(m_examples);
 }
 
 UniValue RPCHelpMan::HandleRequest(const JSONRPCRequest& request) const
@@ -851,6 +867,25 @@ std::string RPCHelpMan::ToString() const
     return ret;
 }
 
+UniValue RPCHelpMan::ToDescriptionValue() const
+{
+    UniValue value(UniValue::VOBJ);
+
+    value.pushKV("name", m_name);
+    value.pushKV("description", TrimString(m_description));
+    value.pushKV("examples", m_examples.ToDescriptionValue());
+
+    UniValue arguments(UniValue::VARR);
+    for (const auto& arg : m_args) {
+        arguments.push_back(arg.ToDescriptionValue());
+    }
+    value.pushKV("arguments", arguments);
+
+    value.pushKV("results", m_results.ToDescriptionValue());
+
+    return value;
+}
+
 UniValue RPCHelpMan::GetArgMap() const
 {
     UniValue arr{UniValue::VARR};
@@ -1012,6 +1047,100 @@ std::string RPCArg::ToDescriptionString(bool is_named_arg) const
     if (m_type == Type::OBJ_NAMED_PARAMS) ret += " Options object that can be used to pass named arguments, listed below.";
     ret += m_description.empty() ? "" : " " + m_description;
     return ret;
+}
+
+const char* RPCArgTypeToDescriptionValue(RPCArg::Type type) {
+    switch (type) {
+        case RPCArg::Type::OBJ:
+            return "object";
+        case RPCArg::Type::ARR:
+            return "array";
+        case RPCArg::Type::STR:
+            return "string";
+        case RPCArg::Type::NUM:
+            return "number";
+        case RPCArg::Type::BOOL:
+            return "boolean";
+        case RPCArg::Type::AMOUNT:
+            return "amount";
+        case RPCArg::Type::STR_HEX:
+            return "hex";
+        case RPCArg::Type::RANGE:
+            return "range";
+        case RPCArg::Type::OBJ_NAMED_PARAMS:
+            return "object-named-parameters";
+        case RPCArg::Type::OBJ_USER_KEYS:
+            return "object-user-keys";
+        default:
+            // todo: don't abort
+            std::abort();
+    }
+}
+
+UniValue RPCArg::ToDescriptionValue() const
+{
+    UniValue value(UniValue::VOBJ);
+
+    value.pushKV("description", m_description);
+
+    UniValue names(UniValue::VARR);
+    if (!m_names.empty()) {
+        for (auto const& name: SplitString(m_names, '|')) {
+            names.push_back(name);
+        }
+    }
+    value.pushKV("names", names);
+
+    UniValue inner(UniValue::VARR);
+    for (auto const& arg: m_inner) {
+        inner.push_back(arg.ToDescriptionValue());
+    }
+    value.pushKV("inner", inner);
+
+    value.pushKV(
+        "optional",
+        !(
+            std::holds_alternative<Optional>(m_fallback)
+            && std::get<Optional>(m_fallback) == Optional::NO
+        )
+    );
+
+    if (std::holds_alternative<DefaultHint>(m_fallback)) {
+        UniValue d(UniValue::VOBJ);
+        d.pushKV("hint", std::get<DefaultHint>(m_fallback));
+        value.pushKV("default", d);
+    } else if (std::holds_alternative<Default>(m_fallback)) {
+        UniValue d(UniValue::VOBJ);
+        d.pushKV("value", std::get<Default>(m_fallback));
+        value.pushKV("default", d);
+    } else if (std::holds_alternative<Optional>(m_fallback)) {
+        UniValue d(UniValue::VNULL);
+        value.pushKV("default", d);
+    } else {
+        // todo: don't abort
+        std::abort();
+    }
+
+    value.pushKV("type", RPCArgTypeToDescriptionValue(m_type));
+
+    value.pushKV("hidden", m_opts.hidden);
+    value.pushKV("skip_type_check", m_opts.skip_type_check);
+    value.pushKV("one_line_description", m_opts.oneline_description);
+    value.pushKV("also_positional", m_opts.also_positional);
+
+    if (m_opts.type_str.size() == 0) {
+        value.pushKV("type_string", UniValue::VNULL);
+    }else if (m_opts.type_str.size() == 2) {
+        UniValue type_string(UniValue::VOBJ);
+        type_string.pushKV("value", m_opts.type_str[0]);
+        type_string.pushKV("description", m_opts.type_str[1]);
+        value.pushKV("type_string", type_string);
+    } else {
+        // todo: don't abort
+        std::abort();
+    }
+
+    return value;
 }
 
 // NOLINTNEXTLINE(misc-no-recursion)
@@ -1310,6 +1439,62 @@ std::string RPCArg::ToString(const bool oneline) const
     }
     } // no default case, so the compiler can warn about missing cases
     NONFATAL_UNREACHABLE();
+}
+
+const char* RPCResultTypeToDescriptionValue(RPCResult::Type type) {
+    switch (type) {
+        case RPCResult::Type::OBJ:
+            return "object";
+        case RPCResult::Type::ARR:
+            return "array";
+        case RPCResult::Type::STR:
+            return "string";
+        case RPCResult::Type::NUM:
+            return "number";
+        case RPCResult::Type::BOOL:
+            return "boolean";
+        case RPCResult::Type::NONE:
+            // todo: should this be NULL?
+            return "none";
+        case RPCResult::Type::ANY:
+            return "any";
+        case RPCResult::Type::STR_AMOUNT:
+            return "amount";
+        case RPCResult::Type::STR_HEX:
+            return "hex";
+        case RPCResult::Type::OBJ_DYN:
+            return "object-dynamic";
+        case RPCResult::Type::ARR_FIXED:
+            return "array-fixed";
+        case RPCResult::Type::NUM_TIME:
+            return "time";
+        case RPCResult::Type::ELISION:
+            return "elision";
+        default:
+            // todo: don't abort
+            std::abort();
+    }
+}
+
+UniValue RPCResult::ToDescriptionValue() const
+{
+    UniValue value(UniValue::VOBJ);
+
+    value.pushKV("type", RPCResultTypeToDescriptionValue(m_type));
+    value.pushKV("optional", m_optional);
+    value.pushKV("skip_type_checking", m_skip_type_check);
+    value.pushKV("description", m_description);
+    value.pushKV("condition", m_cond);
+    value.pushKV("key_name", m_key_name);
+
+    UniValue inner(UniValue::VARR);
+    for (auto const& result : m_inner) {
+        inner.push_back(result.ToDescriptionValue());
+    }
+    value.pushKV("inner", inner);
+
+    return value;
+
 }
 
 static std::pair<int64_t, int64_t> ParseRange(const UniValue& value)

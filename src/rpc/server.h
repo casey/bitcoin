@@ -130,6 +130,7 @@ private:
 public:
     CRPCTable();
     std::string help(const std::string& name, const JSONRPCRequest& helpreq) const;
+    UniValue api() const;
 
     /**
      * Execute a method.
