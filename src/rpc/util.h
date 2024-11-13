@@ -12,6 +12,7 @@
 #include <pubkey.h>
 #include <rpc/protocol.h>
 #include <rpc/request.h>
+#include <rpc/schema.h>
 #include <script/script.h>
 #include <script/sign.h>
 #include <uint256.h>
@@ -491,6 +492,8 @@ public:
     std::vector<std::pair<std::string, bool>> GetArgNames() const;
 
     const std::string m_name;
+
+    friend Schema;
 
 private:
     const RPCMethodImpl m_fun;
