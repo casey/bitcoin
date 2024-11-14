@@ -15,8 +15,8 @@
 # Previous releases
 /releases
 
-#build tests
-test/lint/test_runner/target/
+# Rust build directory
+/target
 
 /guix-build-*
 
