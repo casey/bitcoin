@@ -88,9 +88,9 @@ UniValue CRPCTable::api() const
     for (const auto& entry: mapCommands) {
         UniValue aliases(UniValue::VARR);
 
-        for (const auto& entry: entry.second) {
-            RPCHelpMan man = ((RpcMethodFnType)entry->unique_id)();
-            aliases.push_back(man.ToDescriptionValue());
+        for (const auto& command: entry.second) {
+            RPCHelpMan man = ((RpcMethodFnType)command->unique_id)();
+            aliases.push_back(man.ToDescriptionValue(command->category));
         }
 
         commands.pushKV(entry.first, aliases);

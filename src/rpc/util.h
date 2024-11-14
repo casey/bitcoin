@@ -499,7 +499,7 @@ public:
 
     const std::string m_name;
 
-    UniValue ToDescriptionValue() const;
+    UniValue ToDescriptionValue(const std::string& category) const;
 
 private:
     const RPCMethodImpl m_fun;

@@ -867,11 +867,12 @@ std::string RPCHelpMan::ToString() const
     return ret;
 }
 
-UniValue RPCHelpMan::ToDescriptionValue() const
+UniValue RPCHelpMan::ToDescriptionValue(const std::string &category) const
 {
     UniValue value(UniValue::VOBJ);
 
     value.pushKV("name", m_name);
+    value.pushKV("category", category);
     value.pushKV("description", TrimString(m_description));
     value.pushKV("examples", m_examples.ToDescriptionValue());
 
