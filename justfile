@@ -22,3 +22,6 @@ test-fast:
 
 last-test:
   less build/Testing/Temporary/LastTest.log
+
+save:
+  ./build/src/bitcoin-cli -regtest api | jq > api.json
