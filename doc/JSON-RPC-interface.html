@@ -1,0 +1,392 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>JSON-RPC-interface - Bitcoin Core Developer Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bitcoin Core Developer Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="json-rpc-interface"><a class="header" href="#json-rpc-interface">JSON-RPC Interface</a></h1>
+<p>The headless daemon <code>bitcoind</code> has the JSON-RPC API enabled by default, the GUI
+<code>bitcoin-qt</code> has it disabled by default. This can be changed with the <code>-server</code>
+option. In the GUI it is possible to execute RPC methods in the Debug Console
+Dialog.</p>
+<h2 id="endpoints"><a class="header" href="#endpoints">Endpoints</a></h2>
+<p>There are two JSON-RPC endpoints on the server:</p>
+<ol>
+<li><code>/</code></li>
+<li><code>/wallet/&lt;walletname&gt;/</code></li>
+</ol>
+<h3 id="-endpoint"><a class="header" href="#-endpoint"><code>/</code> endpoint</a></h3>
+<p>This endpoint is always active.
+It can always service non-wallet requests and can service wallet requests when
+exactly one wallet is loaded.</p>
+<h3 id="walletwalletname-endpoint"><a class="header" href="#walletwalletname-endpoint"><code>/wallet/&lt;walletname&gt;/</code> endpoint</a></h3>
+<p>This endpoint is only activated when the wallet component has been compiled in.
+It can service both wallet and non-wallet requests.
+It MUST be used for wallet requests when two or more wallets are loaded.</p>
+<p>This is the endpoint used by bitcoin-cli when a <code>-rpcwallet=</code> parameter is passed in.</p>
+<p>Best practice would dictate using the <code>/wallet/&lt;walletname&gt;/</code> endpoint for ALL
+requests when multiple wallets are in use.</p>
+<h3 id="examples"><a class="header" href="#examples">Examples</a></h3>
+<pre><code class="language-sh"># Get block count from the / endpoint when rpcuser=alice and rpcport=38332
+$ curl --user alice --data-binary '{"jsonrpc": "2.0", "id": "0", "method": "getblockcount", "params": []}' -H 'content-type: application/json' localhost:38332/
+
+# Get balance from the /wallet/walletname endpoint when rpcuser=alice, rpcport=38332 and rpcwallet=desc-wallet
+$ curl --user alice --data-binary '{"jsonrpc": "2.0", "id": "0", "method": "getbalance", "params": []}' -H 'content-type: application/json' localhost:38332/wallet/desc-wallet
+
+</code></pre>
+<h2 id="parameter-passing"><a class="header" href="#parameter-passing">Parameter passing</a></h2>
+<p>The JSON-RPC server supports both <em>by-position</em> and <em>by-name</em> <a href="https://www.jsonrpc.org/specification#parameter_structures">parameter
+structures</a>
+described in the JSON-RPC specification. For extra convenience, to avoid the
+need to name every parameter value, all RPC methods accept a named parameter
+called <code>args</code>, which can be set to an array of initial positional values that
+are combined with named values.</p>
+<p>Examples:</p>
+<pre><code class="language-sh"># "params": ["mywallet", false, false, "", false, false, true]
+bitcoin-cli createwallet mywallet false false "" false false true
+
+# "params": {"wallet_name": "mywallet", "load_on_startup": true}
+bitcoin-cli -named createwallet wallet_name=mywallet load_on_startup=true
+
+# "params": {"args": ["mywallet"], "load_on_startup": true}
+bitcoin-cli -named createwallet mywallet load_on_startup=true
+</code></pre>
+<h2 id="versioning"><a class="header" href="#versioning">Versioning</a></h2>
+<p>The RPC interface might change from one major version of Bitcoin Core to the
+next. This makes the RPC interface implicitly versioned on the major version.
+The version tuple can be retrieved by e.g. the <code>getnetworkinfo</code> RPC in
+<code>version</code>.</p>
+<p>Usually deprecated features can be re-enabled during the grace-period of one
+major version via the <code>-deprecatedrpc=</code> command line option. The release notes
+of a new major release come with detailed instructions on what RPC features
+were deprecated and how to re-enable them temporarily.</p>
+<h2 id="json-rpc-11-vs-20"><a class="header" href="#json-rpc-11-vs-20">JSON-RPC 1.1 vs 2.0</a></h2>
+<p>The server recognizes <a href="https://www.jsonrpc.org/specification">JSON-RPC v2.0</a> requests
+and responds accordingly. A 2.0 request is identified by the presence of
+<code>"jsonrpc": "2.0"</code> in the request body. If that key + value is not present in a request,
+the legacy JSON-RPC v1.1 protocol is followed instead, which was the only available
+protocol in v27.0 and prior releases.</p>
+<div class="table-wrapper"><table><thead><tr><th></th><th>1.1</th><th>2.0</th></tr></thead><tbody>
+<tr><td>Request marker</td><td><code>"version": "1.1"</code> (or none)</td><td><code>"jsonrpc": "2.0"</code></td></tr>
+<tr><td>Response marker</td><td>(none)</td><td><code>"jsonrpc": "2.0"</code></td></tr>
+<tr><td><code>"error"</code> and <code>"result"</code> fields in response</td><td>both present</td><td>only one is present</td></tr>
+<tr><td>HTTP codes in response</td><td><code>200</code> unless there is any kind of RPC error (invalid parameters, method not found, etc)</td><td>Always <code>200</code> unless there is an actual HTTP server error (request parsing error, endpoint not found, etc)</td></tr>
+<tr><td>Notifications: requests that get no reply</td><td>(not supported)</td><td>Supported for requests that exclude the "id" field. Returns HTTP status <code>204</code> "No Content"</td></tr>
+</tbody></table>
+</div>
+<h2 id="security"><a class="header" href="#security">Security</a></h2>
+<p>The RPC interface allows other programs to control Bitcoin Core,
+including the ability to spend funds from your wallets, affect consensus
+verification, read private data, and otherwise perform operations that
+can cause loss of money, data, or privacy.  This section suggests how
+you should use and configure Bitcoin Core to reduce the risk that its
+RPC interface will be abused.</p>
+<ul>
+<li>
+<p><strong>Securing the executable:</strong> Anyone with physical or remote access to
+the computer, container, or virtual machine running Bitcoin Core can
+compromise either the whole program or just the RPC interface.  This
+includes being able to record any passphrases you enter for unlocking
+your encrypted wallets or changing settings so that your Bitcoin Core
+program tells you that certain transactions have multiple
+confirmations even when they aren't part of the best block chain.  For
+this reason, you should not use Bitcoin Core for security sensitive
+operations on systems you do not exclusively control, such as shared
+computers or virtual private servers.</p>
+</li>
+<li>
+<p><strong>Securing local network access:</strong> By default, the RPC interface can
+only be accessed by a client running on the same computer and only
+after the client provides a valid authentication credential (username
+and passphrase).  Any program on your computer with access to the file
+system and local network can obtain this level of access.
+Additionally, other programs on your computer can attempt to provide
+an RPC interface on the same port as used by Bitcoin Core in order to
+trick you into revealing your authentication credentials.  For this
+reason, it is important to only use Bitcoin Core for
+security-sensitive operations on a computer whose other programs you
+trust.</p>
+</li>
+<li>
+<p><strong>Securing remote network access:</strong> You may optionally allow other
+computers to remotely control Bitcoin Core by setting the <code>rpcallowip</code>
+and <code>rpcbind</code> configuration parameters.  These settings are only meant
+for enabling connections over secure private networks or connections
+that have been otherwise secured (e.g. using a VPN or port forwarding
+with SSH or stunnel).  <strong>Do not enable RPC connections over the public
+Internet.</strong>  Although Bitcoin Core's RPC interface does use
+authentication, it does not use encryption, so your login credentials
+are sent as clear text that can be read by anyone on your network
+path.  Additionally, the RPC interface has not been hardened to
+withstand arbitrary Internet traffic, so changing the above settings
+to expose it to the Internet (even using something like a Tor onion
+service) could expose you to unconsidered vulnerabilities.  See
+<code>bitcoind -help</code> for more information about these settings and other
+settings described in this document.</p>
+<p>Related, if you use Bitcoin Core inside a Docker container, you may
+need to expose the RPC port to the host system.  The default way to
+do this in Docker also exposes the port to the public Internet.
+Instead, expose it only on the host system's localhost, for example:
+<code>-p 127.0.0.1:8332:8332</code></p>
+</li>
+<li>
+<p><strong>Secure authentication:</strong> By default, when no <code>rpcpassword</code> is specified, Bitcoin Core generates unique
+login credentials each time it restarts and puts them into a file
+readable only by the user that started Bitcoin Core, allowing any of
+that user's RPC clients with read access to the file to login
+automatically.  The file is <code>.cookie</code> in the Bitcoin Core
+configuration directory, and using these credentials is the preferred
+RPC authentication method.  If you need to generate static login
+credentials for your programs, you can use the script in the
+<code>share/rpcauth</code> directory in the Bitcoin Core source tree.  As a final
+fallback, you can directly use manually-chosen <code>rpcuser</code> and
+<code>rpcpassword</code> configuration parameters---but you must ensure that you
+choose a strong and unique passphrase (and still don't use insecure
+networks, as mentioned above).</p>
+</li>
+<li>
+<p><strong>Secure string handling:</strong> The RPC interface does not guarantee any
+escaping of data beyond what's necessary to encode it as JSON,
+although it does usually provide serialized data using a hex
+representation of the bytes. If you use RPC data in your programs or
+provide its data to other programs, you must ensure any problem strings
+are properly escaped. For example, the <code>createwallet</code> RPC accepts
+arguments such as <code>wallet_name</code> which is a string and could be used
+for a path traversal attack without application level checks. Multiple
+websites have been manipulated because they displayed decoded hex strings
+that included HTML <code>&lt;script&gt;</code> tags. For this reason, and others, it is
+recommended to display all serialized data in hex form only.</p>
+</li>
+</ul>
+<h2 id="rpc-consistency-guarantees"><a class="header" href="#rpc-consistency-guarantees">RPC consistency guarantees</a></h2>
+<p>State that can be queried via RPCs is guaranteed to be at least up-to-date with
+the chain state immediately prior to the call's execution. However, the state
+returned by RPCs that reflect the mempool may not be up-to-date with the
+current mempool state.</p>
+<h3 id="transaction-pool"><a class="header" href="#transaction-pool">Transaction Pool</a></h3>
+<p>The mempool state returned via an RPC is consistent with itself and with the
+chain state at the time of the call. Thus, the mempool state only encompasses
+transactions that are considered mine-able by the node at the time of the RPC.</p>
+<p>The mempool state returned via an RPC reflects all effects of mempool and chain
+state related RPCs that returned prior to this call.</p>
+<h3 id="wallet"><a class="header" href="#wallet">Wallet</a></h3>
+<p>The wallet state returned via an RPC is consistent with itself and with the
+chain state at the time of the call.</p>
+<p>Wallet RPCs will return the latest chain state consistent with prior non-wallet
+RPCs. The effects of all blocks (and transactions in blocks) at the time of the
+call is reflected in the state of all wallet transactions. For example, if a
+block contains transactions that conflicted with mempool transactions, the
+wallet would reflect the removal of these mempool transactions in the state.</p>
+<p>However, the wallet may not be up-to-date with the current state of the mempool
+or the state of the mempool by an RPC that returned before this RPC. For
+example, a wallet transaction that was BIP-125-replaced in the mempool prior to
+this RPC may not yet be reflected as such in this RPC response.</p>
+<h2 id="limitations"><a class="header" href="#limitations">Limitations</a></h2>
+<p>There is a known issue in the JSON-RPC interface that can cause a node to crash if
+too many http connections are being opened at the same time because the system runs
+out of available file descriptors. To prevent this from happening you might
+want to increase the number of maximum allowed file descriptors in your system
+and try to prevent opening too many connections to your JSON-RPC interface at the
+same time if this is under your control. It is hard to give general advice
+since this depends on your system but if you make several hundred requests at
+once you are definitely at risk of encountering this issue.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../doc/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../doc/README_doxygen.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../doc/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../doc/README_doxygen.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

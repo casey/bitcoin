@@ -1,0 +1,547 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>release-process - Bitcoin Core Developer Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bitcoin Core Developer Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="release-process"><a class="header" href="#release-process">Release Process</a></h1>
+<h2 id="branch-updates"><a class="header" href="#branch-updates">Branch updates</a></h2>
+<h3 id="before-every-release-candidate"><a class="header" href="#before-every-release-candidate">Before every release candidate</a></h3>
+<ul>
+<li>Update release candidate version in <code>CMakeLists.txt</code> (<code>CLIENT_VERSION_RC</code>).</li>
+<li>Update manpages (after rebuilding the binaries), see <a href="/contrib/devtools/README.html#gen-manpagespy">gen-manpages.py</a>.</li>
+<li>Update bitcoin.conf and commit changes if they exist, see <a href="/contrib/devtools/README.html#gen-bitcoin-confsh">gen-bitcoin-conf.sh</a>.</li>
+</ul>
+<h3 id="before-every-major-and-minor-release"><a class="header" href="#before-every-major-and-minor-release">Before every major and minor release</a></h3>
+<ul>
+<li>Update <a href="bips.html">bips.md</a> to account for changes since the last release.</li>
+<li>Update version in <code>CMakeLists.txt</code> (don't forget to set <code>CLIENT_VERSION_RC</code> to <code>0</code>).</li>
+<li>Update manpages (see previous section)</li>
+<li>Write release notes (see "Write the release notes" below) in doc/release-notes.md. If necessary,
+archive the previous release notes as doc/release-notes/release-notes-${VERSION}.md.</li>
+</ul>
+<h3 id="before-every-major-release"><a class="header" href="#before-every-major-release">Before every major release</a></h3>
+<ul>
+<li>On both the master branch and the new release branch:
+<ul>
+<li>update <code>CLIENT_VERSION_MAJOR</code> in <a href="../CMakeLists.txt"><code>CMakeLists.txt</code></a></li>
+</ul>
+</li>
+<li>On the new release branch in <a href="../CMakeLists.txt"><code>CMakeLists.txt</code></a>(see <a href="https://github.com/bitcoin/bitcoin/commit/742f7dd">this commit</a>):
+<ul>
+<li>set <code>CLIENT_VERSION_MINOR</code> to <code>0</code></li>
+<li>set <code>CLIENT_VERSION_BUILD</code> to <code>0</code></li>
+<li>set <code>CLIENT_VERSION_IS_RELEASE</code> to <code>true</code></li>
+</ul>
+</li>
+</ul>
+<h4 id="before-branch-off"><a class="header" href="#before-branch-off">Before branch-off</a></h4>
+<ul>
+<li>Update translations see <a href="/doc/translation_process.html#synchronising-translations">translation_process.md</a>.</li>
+<li>Update hardcoded <a href="/contrib/seeds/README.html">seeds</a>, see <a href="https://github.com/bitcoin/bitcoin/pull/27488">this pull request</a> for an example.</li>
+<li>Update the following variables in <a href="/src/kernel/chainparams.cpp"><code>src/kernel/chainparams.cpp</code></a> for mainnet, testnet, and signet:
+<ul>
+<li><code>m_assumed_blockchain_size</code> and <code>m_assumed_chain_state_size</code> with the current size plus some overhead (see
+<a href="#how-to-calculate-assumed-blockchain-and-chain-state-size">this</a> for information on how to calculate them).</li>
+<li>The following updates should be reviewed with <code>reindex-chainstate</code> and <code>assumevalid=0</code> to catch any defect
+that causes rejection of blocks in the past history.</li>
+<li><code>chainTxData</code> with statistics about the transaction count and rate. Use the output of the <code>getchaintxstats</code> RPC with an
+<code>nBlocks</code> of 4096 (28 days) and a <code>bestblockhash</code> of RPC <code>getbestblockhash</code>; see
+<a href="https://github.com/bitcoin/bitcoin/pull/28591">this pull request</a> for an example. Reviewers can verify the results by running
+<code>getchaintxstats &lt;window_block_count&gt; &lt;window_final_block_hash&gt;</code> with the <code>window_block_count</code> and <code>window_final_block_hash</code> from your output.</li>
+<li><code>defaultAssumeValid</code> with the output of RPC <code>getblockhash</code> using the <code>height</code> of <code>window_final_block_height</code> above
+(and update the block height comment with that height), taking into account the following:
+<ul>
+<li>On mainnet, the selected value must not be orphaned, so it may be useful to set the height two blocks back from the tip.</li>
+<li>Testnet should be set with a height some tens of thousands back from the tip, due to reorgs there.</li>
+</ul>
+</li>
+<li><code>nMinimumChainWork</code> with the "chainwork" value of RPC <code>getblockheader</code> using the same height as that selected for the previous step.</li>
+</ul>
+</li>
+<li>Consider updating the headers synchronization tuning parameters to account for the chainparams updates.
+The optimal values change very slowly, so this isn't strictly necessary every release, but doing so doesn't hurt.
+<ul>
+<li>Update configuration variables in <a href="/contrib/devtools/headerssync-params.py"><code>contrib/devtools/headerssync-params.py</code></a>:
+<ul>
+<li>Set <code>TIME</code> to the software's expected supported lifetime -- after this time, its ability to defend against a high bandwidth timewarp attacker will begin to degrade.</li>
+<li>Set <code>MINCHAINWORK_HEADERS</code> to the height used for the <code>nMinimumChainWork</code> calculation above.</li>
+<li>Check that the other variables still look reasonable.</li>
+</ul>
+</li>
+<li>Run the script. It works fine in CPython, but PyPy is much faster (seconds instead of minutes): <code>pypy3 contrib/devtools/headerssync-params.py</code>.</li>
+<li>Paste the output defining <code>HEADER_COMMITMENT_PERIOD</code> and <code>REDOWNLOAD_BUFFER_SIZE</code> into the top of <a href="/src/headerssync.cpp"><code>src/headerssync.cpp</code></a>.</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>Clear the release notes and move them to the wiki (see "Write the release notes" below).</li>
+<li>Translations on Transifex:
+<ul>
+<li>Pull translations from Transifex into the master branch.</li>
+<li>Create <a href="https://www.transifex.com/bitcoin/bitcoin/content/">a new resource</a> named after the major version with the slug <code>qt-translation-&lt;RRR&gt;x</code>, where <code>RRR</code> is the major branch number padded with zeros. Use <code>src/qt/locale/bitcoin_en.xlf</code> to create it.</li>
+<li>In the project workflow settings, ensure that <a href="https://help.transifex.com/en/articles/6224817-setting-up-translation-memory-fill-up">Translation Memory Fill-up</a> is enabled and that <a href="https://help.transifex.com/en/articles/6224753-translation-memory-with-context">Translation Memory Context Matching</a> is disabled.</li>
+<li>Update the Transifex slug in <a href="/.tx/config"><code>.tx/config</code></a> to the slug of the resource created in the first step. This identifies which resource the translations will be synchronized from.</li>
+<li>Make an announcement that translators can start translating for the new version. You can use one of the <a href="https://www.transifex.com/bitcoin/communication/">previous announcements</a> as a template.</li>
+<li>Change the auto-update URL for the resource to <code>master</code>, e.g. <code>https://raw.githubusercontent.com/bitcoin/bitcoin/master/src/qt/locale/bitcoin_en.xlf</code>. (Do this only after the previous steps, to prevent an auto-update from interfering.)</li>
+</ul>
+</li>
+</ul>
+<h4 id="after-branch-off-on-the-major-release-branch"><a class="header" href="#after-branch-off-on-the-major-release-branch">After branch-off (on the major release branch)</a></h4>
+<ul>
+<li>Update the versions.</li>
+<li>Create the draft, named "<em>version</em> Release Notes Draft", as a <a href="https://github.com/bitcoin-core/bitcoin-devwiki/wiki/_new">collaborative wiki</a>.</li>
+<li>Clear the release notes: <code>cp doc/release-notes-empty-template.md doc/release-notes.md</code></li>
+<li>Create a pinned meta-issue for testing the release candidate (see <a href="https://github.com/bitcoin/bitcoin/issues/27621">this issue</a> for an example) and provide a link to it in the release announcements where useful.</li>
+<li>Translations on Transifex
+<ul>
+<li>Change the auto-update URL for the new major version's resource away from <code>master</code> and to the branch, e.g. <code>https://raw.githubusercontent.com/bitcoin/bitcoin/&lt;branch&gt;/src/qt/locale/bitcoin_en.xlf</code>. Do not forget this or it will keep tracking the translations on master instead, drifting away from the specific major release.</li>
+</ul>
+</li>
+<li>Prune inputs from the qa-assets repo (See <a href="https://github.com/bitcoin-core/qa-assets#pruning-inputs">pruning
+inputs</a>).</li>
+</ul>
+<h4 id="before-final-release"><a class="header" href="#before-final-release">Before final release</a></h4>
+<ul>
+<li>Merge the release notes from <a href="https://github.com/bitcoin-core/bitcoin-devwiki/wiki/">the wiki</a> into the branch.</li>
+<li>Ensure the "Needs release note" label is removed from all relevant pull
+requests and issues:
+https://github.com/bitcoin/bitcoin/issues?q=label%3A%22Needs+release+note%22</li>
+</ul>
+<h4 id="tagging-a-release-candidate"><a class="header" href="#tagging-a-release-candidate">Tagging a release (candidate)</a></h4>
+<p>To tag the version (or release candidate) in git, use the <code>make-tag.py</code> script from <a href="https://github.com/bitcoin-core/bitcoin-maintainer-tools">bitcoin-maintainer-tools</a>. From the root of the repository run:</p>
+<pre><code>../bitcoin-maintainer-tools/make-tag.py v(new version, e.g. 25.0)
+</code></pre>
+<p>This will perform a few last-minute consistency checks in the build system files, and if they pass, create a signed tag.</p>
+<h2 id="building"><a class="header" href="#building">Building</a></h2>
+<h3 id="first-time--new-builders"><a class="header" href="#first-time--new-builders">First time / New builders</a></h3>
+<p>Install Guix using one of the installation methods detailed in
+<a href="/contrib/guix/INSTALL.html">contrib/guix/INSTALL.md</a>.</p>
+<p>Check out the source code in the following directory hierarchy.</p>
+<pre><code>cd /path/to/your/toplevel/build
+git clone https://github.com/bitcoin-core/guix.sigs.git
+git clone https://github.com/bitcoin-core/bitcoin-detached-sigs.git
+git clone https://github.com/bitcoin/bitcoin.git
+</code></pre>
+<h3 id="write-the-release-notes"><a class="header" href="#write-the-release-notes">Write the release notes</a></h3>
+<p>Open a draft of the release notes for collaborative editing at https://github.com/bitcoin-core/bitcoin-devwiki/wiki.</p>
+<p>For the period during which the notes are being edited on the wiki, the version on the branch should be wiped and replaced with a link to the wiki which should be used for all announcements until <code>-final</code>.</p>
+<p>Generate list of authors:</p>
+<pre><code>git log --format='- %aN' v(current version, e.g. 25.0)..v(new version, e.g. 25.1) | grep -v 'merge-script' | sort -fiu
+</code></pre>
+<h3 id="setup-and-perform-guix-builds"><a class="header" href="#setup-and-perform-guix-builds">Setup and perform Guix builds</a></h3>
+<p>Checkout the Bitcoin Core version you'd like to build:</p>
+<pre><code class="language-sh">pushd ./bitcoin
+SIGNER='(your builder key, ie bluematt, sipa, etc)'
+VERSION='(new version without v-prefix, e.g. 25.0)'
+git fetch origin "v${VERSION}"
+git checkout "v${VERSION}"
+popd
+</code></pre>
+<p>Ensure your guix.sigs are up-to-date if you wish to <code>guix-verify</code> your builds
+against other <code>guix-attest</code> signatures.</p>
+<pre><code class="language-sh">git -C ./guix.sigs pull
+</code></pre>
+<h3 id="create-the-macos-sdk-tarball-first-time-or-when-sdk-version-changes"><a class="header" href="#create-the-macos-sdk-tarball-first-time-or-when-sdk-version-changes">Create the macOS SDK tarball (first time, or when SDK version changes)</a></h3>
+<p>Create the macOS SDK tarball, see the <a href="/contrib/macdeploy/README.html#deterministic-macos-app-notes">macdeploy
+instructions</a> for
+details.</p>
+<h3 id="build-and-attest-to-build-outputs"><a class="header" href="#build-and-attest-to-build-outputs">Build and attest to build outputs</a></h3>
+<p>Follow the relevant Guix README.md sections:</p>
+<ul>
+<li><a href="/contrib/guix/README.html#building">Building</a></li>
+<li><a href="/contrib/guix/README.html#attesting-to-build-outputs">Attesting to build outputs</a></li>
+</ul>
+<h3 id="verify-other-builders-signatures-to-your-own-optional"><a class="header" href="#verify-other-builders-signatures-to-your-own-optional">Verify other builders' signatures to your own (optional)</a></h3>
+<ul>
+<li><a href="/contrib/guix/README.html#verifying-build-output-attestations">Verifying build output attestations</a></li>
+</ul>
+<h3 id="commit-your-non-codesigned-signature-to-guixsigs"><a class="header" href="#commit-your-non-codesigned-signature-to-guixsigs">Commit your non codesigned signature to guix.sigs</a></h3>
+<pre><code class="language-sh">pushd ./guix.sigs
+git add "${VERSION}/${SIGNER}"/noncodesigned.SHA256SUMS{,.asc}
+git commit -m "Add attestations by ${SIGNER} for ${VERSION} non-codesigned"
+popd
+</code></pre>
+<p>Then open a Pull Request to the <a href="https://github.com/bitcoin-core/guix.sigs">guix.sigs repository</a>.</p>
+<h2 id="codesigning"><a class="header" href="#codesigning">Codesigning</a></h2>
+<h3 id="macos-codesigner-only-create-detached-macos-signatures-assuming-signapple-is-installed-and-up-to-date-with-master-branch"><a class="header" href="#macos-codesigner-only-create-detached-macos-signatures-assuming-signapple-is-installed-and-up-to-date-with-master-branch">macOS codesigner only: Create detached macOS signatures (assuming <a href="https://github.com/achow101/signapple/">signapple</a> is installed and up to date with master branch)</a></h3>
+<p>In the <code>guix-build-${VERSION}/output/x86_64-apple-darwin</code> and <code>guix-build-${VERSION}/output/arm64-apple-darwin</code> directories:</p>
+<pre><code>tar xf bitcoin-osx-unsigned.tar.gz
+./detached-sig-create.sh /path/to/codesign.p12
+Enter the keychain password and authorize the signature
+signature-osx.tar.gz will be created
+</code></pre>
+<h3 id="windows-codesigner-only-create-detached-windows-signatures"><a class="header" href="#windows-codesigner-only-create-detached-windows-signatures">Windows codesigner only: Create detached Windows signatures</a></h3>
+<p>In the <code>guix-build-${VERSION}/output/x86_64-w64-mingw32</code> directory:</p>
+<pre><code>tar xf bitcoin-win-unsigned.tar.gz
+./detached-sig-create.sh -key /path/to/codesign.key
+Enter the passphrase for the key when prompted
+signature-win.tar.gz will be created
+</code></pre>
+<h3 id="windows-and-macos-codesigners-only-test-code-signatures"><a class="header" href="#windows-and-macos-codesigners-only-test-code-signatures">Windows and macOS codesigners only: test code signatures</a></h3>
+<p>It is advised to test that the code signature attaches properly prior to tagging by performing the <code>guix-codesign</code> step.
+However if this is done, once the release has been tagged in the bitcoin-detached-sigs repo, the <code>guix-codesign</code> step must be performed again in order for the guix attestation to be valid when compared against the attestations of non-codesigner builds. The directories created by <code>guix-codesign</code> will need to be cleared prior to running <code>guix-codesign</code> again.</p>
+<h3 id="windows-and-macos-codesigners-only-commit-the-detached-codesign-payloads"><a class="header" href="#windows-and-macos-codesigners-only-commit-the-detached-codesign-payloads">Windows and macOS codesigners only: Commit the detached codesign payloads</a></h3>
+<pre><code class="language-sh">pushd ./bitcoin-detached-sigs
+# checkout or create the appropriate branch for this release series
+git checkout --orphan &lt;branch&gt;
+# if you are the macOS codesigner
+rm -rf osx
+tar xf signature-osx.tar.gz
+# if you are the windows codesigner
+rm -rf win
+tar xf signature-win.tar.gz
+git add -A
+git commit -m "&lt;version&gt;: {osx,win} signature for {rc,final}"
+git tag -s "v${VERSION}" HEAD
+git push the current branch and new tag
+popd
+</code></pre>
+<h3 id="non-codesigners-wait-for-windows-and-macos-detached-signatures"><a class="header" href="#non-codesigners-wait-for-windows-and-macos-detached-signatures">Non-codesigners: wait for Windows and macOS detached signatures</a></h3>
+<ul>
+<li>Once the Windows and macOS builds each have 3 matching signatures, they will be signed with their respective release keys.</li>
+<li>Detached signatures will then be committed to the <a href="https://github.com/bitcoin-core/bitcoin-detached-sigs">bitcoin-detached-sigs</a> repository, which can be combined with the unsigned apps to create signed binaries.</li>
+</ul>
+<h3 id="create-the-codesigned-build-outputs"><a class="header" href="#create-the-codesigned-build-outputs">Create the codesigned build outputs</a></h3>
+<ul>
+<li><a href="/contrib/guix/README.html#codesigning-build-outputs">Codesigning build outputs</a></li>
+</ul>
+<h3 id="verify-other-builders-signatures-to-your-own-optional-1"><a class="header" href="#verify-other-builders-signatures-to-your-own-optional-1">Verify other builders' signatures to your own (optional)</a></h3>
+<ul>
+<li><a href="/contrib/guix/README.html#verifying-build-output-attestations">Verifying build output attestations</a></li>
+</ul>
+<h3 id="commit-your-codesigned-signature-to-guixsigs-for-the-signed-macoswindows-binaries"><a class="header" href="#commit-your-codesigned-signature-to-guixsigs-for-the-signed-macoswindows-binaries">Commit your codesigned signature to guix.sigs (for the signed macOS/Windows binaries)</a></h3>
+<pre><code class="language-sh">pushd ./guix.sigs
+git add "${VERSION}/${SIGNER}"/all.SHA256SUMS{,.asc}
+git commit -m "Add attestations by ${SIGNER} for ${VERSION} codesigned"
+popd
+</code></pre>
+<p>Then open a Pull Request to the <a href="https://github.com/bitcoin-core/guix.sigs">guix.sigs repository</a>.</p>
+<h2 id="after-6-or-more-people-have-guix-built-and-their-results-match"><a class="header" href="#after-6-or-more-people-have-guix-built-and-their-results-match">After 6 or more people have guix-built and their results match</a></h2>
+<p>After verifying signatures, combine the <code>all.SHA256SUMS.asc</code> file from all signers into <code>SHA256SUMS.asc</code>:</p>
+<pre><code class="language-bash">cat "$VERSION"/*/all.SHA256SUMS.asc &gt; SHA256SUMS.asc
+</code></pre>
+<ul>
+<li>
+<p>Upload to the bitcoincore.org server:</p>
+<ol>
+<li>
+<p>The contents of each <code>./bitcoin/guix-build-${VERSION}/output/${HOST}/</code> directory.</p>
+<p>Guix will output all of the results into host subdirectories, but the SHA256SUMS
+file does not include these subdirectories. In order for downloads via torrent
+to verify without directory structure modification, all of the uploaded files
+need to be in the same directory as the SHA256SUMS file.</p>
+<p>Wait until all of these files have finished uploading before uploading the SHA256SUMS(.asc) files.</p>
+</li>
+<li>
+<p>The <code>SHA256SUMS</code> file</p>
+</li>
+<li>
+<p>The <code>SHA256SUMS.asc</code> combined signature file you just created.</p>
+</li>
+</ol>
+</li>
+<li>
+<p>After uploading release candidate binaries, notify the bitcoin-core-dev mailing list and
+bitcoin-dev group that a release candidate is available for testing. Include a link to the release
+notes draft.</p>
+</li>
+<li>
+<p>The server will automatically create an OpenTimestamps file and torrent of the directory.</p>
+</li>
+<li>
+<p>Optionally help seed this torrent. To get the <code>magnet:</code> URI use:</p>
+<pre><code class="language-sh">transmission-show -m &lt;torrent file&gt;
+</code></pre>
+<p>Insert the magnet URI into the announcement sent to mailing lists. This permits
+people without access to <code>bitcoincore.org</code> to download the binary distribution.
+Also put it into the <code>optional_magnetlink:</code> slot in the YAML file for
+bitcoincore.org.</p>
+</li>
+<li>
+<p>Archive the release notes for the new version to <code>doc/release-notes/release-notes-${VERSION}.md</code>
+(branch <code>master</code> and branch of the release).</p>
+</li>
+<li>
+<p>Update the bitcoincore.org website</p>
+<ul>
+<li>
+<p>blog post</p>
+</li>
+<li>
+<p>maintained versions <a href="https://github.com/bitcoin-core/bitcoincore.org/commits/master/_includes/posts/maintenance-table.md">table</a></p>
+</li>
+<li>
+<p>RPC documentation update</p>
+<ul>
+<li>See https://github.com/bitcoin-core/bitcoincore.org/blob/master/contrib/doc-gen/</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Update repositories</p>
+<ul>
+<li>
+<p>Delete post-EOL <a href="https://github.com/bitcoin/bitcoin/branches/all">release branches</a> and create a tag <code>v${branch_name}-final</code>.</p>
+</li>
+<li>
+<p>Delete <a href="https://github.com/bitcoin/bitcoin/labels?q=backport">"Needs backport" labels</a> for non-existing branches.</p>
+</li>
+<li>
+<p>Update packaging repo</p>
+<ul>
+<li>
+<p>Push the flatpak to flathub, e.g. https://github.com/flathub/org.bitcoincore.bitcoin-qt/pull/2</p>
+</li>
+<li>
+<p>Push the snap, see https://github.com/bitcoin-core/packaging/blob/main/snap/local/build.md</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Create a <a href="https://github.com/bitcoin/bitcoin/releases/new">new GitHub release</a> with a link to the archived release notes</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Announce the release:</p>
+<ul>
+<li>
+<p>bitcoin-dev and bitcoin-core-dev mailing list</p>
+</li>
+<li>
+<p>Bitcoin Core announcements list https://bitcoincore.org/en/list/announcements/join/</p>
+</li>
+<li>
+<p>Bitcoin Core Twitter https://twitter.com/bitcoincoreorg</p>
+</li>
+<li>
+<p>Celebrate</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="additional-information"><a class="header" href="#additional-information">Additional information</a></h3>
+<h4 id="how-to-calculate-m_assumed_blockchain_size-and-m_assumed_chain_state_size"><a class="header" href="#how-to-calculate-m_assumed_blockchain_size-and-m_assumed_chain_state_size"><a name="how-to-calculate-assumed-blockchain-and-chain-state-size"></a>How to calculate <code>m_assumed_blockchain_size</code> and <code>m_assumed_chain_state_size</code></a></h4>
+<p>Both variables are used as a guideline for how much space the user needs on their drive in total, not just strictly for the blockchain.
+Note that all values should be taken from a <strong>fully synced</strong> node and have an overhead of 5-10% added on top of its base value.</p>
+<p>To calculate <code>m_assumed_blockchain_size</code>, take the size in GiB of these directories:</p>
+<ul>
+<li>For <code>mainnet</code> -&gt; the data directory, excluding the <code>/testnet3</code>, <code>/testnet4</code>, <code>/signet</code>, and <code>/regtest</code> directories and any overly large files, e.g. a huge <code>debug.log</code></li>
+<li>For <code>testnet</code> -&gt; <code>/testnet3</code></li>
+<li>For <code>testnet4</code> -&gt; <code>/testnet4</code></li>
+<li>For <code>signet</code> -&gt; <code>/signet</code></li>
+</ul>
+<p>To calculate <code>m_assumed_chain_state_size</code>, take the size in GiB of these directories:</p>
+<ul>
+<li>For <code>mainnet</code> -&gt; <code>/chainstate</code></li>
+<li>For <code>testnet</code> -&gt; <code>/testnet3/chainstate</code></li>
+<li>For <code>testnet4</code> -&gt; <code>/testnet4/chainstate</code></li>
+<li>For <code>signet</code> -&gt; <code>/signet/chainstate</code></li>
+</ul>
+<p>Notes:</p>
+<ul>
+<li>When taking the size for <code>m_assumed_blockchain_size</code>, there's no need to exclude the <code>/chainstate</code> directory since it's a guideline value and an overhead will be added anyway.</li>
+<li>The expected overhead for growth may change over time. Consider whether the percentage needs to be changed in response; if so, update it here in this section.</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../doc/release-notes-empty-template.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../doc/tor.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../doc/release-notes-empty-template.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../doc/tor.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

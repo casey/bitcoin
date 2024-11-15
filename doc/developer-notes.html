@@ -1,0 +1,1789 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>developer-notes - Bitcoin Core Developer Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bitcoin Core Developer Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="developer-notes"><a class="header" href="#developer-notes">Developer Notes</a></h1>
+<!-- markdown-toc start -->
+<p><strong>Table of Contents</strong></p>
+<ul>
+<li><a href="#developer-notes">Developer Notes</a>
+<ul>
+<li><a href="#coding-style-general">Coding Style (General)</a></li>
+<li><a href="#coding-style-c">Coding Style (C++)</a></li>
+<li><a href="#coding-style-python">Coding Style (Python)</a></li>
+<li><a href="#coding-style-doxygen-compatible-comments">Coding Style (Doxygen-compatible comments)</a>
+<ul>
+<li><a href="#generating-documentation">Generating Documentation</a></li>
+</ul>
+</li>
+<li><a href="#development-tips-and-tricks">Development tips and tricks</a>
+<ul>
+<li><a href="#compiling-for-debugging">Compiling for debugging</a></li>
+<li><a href="#show-sources-in-debugging">Show sources in debugging</a></li>
+<li><a href="#debuglog"><code>debug.log</code></a></li>
+<li><a href="#signet-testnet-and-regtest-modes">Signet, testnet, and regtest modes</a></li>
+<li><a href="#debug_lockorder">DEBUG_LOCKORDER</a></li>
+<li><a href="#debug_lockcontention">DEBUG_LOCKCONTENTION</a></li>
+<li><a href="#valgrind-suppressions-file">Valgrind suppressions file</a></li>
+<li><a href="#compiling-for-test-coverage">Compiling for test coverage</a></li>
+<li><a href="#performance-profiling-with-perf">Performance profiling with perf</a></li>
+<li><a href="#sanitizers">Sanitizers</a></li>
+</ul>
+</li>
+<li><a href="#lockingmutex-usage-notes">Locking/mutex usage notes</a></li>
+<li><a href="#threads">Threads</a></li>
+<li><a href="#ignoring-ideeditor-files">Ignoring IDE/editor files</a></li>
+</ul>
+</li>
+<li><a href="#development-guidelines">Development guidelines</a>
+<ul>
+<li><a href="#general-bitcoin-core">General Bitcoin Core</a></li>
+<li><a href="#wallet">Wallet</a></li>
+<li><a href="#general-c">General C++</a></li>
+<li><a href="#c-data-structures">C++ data structures</a></li>
+<li><a href="#strings-and-formatting">Strings and formatting</a></li>
+<li><a href="#shadowing">Shadowing</a></li>
+<li><a href="#lifetimebound">Lifetimebound</a></li>
+<li><a href="#threads-and-synchronization">Threads and synchronization</a></li>
+<li><a href="#scripts">Scripts</a>
+<ul>
+<li><a href="#shebang">Shebang</a></li>
+</ul>
+</li>
+<li><a href="#source-code-organization">Source code organization</a></li>
+<li><a href="#gui">GUI</a></li>
+<li><a href="#subtrees">Subtrees</a></li>
+<li><a href="#upgrading-leveldb">Upgrading LevelDB</a>
+<ul>
+<li><a href="#file-descriptor-counts">File Descriptor Counts</a></li>
+<li><a href="#consensus-compatibility">Consensus Compatibility</a></li>
+</ul>
+</li>
+<li><a href="#scripted-diffs">Scripted diffs</a>
+<ul>
+<li><a href="#suggestions-and-examples">Suggestions and examples</a></li>
+</ul>
+</li>
+<li><a href="#release-notes">Release notes</a></li>
+<li><a href="#rpc-interface-guidelines">RPC interface guidelines</a></li>
+<li><a href="#internal-interface-guidelines">Internal interface guidelines</a></li>
+</ul>
+</li>
+</ul>
+<!-- markdown-toc end -->
+<h2 id="coding-style-general"><a class="header" href="#coding-style-general">Coding Style (General)</a></h2>
+<p>Various coding styles have been used during the history of the codebase,
+and the result is not very consistent. However, we're now trying to converge to
+a single style, which is specified below. When writing patches, favor the new
+style over attempting to mimic the surrounding style, except for move-only
+commits.</p>
+<p>Do not submit patches solely to modify the style of existing code.</p>
+<h2 id="coding-style-c"><a class="header" href="#coding-style-c">Coding Style (C++)</a></h2>
+<ul>
+<li>
+<p><strong>Indentation and whitespace rules</strong> as specified in
+<a href="/src/.clang-format">src/.clang-format</a>. You can use the provided
+<a href="/contrib/devtools/README.html#clang-format-diffpy">clang-format-diff script</a>
+tool to clean up patches automatically before submission.</p>
+<ul>
+<li>Braces on new lines for classes, functions, methods.</li>
+<li>Braces on the same line for everything else.</li>
+<li>4 space indentation (no tabs) for every block except namespaces.</li>
+<li>No indentation for <code>public</code>/<code>protected</code>/<code>private</code> or for <code>namespace</code>.</li>
+<li>No extra spaces inside parenthesis; don't do <code>( this )</code>.</li>
+<li>No space after function names; one space after <code>if</code>, <code>for</code> and <code>while</code>.</li>
+<li>If an <code>if</code> only has a single-statement <code>then</code>-clause, it can appear
+on the same line as the <code>if</code>, without braces. In every other case,
+braces are required, and the <code>then</code> and <code>else</code> clauses must appear
+correctly indented on a new line.</li>
+<li>There's no hard limit on line width, but prefer to keep lines to &lt;100
+characters if doing so does not decrease readability. Break up long
+function declarations over multiple lines using the Clang Format
+<a href="https://clang.llvm.org/docs/ClangFormatStyleOptions.html">AlignAfterOpenBracket</a>
+style option.</li>
+</ul>
+</li>
+<li>
+<p><strong>Symbol naming conventions</strong>. These are preferred in new code, but are not
+required when doing so would need changes to significant pieces of existing
+code.</p>
+<ul>
+<li>
+<p>Variable (including function arguments) and namespace names are all lowercase and may use <code>_</code> to
+separate words (snake_case).</p>
+<ul>
+<li>Class member variables have a <code>m_</code> prefix.</li>
+<li>Global variables have a <code>g_</code> prefix.</li>
+</ul>
+</li>
+<li>
+<p>Constant names are all uppercase, and use <code>_</code> to separate words.</p>
+</li>
+<li>
+<p>Enumerator constants may be <code>snake_case</code>, <code>PascalCase</code> or <code>ALL_CAPS</code>.
+This is a more tolerant policy than the <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Renum-caps">C++ Core
+Guidelines</a>,
+which recommend using <code>snake_case</code>.  Please use what seems appropriate.</p>
+</li>
+<li>
+<p>Class names, function names, and method names are UpperCamelCase
+(PascalCase). Do not prefix class names with <code>C</code>. See <a href="#internal-interface-naming-style">Internal interface
+naming style</a> for an exception to this
+convention.</p>
+</li>
+<li>
+<p>Test suite naming convention: The Boost test suite in file
+<code>src/test/foo_tests.cpp</code> should be named <code>foo_tests</code>. Test suite names
+must be unique.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Miscellaneous</strong></p>
+<ul>
+<li><code>++i</code> is preferred over <code>i++</code>.</li>
+<li><code>nullptr</code> is preferred over <code>NULL</code> or <code>(void*)0</code>.</li>
+<li><code>static_assert</code> is preferred over <code>assert</code> where possible. Generally; compile-time checking is preferred over run-time checking.</li>
+<li>Use a named cast or functional cast, not a C-Style cast. When casting
+between integer types, use functional casts such as <code>int(x)</code> or <code>int{x}</code>
+instead of <code>(int) x</code>. When casting between more complex types, use <code>static_cast</code>.
+Use <code>reinterpret_cast</code> and <code>const_cast</code> as appropriate.</li>
+<li>Prefer <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Res-list"><code>list initialization ({})</code></a> where possible.
+For example <code>int x{0};</code> instead of <code>int x = 0;</code> or <code>int x(0);</code></li>
+<li>Recursion is checked by clang-tidy and thus must be made explicit. Use
+<code>NOLINTNEXTLINE(misc-no-recursion)</code> to suppress the check.</li>
+</ul>
+</li>
+</ul>
+<p>For function calls a namespace should be specified explicitly, unless such functions have been declared within it.
+Otherwise, <a href="https://en.cppreference.com/w/cpp/language/adl">argument-dependent lookup</a>, also known as ADL, could be
+triggered that makes code harder to maintain and reason about:</p>
+<pre><code class="language-c++">#include &lt;filesystem&gt;
+
+namespace fs {
+class path : public std::filesystem::path
+{
+};
+// The intention is to disallow this function.
+bool exists(const fs::path&amp; p) = delete;
+} // namespace fs
+
+int main()
+{
+    //fs::path p; // error
+    std::filesystem::path p; // compiled
+    exists(p); // ADL being used for unqualified name lookup
+}
+</code></pre>
+<p>Block style example:</p>
+<pre><code class="language-c++">int g_count{0};
+
+namespace foo {
+class Class
+{
+    std::string m_name;
+
+public:
+    bool Function(const std::string&amp; s, int n)
+    {
+        // Comment summarising what this section of code does
+        for (int i = 0; i &lt; n; ++i) {
+            int total_sum{0};
+            // When something fails, return early
+            if (!Something()) return false;
+            ...
+            if (SomethingElse(i)) {
+                total_sum += ComputeSomething(g_count);
+            } else {
+                DoSomething(m_name, total_sum);
+            }
+        }
+
+        // Success return is usually at the end
+        return true;
+    }
+}
+} // namespace foo
+</code></pre>
+<h2 id="coding-style-c-functions-and-methods"><a class="header" href="#coding-style-c-functions-and-methods">Coding Style (C++ functions and methods)</a></h2>
+<ul>
+<li>
+<p>When ordering function parameters, place input parameters first, then any
+in-out parameters, followed by any output parameters.</p>
+</li>
+<li>
+<p><em>Rationale</em>: API consistency.</p>
+</li>
+<li>
+<p>Prefer returning values directly to using in-out or output parameters. Use
+<code>std::optional</code> where helpful for returning values.</p>
+</li>
+<li>
+<p><em>Rationale</em>: Less error-prone (no need for assumptions about what the output
+is initialized to on failure), easier to read, and often the same or better
+performance.</p>
+</li>
+<li>
+<p>Generally, use <code>std::optional</code> to represent optional by-value inputs (and
+instead of a magic default value, if there is no real default). Non-optional
+input parameters should usually be values or const references, while
+non-optional in-out and output parameters should usually be references, as
+they cannot be null.</p>
+</li>
+</ul>
+<h2 id="coding-style-c-named-arguments"><a class="header" href="#coding-style-c-named-arguments">Coding Style (C++ named arguments)</a></h2>
+<p>When passing named arguments, use a format that clang-tidy understands. The
+argument names can otherwise not be verified by clang-tidy.</p>
+<p>For example:</p>
+<pre><code class="language-c++">void function(Addrman&amp; addrman, bool clear);
+
+int main()
+{
+    function(g_addrman, /*clear=*/false);
+}
+</code></pre>
+<h3 id="running-clang-tidy"><a class="header" href="#running-clang-tidy">Running clang-tidy</a></h3>
+<p>To run clang-tidy on Ubuntu/Debian, install the dependencies:</p>
+<pre><code class="language-sh">apt install clang-tidy clang
+</code></pre>
+<p>Configure with clang as the compiler:</p>
+<pre><code class="language-sh">cmake -B build -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build -j $(nproc)
+</code></pre>
+<p>The output is denoised of errors from external dependencies.</p>
+<p>To run clang-tidy on all source files:</p>
+<pre><code class="language-sh">( cd ./src/ &amp;&amp; run-clang-tidy -p ../build -j $(nproc) )
+</code></pre>
+<p>To run clang-tidy on the changed source lines:</p>
+<pre><code class="language-sh">git diff | ( cd ./src/ &amp;&amp; clang-tidy-diff -p2 -path ../build -j $(nproc) )
+</code></pre>
+<h2 id="coding-style-python"><a class="header" href="#coding-style-python">Coding Style (Python)</a></h2>
+<p>Refer to <a href="/test/functional/README.html#style-guidelines">/test/functional/README.md#style-guidelines</a>.</p>
+<h2 id="coding-style-doxygen-compatible-comments"><a class="header" href="#coding-style-doxygen-compatible-comments">Coding Style (Doxygen-compatible comments)</a></h2>
+<p>Bitcoin Core uses <a href="https://www.doxygen.nl/">Doxygen</a> to generate its official documentation.</p>
+<p>Use Doxygen-compatible comment blocks for functions, methods, and fields.</p>
+<p>For example, to describe a function use:</p>
+<pre><code class="language-c++">/**
+ * ... Description ...
+ *
+ * @param[in]  arg1 input description...
+ * @param[in]  arg2 input description...
+ * @param[out] arg3 output description...
+ * @return Return cases...
+ * @throws Error type and cases...
+ * @pre  Pre-condition for function...
+ * @post Post-condition for function...
+ */
+bool function(int arg1, const char *arg2, std::string&amp; arg3)
+</code></pre>
+<p>A complete list of <code>@xxx</code> commands can be found at https://www.doxygen.nl/manual/commands.html.
+As Doxygen recognizes the comments by the delimiters (<code>/**</code> and <code>*/</code> in this case), you don't
+<em>need</em> to provide any commands for a comment to be valid; just a description text is fine.</p>
+<p>To describe a class, use the same construct above the class definition:</p>
+<pre><code class="language-c++">/**
+ * Alerts are for notifying old versions if they become too obsolete and
+ * need to upgrade. The message is displayed in the status bar.
+ * @see GetWarnings()
+ */
+class CAlert
+</code></pre>
+<p>To describe a member or variable use:</p>
+<pre><code class="language-c++">//! Description before the member
+int var;
+</code></pre>
+<p>or</p>
+<pre><code class="language-c++">int var; //!&lt; Description after the member
+</code></pre>
+<p>Also OK:</p>
+<pre><code class="language-c++">///
+/// ... Description ...
+///
+bool function2(int arg1, const char *arg2)
+</code></pre>
+<p>Not picked up by Doxygen:</p>
+<pre><code class="language-c++">//
+// ... Description ...
+//
+</code></pre>
+<p>Also not picked up by Doxygen:</p>
+<pre><code class="language-c++">/*
+ * ... Description ...
+ */
+</code></pre>
+<p>A full list of comment syntaxes picked up by Doxygen can be found at https://www.doxygen.nl/manual/docblocks.html,
+but the above styles are favored.</p>
+<p>Recommendations:</p>
+<ul>
+<li>
+<p>Avoiding duplicating type and input/output information in function
+descriptions.</p>
+</li>
+<li>
+<p>Use backticks (``) to refer to <code>argument</code> names in function and
+parameter descriptions.</p>
+</li>
+<li>
+<p>Backticks aren't required when referring to functions Doxygen already knows
+about; it will build hyperlinks for these automatically. See
+https://www.doxygen.nl/manual/autolink.html for complete info.</p>
+</li>
+<li>
+<p>Avoid linking to external documentation; links can break.</p>
+</li>
+<li>
+<p>Javadoc and all valid Doxygen comments are stripped from Doxygen source code
+previews (<code>STRIP_CODE_COMMENTS = YES</code> in <a href="/doc/Doxyfile.in">Doxyfile.in</a>). If
+you want a comment to be preserved, it must instead use <code>//</code> or <code>/* */</code>.</p>
+</li>
+</ul>
+<h3 id="generating-documentation"><a class="header" href="#generating-documentation">Generating Documentation</a></h3>
+<p>Assuming the build directory is named <code>build</code>,
+the documentation can be generated with <code>cmake --build build --target docs</code>.
+The resulting files will be located in <code>build/doc/doxygen/html</code>;
+open <code>index.html</code> in that directory to view the homepage.</p>
+<p>Before building the <code>docs</code> target, you'll need to install these dependencies:</p>
+<p>Linux: <code>sudo apt install doxygen graphviz</code></p>
+<p>MacOS: <code>brew install doxygen graphviz</code></p>
+<h2 id="development-tips-and-tricks"><a class="header" href="#development-tips-and-tricks">Development tips and tricks</a></h2>
+<h3 id="compiling-for-debugging"><a class="header" href="#compiling-for-debugging">Compiling for debugging</a></h3>
+<p>When using the default build configuration by running <code>cmake -B build</code>, the
+<code>-DCMAKE_BUILD_TYPE</code> is set to <code>RelWithDebInfo</code>. This option adds debug symbols
+but also performs some compiler optimizations that may make debugging trickier
+as the code may not correspond directly to the source.</p>
+<p>If you need to build exclusively for debugging, set the <code>-DCMAKE_BUILD_TYPE</code>
+to <code>Debug</code> (i.e. <code>-DCMAKE_BUILD_TYPE=Debug</code>). You can always check the cmake
+build options of an existing build with <code>ccmake build</code>.</p>
+<h3 id="show-sources-in-debugging"><a class="header" href="#show-sources-in-debugging">Show sources in debugging</a></h3>
+<p>If you have ccache enabled, absolute paths are stripped from debug information
+with the <code>-fdebug-prefix-map</code> and <code>-fmacro-prefix-map</code> options (if supported by the
+compiler). This might break source file detection in case you move binaries
+after compilation, debug from the directory other than the project root or use
+an IDE that only supports absolute paths for debugging (e.g. it won't stop at breakpoints).</p>
+<p>There are a few possible fixes:</p>
+<ol>
+<li>Configure source file mapping.</li>
+</ol>
+<p>For <code>gdb</code> create or append to <a href="https://sourceware.org/gdb/current/onlinedocs/gdb#gdbinit-man"><code>.gdbinit</code> file</a>:</p>
+<pre><code>set substitute-path ./src /path/to/project/root/src
+</code></pre>
+<p>For <code>lldb</code> create or append to <a href="https://lldb.llvm.org/man/lldb.html#configuration-files"><code>.lldbinit</code> file</a>:</p>
+<pre><code>settings set target.source-map ./src /path/to/project/root/src
+</code></pre>
+<ol start="2">
+<li>Add a symlink to the <code>./src</code> directory:</li>
+</ol>
+<pre><code>ln -s /path/to/project/root/src src
+</code></pre>
+<ol start="3">
+<li>
+<p>Use <code>debugedit</code> to modify debug information in the binary.</p>
+</li>
+<li>
+<p>If your IDE has an option for this, change your breakpoints to use the file name only.</p>
+</li>
+</ol>
+<h3 id="debuglog"><a class="header" href="#debuglog"><code>debug.log</code></a></h3>
+<p>If the code is behaving strangely, take a look in the <code>debug.log</code> file in the data directory;
+error and debugging messages are written there.</p>
+<p>Debug logging can be enabled on startup with the <code>-debug</code> and <code>-loglevel</code>
+configuration options and toggled while bitcoind is running with the <code>logging</code>
+RPC.  For instance, launching bitcoind with <code>-debug</code> or <code>-debug=1</code> will turn on
+all log categories and <code>-loglevel=trace</code> will turn on all log severity levels.</p>
+<p>The Qt code routes <code>qDebug()</code> output to <code>debug.log</code> under category "qt": run with <code>-debug=qt</code>
+to see it.</p>
+<h3 id="signet-testnet-and-regtest-modes"><a class="header" href="#signet-testnet-and-regtest-modes">Signet, testnet, and regtest modes</a></h3>
+<p>If you are testing multi-machine code that needs to operate across the internet,
+you can run with either the <code>-signet</code> or the <code>-testnet</code> config option to test
+with "play bitcoins" on a test network.</p>
+<p>If you are testing something that can run on one machine, run with the
+<code>-regtest</code> option.  In regression test mode, blocks can be created on demand;
+see <a href="/test/functional">test/functional/</a> for tests that run in <code>-regtest</code> mode.</p>
+<h3 id="debug_lockorder"><a class="header" href="#debug_lockorder">DEBUG_LOCKORDER</a></h3>
+<p>Bitcoin Core is a multi-threaded application, and deadlocks or other
+multi-threading bugs can be very difficult to track down. The <code>-DCMAKE_BUILD_TYPE=Debug</code>
+build option adds <code>-DDEBUG_LOCKORDER</code> to the compiler flags. This inserts
+run-time checks to keep track of which locks are held and adds warnings to the
+<code>debug.log</code> file if inconsistencies are detected.</p>
+<h3 id="debug_lockcontention"><a class="header" href="#debug_lockcontention">DEBUG_LOCKCONTENTION</a></h3>
+<p>Defining <code>DEBUG_LOCKCONTENTION</code> adds a "lock" logging category to the logging
+RPC that, when enabled, logs the location and duration of each lock contention
+to the <code>debug.log</code> file.</p>
+<p>The <code>-DCMAKE_BUILD_TYPE=Debug</code> build option adds <code>-DDEBUG_LOCKCONTENTION</code> to the
+compiler flags. You may also enable it manually by building with <code>-DDEBUG_LOCKCONTENTION</code> added to your CPPFLAGS,
+i.e. <code>CPPFLAGS="-DDEBUG_LOCKCONTENTION"</code>, then build and run bitcoind.</p>
+<p>You can then use the <code>-debug=lock</code> configuration option at bitcoind startup or
+<code>bitcoin-cli logging '["lock"]'</code> at runtime to turn on lock contention logging.
+It can be toggled off again with <code>bitcoin-cli logging [] '["lock"]'</code>.</p>
+<h3 id="assertions-and-checks"><a class="header" href="#assertions-and-checks">Assertions and Checks</a></h3>
+<p>The util file <code>src/util/check.h</code> offers helpers to protect against coding and
+internal logic bugs. They must never be used to validate user, network or any
+other input.</p>
+<ul>
+<li><code>assert</code> or <code>Assert</code> should be used to document assumptions when any
+violation would mean that it is not safe to continue program execution. The
+code is always compiled with assertions enabled.
+<ul>
+<li>For example, a nullptr dereference or any other logic bug in validation
+code means the program code is faulty and must terminate immediately.</li>
+</ul>
+</li>
+<li><code>CHECK_NONFATAL</code> should be used for recoverable internal logic bugs. On
+failure, it will throw an exception, which can be caught to recover from the
+error.
+<ul>
+<li>For example, a nullptr dereference or any other logic bug in RPC code
+means that the RPC code is faulty and cannot be executed. However, the
+logic bug can be shown to the user and the program can continue to run.</li>
+</ul>
+</li>
+<li><code>Assume</code> should be used to document assumptions when program execution can
+safely continue even if the assumption is violated. In debug builds it
+behaves like <code>Assert</code>/<code>assert</code> to notify developers and testers about
+nonfatal errors. In production it doesn't warn or log anything, though the
+expression is always evaluated.
+<ul>
+<li>For example it can be assumed that a variable is only initialized once,
+but a failed assumption does not result in a fatal bug. A failed
+assumption may or may not result in a slightly degraded user experience,
+but it is safe to continue program execution.</li>
+</ul>
+</li>
+</ul>
+<h3 id="valgrind-suppressions-file"><a class="header" href="#valgrind-suppressions-file">Valgrind suppressions file</a></h3>
+<p>Valgrind is a programming tool for memory debugging, memory leak detection, and
+profiling. The repo contains a Valgrind suppressions file
+(<a href="https://github.com/bitcoin/bitcoin/blob/master/contrib/valgrind.supp"><code>valgrind.supp</code></a>)
+which includes known Valgrind warnings in our dependencies that cannot be fixed
+in-tree. Example use:</p>
+<pre><code class="language-shell">$ valgrind --suppressions=contrib/valgrind.supp build/src/test/test_bitcoin
+$ valgrind --suppressions=contrib/valgrind.supp --leak-check=full \
+      --show-leak-kinds=all build/src/test/test_bitcoin --log_level=test_suite
+$ valgrind -v --leak-check=full build/src/bitcoind -printtoconsole
+$ ./build/test/functional/test_runner.py --valgrind
+</code></pre>
+<h3 id="compiling-for-test-coverage"><a class="header" href="#compiling-for-test-coverage">Compiling for test coverage</a></h3>
+<p>LCOV can be used to generate a test coverage report based upon <code>ctest</code>
+execution. LCOV must be installed on your system (e.g. the <code>lcov</code> package
+on Debian/Ubuntu).</p>
+<p>To enable LCOV report generation during test runs:</p>
+<pre><code class="language-shell">cmake -B build -DCMAKE_BUILD_TYPE=Coverage
+cmake --build build
+cmake -P build/Coverage.cmake
+
+# A coverage report will now be accessible at `./build/test_bitcoin.coverage/index.html`,
+# which covers unit tests, and `./build/total.coverage/index.html`, which covers
+# unit and functional tests.
+</code></pre>
+<p>Additional LCOV options can be specified using <code>LCOV_OPTS</code>, but may be dependent
+on the version of LCOV. For example, when using LCOV <code>2.x</code>, branch coverage can be
+enabled by setting <code>LCOV_OPTS="--rc branch_coverage=1"</code>:</p>
+<pre><code>cmake -DLCOV_OPTS="--rc branch_coverage=1" -P build/Coverage.cmake
+</code></pre>
+<p>To enable test parallelism:</p>
+<pre><code>cmake -DJOBS=$(nproc) -P build/Coverage.cmake
+</code></pre>
+<h3 id="performance-profiling-with-perf"><a class="header" href="#performance-profiling-with-perf">Performance profiling with perf</a></h3>
+<p>Profiling is a good way to get a precise idea of where time is being spent in
+code. One tool for doing profiling on Linux platforms is called
+<a href="https://www.brendangregg.com/perf.html"><code>perf</code></a>, and has been integrated into
+the functional test framework. Perf can observe a running process and sample
+(at some frequency) where its execution is.</p>
+<p>Perf installation is contingent on which kernel version you're running; see
+<a href="https://askubuntu.com/questions/50145/how-to-install-perf-monitoring-tool">this thread</a>
+for specific instructions.</p>
+<p>Certain kernel parameters may need to be set for perf to be able to inspect the
+running process's stack.</p>
+<pre><code class="language-sh">$ sudo sysctl -w kernel.perf_event_paranoid=-1
+$ sudo sysctl -w kernel.kptr_restrict=0
+</code></pre>
+<p>Make sure you <a href="https://lwn.net/Articles/420403/">understand the security
+trade-offs</a> of setting these kernel
+parameters.</p>
+<p>To profile a running bitcoind process for 60 seconds, you could use an
+invocation of <code>perf record</code> like this:</p>
+<pre><code class="language-sh">$ perf record \
+    -g --call-graph dwarf --per-thread -F 140 \
+    -p `pgrep bitcoind` -- sleep 60
+</code></pre>
+<p>You could then analyze the results by running:</p>
+<pre><code class="language-sh">perf report --stdio | c++filt | less
+</code></pre>
+<p>or using a graphical tool like <a href="https://github.com/KDAB/hotspot">Hotspot</a>.</p>
+<p>See the functional test documentation for how to invoke perf within tests.</p>
+<h3 id="sanitizers"><a class="header" href="#sanitizers">Sanitizers</a></h3>
+<p>Bitcoin Core can be compiled with various "sanitizers" enabled, which add
+instrumentation for issues regarding things like memory safety, thread race
+conditions, or undefined behavior. This is controlled with the
+<code>-DSANITIZERS</code> cmake build flag, which should be a comma separated list of
+sanitizers to enable. The sanitizer list should correspond to supported
+<code>-fsanitize=</code> options in your compiler. These sanitizers have runtime overhead,
+so they are most useful when testing changes or producing debugging builds.</p>
+<p>Some examples:</p>
+<pre><code class="language-bash"># Enable both the address sanitizer and the undefined behavior sanitizer
+cmake -B build -DSANITIZERS=address,undefined
+
+# Enable the thread sanitizer
+cmake -B build -DSANITIZERS=thread
+</code></pre>
+<p>If you are compiling with GCC you will typically need to install corresponding
+"san" libraries to actually compile with these flags, e.g. libasan for the
+address sanitizer, libtsan for the thread sanitizer, and libubsan for the
+undefined sanitizer. If you are missing required libraries, the build
+will fail with a linker error when testing the sanitizer flags.</p>
+<p>The test suite should pass cleanly with the <code>thread</code> and <code>undefined</code> sanitizers. You
+may need to use a suppressions file, see <code>test/sanitizer_suppressions</code>. They may be
+used as follows:</p>
+<pre><code class="language-bash">export LSAN_OPTIONS="suppressions=$(pwd)/test/sanitizer_suppressions/lsan"
+export TSAN_OPTIONS="suppressions=$(pwd)/test/sanitizer_suppressions/tsan:halt_on_error=1:second_deadlock_stack=1"
+export UBSAN_OPTIONS="suppressions=$(pwd)/test/sanitizer_suppressions/ubsan:print_stacktrace=1:halt_on_error=1:report_error_type=1"
+</code></pre>
+<p>See the CI config for more examples, and upstream documentation for more information
+about any additional options.</p>
+<p>Not all sanitizer options can be enabled at the same time, e.g. trying to build
+with <code>-DSANITIZERS=address,thread</code> will fail in the build as
+these sanitizers are mutually incompatible. Refer to your compiler manual to
+learn more about these options and which sanitizers are supported by your
+compiler.</p>
+<p>Additional resources:</p>
+<ul>
+<li><a href="https://clang.llvm.org/docs/AddressSanitizer.html">AddressSanitizer</a></li>
+<li><a href="https://clang.llvm.org/docs/LeakSanitizer.html">LeakSanitizer</a></li>
+<li><a href="https://clang.llvm.org/docs/MemorySanitizer.html">MemorySanitizer</a></li>
+<li><a href="https://clang.llvm.org/docs/ThreadSanitizer.html">ThreadSanitizer</a></li>
+<li><a href="https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html">UndefinedBehaviorSanitizer</a></li>
+<li><a href="https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html">GCC Instrumentation Options</a></li>
+<li><a href="https://github.com/google/sanitizers/wiki">Google Sanitizers Wiki</a></li>
+</ul>
+<h2 id="lockingmutex-usage-notes"><a class="header" href="#lockingmutex-usage-notes">Locking/mutex usage notes</a></h2>
+<p>The code is multi-threaded and uses mutexes and the
+<code>LOCK</code> and <code>TRY_LOCK</code> macros to protect data structures.</p>
+<p>Deadlocks due to inconsistent lock ordering (thread 1 locks <code>cs_main</code> and then
+<code>cs_wallet</code>, while thread 2 locks them in the opposite order: result, deadlock
+as each waits for the other to release its lock) are a problem. Compile with
+<code>-DDEBUG_LOCKORDER</code> (or use <code>-DCMAKE_BUILD_TYPE=Debug</code>) to get lock order inconsistencies
+reported in the <code>debug.log</code> file.</p>
+<p>Re-architecting the core code so there are better-defined interfaces
+between the various components is a goal, with any necessary locking
+done by the components (e.g. see the self-contained <code>FillableSigningProvider</code> class
+and its <code>cs_KeyStore</code> lock for example).</p>
+<h2 id="threads"><a class="header" href="#threads">Threads</a></h2>
+<ul>
+<li>
+<p><a href="https://doxygen.bitcoincore.org/bitcoind_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97">Main thread (<code>bitcoind</code>)</a>
+: Started from <code>main()</code> in <code>bitcoind.cpp</code>. Responsible for starting up and
+shutting down the application.</p>
+</li>
+<li>
+<p><a href="https://doxygen.bitcoincore.org/namespacenode.html#ab4305679079866f0f420f7dbf278381d">Init load (<code>b-initload</code>)</a>
+: Performs various loading tasks that are part of init but shouldn't block the node from being started: external block import,
+reindex, reindex-chainstate, main chain activation, spawn indexes background sync threads and mempool load.</p>
+</li>
+<li>
+<p><a href="https://doxygen.bitcoincore.org/class_c_check_queue.html#a6e7fa51d3a25e7cb65446d4b50e6a987">CCheckQueue::Loop (<code>b-scriptch.x</code>)</a>
+: Parallel script validation threads for transactions in blocks.</p>
+</li>
+<li>
+<p><a href="https://doxygen.bitcoincore.org/httpserver_8cpp.html#abb9f6ea8819672bd9a62d3695070709c">ThreadHTTP (<code>b-http</code>)</a>
+: Libevent thread to listen for RPC and REST connections.</p>
+</li>
+<li>
+<p><a href="https://doxygen.bitcoincore.org/httpserver_8cpp.html#aa6a7bc27265043bc0193220c5ae3a55f">HTTP worker threads(<code>b-httpworker.x</code>)</a>
+: Threads to service RPC and REST requests.</p>
+</li>
+<li>
+<p><a href="https://doxygen.bitcoincore.org/class_base_index.html#a96a7407421fbf877509248bbe64f8d87">Indexer threads (<code>b-txindex</code>, etc)</a>
+: One thread per indexer.</p>
+</li>
+<li>
+<p><a href="https://doxygen.bitcoincore.org/class_c_scheduler.html#a14d2800815da93577858ea078aed1fba">SchedulerThread (<code>b-scheduler</code>)</a>
+: Does asynchronous background tasks like dumping wallet contents, dumping
+addrman and running asynchronous validationinterface callbacks.</p>
+</li>
+<li>
+<p><a href="https://doxygen.bitcoincore.org/torcontrol_8cpp.html#a52a3efff23634500bb42c6474f306091">TorControlThread (<code>b-torcontrol</code>)</a>
+: Libevent thread for tor connections.</p>
+</li>
+<li>
+<p>Net threads:</p>
+<ul>
+<li>
+<p><a href="https://doxygen.bitcoincore.org/class_c_connman.html#aacdbb7148575a31bb33bc345e2bf22a9">ThreadMessageHandler (<code>b-msghand</code>)</a>
+: Application level message handling (sending and receiving). Almost
+all net_processing and validation logic runs on this thread.</p>
+</li>
+<li>
+<p><a href="https://doxygen.bitcoincore.org/class_c_connman.html#aa7c6970ed98a4a7bafbc071d24897d13">ThreadDNSAddressSeed (<code>b-dnsseed</code>)</a>
+: Loads addresses of peers from the DNS.</p>
+</li>
+<li>
+<p>ThreadMapPort (<code>b-mapport</code>)
+: Universal plug-and-play startup/shutdown.</p>
+</li>
+<li>
+<p><a href="https://doxygen.bitcoincore.org/class_c_connman.html#a765597cbfe99c083d8fa3d61bb464e34">ThreadSocketHandler (<code>b-net</code>)</a>
+: Sends/Receives data from peers on port 8333.</p>
+</li>
+<li>
+<p><a href="https://doxygen.bitcoincore.org/class_c_connman.html#a0b787caf95e52a346a2b31a580d60a62">ThreadOpenAddedConnections (<code>b-addcon</code>)</a>
+: Opens network connections to added nodes.</p>
+</li>
+<li>
+<p><a href="https://doxygen.bitcoincore.org/class_c_connman.html#a55e9feafc3bab78e5c9d408c207faa45">ThreadOpenConnections (<code>b-opencon</code>)</a>
+: Initiates new connections to peers.</p>
+</li>
+<li>
+<p><a href="https://doxygen.bitcoincore.org/class_c_connman.html#a57787b4f9ac847d24065fbb0dd6e70f8">ThreadI2PAcceptIncoming (<code>b-i2paccept</code>)</a>
+: Listens for and accepts incoming I2P connections through the I2P SAM proxy.</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="ignoring-ideeditor-files"><a class="header" href="#ignoring-ideeditor-files">Ignoring IDE/editor files</a></h2>
+<p>In closed-source environments in which everyone uses the same IDE, it is common
+to add temporary files it produces to the project-wide <code>.gitignore</code> file.</p>
+<p>However, in open source software such as Bitcoin Core, where everyone uses
+their own editors/IDE/tools, it is less common. Only you know what files your
+editor produces and this may change from version to version. The canonical way
+to do this is thus to create your local gitignore. Add this to <code>~/.gitconfig</code>:</p>
+<pre><code>[core]
+        excludesfile = /home/.../.gitignore_global
+</code></pre>
+<p>(alternatively, type the command <code>git config --global core.excludesfile ~/.gitignore_global</code>
+on a terminal)</p>
+<p>Then put your favourite tool's temporary filenames in that file, e.g.</p>
+<pre><code># NetBeans
+nbproject/
+</code></pre>
+<p>Another option is to create a per-repository excludes file <code>.git/info/exclude</code>.
+These are not committed but apply only to one repository.</p>
+<p>If a set of tools is used by the build system or scripts the repository (for
+example, lcov) it is perfectly acceptable to add its files to <code>.gitignore</code>
+and commit them.</p>
+<h1 id="development-guidelines"><a class="header" href="#development-guidelines">Development guidelines</a></h1>
+<p>A few non-style-related recommendations for developers, as well as points to
+pay attention to for reviewers of Bitcoin Core code.</p>
+<h2 id="general-bitcoin-core"><a class="header" href="#general-bitcoin-core">General Bitcoin Core</a></h2>
+<ul>
+<li>
+<p>New features should be exposed on RPC first, then can be made available in the GUI.</p>
+<ul>
+<li><em>Rationale</em>: RPC allows for better automatic testing. The test suite for
+the GUI is very limited.</li>
+</ul>
+</li>
+<li>
+<p>Make sure pull requests pass CI before merging.</p>
+<ul>
+<li>
+<p><em>Rationale</em>: Makes sure that they pass thorough testing, and that the tester will keep passing
+on the master branch. Otherwise, all new pull requests will start failing the tests, resulting in
+confusion and mayhem.</p>
+</li>
+<li>
+<p><em>Explanation</em>: If the test suite is to be updated for a change, this has to
+be done first.</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="logging"><a class="header" href="#logging">Logging</a></h2>
+<p>The macros <code>LogInfo</code>, <code>LogDebug</code>, <code>LogTrace</code>, <code>LogWarning</code> and <code>LogError</code> are available for
+logging messages. They should be used as follows:</p>
+<ul>
+<li>
+<p><code>LogDebug(BCLog::CATEGORY, fmt, params...)</code> is what you want
+most of the time, and it should be used for log messages that are
+useful for debugging and can reasonably be enabled on a production
+system (that has sufficient free storage space). They will be logged
+if the program is started with <code>-debug=category</code> or <code>-debug=1</code>.</p>
+</li>
+<li>
+<p><code>LogInfo(fmt, params...)</code> should only be used rarely, e.g. for startup
+messages or for infrequent and important events such as a new block tip
+being found or a new outbound connection being made. These log messages
+are unconditional, so care must be taken that they can't be used by an
+attacker to fill up storage. Note that <code>LogPrintf(fmt, params...)</code> is
+a deprecated alias for <code>LogInfo</code>.</p>
+</li>
+<li>
+<p><code>LogError(fmt, params...)</code> should be used in place of <code>LogInfo</code> for
+severe problems that require the node (or a subsystem) to shut down
+entirely (e.g., insufficient storage space).</p>
+</li>
+<li>
+<p><code>LogWarning(fmt, params...)</code> should be used in place of <code>LogInfo</code> for
+severe problems that the node admin should address, but are not
+severe enough to warrant shutting down the node (e.g., system time
+appears to be wrong, unknown soft fork appears to have activated).</p>
+</li>
+<li>
+<p><code>LogTrace(BCLog::CATEGORY, fmt, params...)</code> should be used in place of
+<code>LogDebug</code> for log messages that would be unusable on a production
+system, e.g. due to being too noisy in normal use, or too resource
+intensive to process. These will be logged if the startup
+options <code>-debug=category -loglevel=category:trace</code> or <code>-debug=1 -loglevel=trace</code> are selected.</p>
+</li>
+</ul>
+<p>Note that the format strings and parameters of <code>LogDebug</code> and <code>LogTrace</code>
+are only evaluated if the logging category is enabled, so you must be
+careful to avoid side-effects in those expressions.</p>
+<h2 id="wallet"><a class="header" href="#wallet">Wallet</a></h2>
+<ul>
+<li>Make sure that no crashes happen with run-time option <code>-disablewallet</code>.</li>
+</ul>
+<h2 id="general-c"><a class="header" href="#general-c">General C++</a></h2>
+<p>For general C++ guidelines, you may refer to the <a href="https://isocpp.github.io/CppCoreGuidelines/">C++ Core
+Guidelines</a>.</p>
+<p>Common misconceptions are clarified in those sections:</p>
+<ul>
+<li>
+<p>Passing (non-)fundamental types in the <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rf-conventional">C++ Core
+Guideline</a>.</p>
+</li>
+<li>
+<p>If you use the <code>.h</code>, you must link the <code>.cpp</code>.</p>
+<ul>
+<li><em>Rationale</em>: Include files define the interface for the code in implementation files. Including one but
+not linking the other is confusing. Please avoid that. Moving functions from
+the <code>.h</code> to the <code>.cpp</code> should not result in build errors.</li>
+</ul>
+</li>
+<li>
+<p>Use the RAII (Resource Acquisition Is Initialization) paradigm where possible. For example, by using
+<code>unique_ptr</code> for allocations in a function.</p>
+<ul>
+<li><em>Rationale</em>: This avoids memory and resource leaks, and ensures exception safety.</li>
+</ul>
+</li>
+</ul>
+<h2 id="c-data-structures"><a class="header" href="#c-data-structures">C++ data structures</a></h2>
+<ul>
+<li>
+<p>Never use the <code>std::map []</code> syntax when reading from a map, but instead use <code>.find()</code>.</p>
+<ul>
+<li><em>Rationale</em>: <code>[]</code> does an insert (of the default element) if the item doesn't
+exist in the map yet. This has resulted in memory leaks in the past, as well as
+race conditions (expecting read-read behavior). Using <code>[]</code> is fine for <em>writing</em> to a map.</li>
+</ul>
+</li>
+<li>
+<p>Do not compare an iterator from one data structure with an iterator of
+another data structure (even if of the same type).</p>
+<ul>
+<li><em>Rationale</em>: Behavior is undefined. In C++ parlor this means "may reformat
+the universe", in practice this has resulted in at least one hard-to-debug crash bug.</li>
+</ul>
+</li>
+<li>
+<p>Watch out for out-of-bounds vector access. <code>&amp;vch[vch.size()]</code> is illegal,
+including <code>&amp;vch[0]</code> for an empty vector. Use <code>vch.data()</code> and <code>vch.data() + vch.size()</code> instead.</p>
+</li>
+<li>
+<p>Vector bounds checking is only enabled in debug mode. Do not rely on it.</p>
+</li>
+<li>
+<p>Initialize all non-static class members where they are defined.
+If this is skipped for a good reason (i.e., optimization on the critical
+path), add an explicit comment about this.</p>
+<ul>
+<li><em>Rationale</em>: Ensure determinism by avoiding accidental use of uninitialized
+values. Also, static analyzers balk about this.
+Initializing the members in the declaration makes it easy to
+spot uninitialized ones.</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-cpp">class A
+{
+    uint32_t m_count{0};
+}
+</code></pre>
+<ul>
+<li>
+<p>By default, declare constructors <code>explicit</code>.</p>
+<ul>
+<li><em>Rationale</em>: This is a precaution to avoid unintended
+<a href="https://en.cppreference.com/w/cpp/language/converting_constructor">conversions</a>.</li>
+</ul>
+</li>
+<li>
+<p>Use explicitly signed or unsigned <code>char</code>s, or even better <code>uint8_t</code> and
+<code>int8_t</code>. Do not use bare <code>char</code> unless it is to pass to a third-party API.
+This type can be signed or unsigned depending on the architecture, which can
+lead to interoperability problems or dangerous conditions such as
+out-of-bounds array accesses.</p>
+</li>
+<li>
+<p>Prefer explicit constructions over implicit ones that rely on 'magical' C++ behavior.</p>
+<ul>
+<li><em>Rationale</em>: Easier to understand what is happening, thus easier to spot mistakes, even for those
+that are not language lawyers.</li>
+</ul>
+</li>
+<li>
+<p>Use <code>Span</code> as function argument when it can operate on any range-like container.</p>
+<ul>
+<li><em>Rationale</em>: Compared to <code>Foo(const vector&lt;int&gt;&amp;)</code> this avoids the need for a (potentially expensive)
+conversion to vector if the caller happens to have the input stored in another type of container.
+However, be aware of the pitfalls documented in <a href="../src/span.h">span.h</a>.</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-cpp">void Foo(Span&lt;const int&gt; data);
+
+std::vector&lt;int&gt; vec{1,2,3};
+Foo(vec);
+</code></pre>
+<ul>
+<li>
+<p>Prefer <code>enum class</code> (scoped enumerations) over <code>enum</code> (traditional enumerations) where possible.</p>
+<ul>
+<li><em>Rationale</em>: Scoped enumerations avoid two potential pitfalls/problems with traditional C++ enumerations: implicit conversions to <code>int</code>, and name clashes due to enumerators being exported to the surrounding scope.</li>
+</ul>
+</li>
+<li>
+<p><code>switch</code> statement on an enumeration example:</p>
+</li>
+</ul>
+<pre><code class="language-cpp">enum class Tabs {
+    info,
+    console,
+    network_graph,
+    peers
+};
+
+int GetInt(Tabs tab)
+{
+    switch (tab) {
+    case Tabs::info: return 0;
+    case Tabs::console: return 1;
+    case Tabs::network_graph: return 2;
+    case Tabs::peers: return 3;
+    } // no default case, so the compiler can warn about missing cases
+    assert(false);
+}
+</code></pre>
+<p><em>Rationale</em>: The comment documents skipping <code>default:</code> label, and it complies with <code>clang-format</code> rules. The assertion prevents firing of <code>-Wreturn-type</code> warning on some compilers.</p>
+<h2 id="strings-and-formatting"><a class="header" href="#strings-and-formatting">Strings and formatting</a></h2>
+<ul>
+<li>
+<p>Use <code>std::string</code>, avoid C string manipulation functions.</p>
+<ul>
+<li><em>Rationale</em>: C++ string handling is marginally safer, less scope for
+buffer overflows, and surprises with <code>\0</code> characters. Also, some C string manipulations
+tend to act differently depending on platform, or even the user locale.</li>
+</ul>
+</li>
+<li>
+<p>Use <code>ToIntegral</code> from <a href="/src/util/strencodings.h"><code>strencodings.h</code></a> for number parsing. In legacy code you might also find <code>ParseInt*</code> family of functions, <code>ParseDouble</code> or <code>LocaleIndependentAtoi</code>.</p>
+<ul>
+<li><em>Rationale</em>: These functions do overflow checking and avoid pesky locale issues.</li>
+</ul>
+</li>
+<li>
+<p>Avoid using locale dependent functions if possible. You can use the provided
+<a href="/test/lint/lint-locale-dependence.py"><code>lint-locale-dependence.py</code></a>
+to check for accidental use of locale dependent functions.</p>
+<ul>
+<li>
+<p><em>Rationale</em>: Unnecessary locale dependence can cause bugs that are very tricky to isolate and fix.</p>
+</li>
+<li>
+<p>These functions are known to be locale dependent:
+<code>alphasort</code>, <code>asctime</code>, <code>asprintf</code>, <code>atof</code>, <code>atoi</code>, <code>atol</code>, <code>atoll</code>, <code>atoq</code>,
+<code>btowc</code>, <code>ctime</code>, <code>dprintf</code>, <code>fgetwc</code>, <code>fgetws</code>, <code>fprintf</code>, <code>fputwc</code>,
+<code>fputws</code>, <code>fscanf</code>, <code>fwprintf</code>, <code>getdate</code>, <code>getwc</code>, <code>getwchar</code>, <code>isalnum</code>,
+<code>isalpha</code>, <code>isblank</code>, <code>iscntrl</code>, <code>isdigit</code>, <code>isgraph</code>, <code>islower</code>, <code>isprint</code>,
+<code>ispunct</code>, <code>isspace</code>, <code>isupper</code>, <code>iswalnum</code>, <code>iswalpha</code>, <code>iswblank</code>,
+<code>iswcntrl</code>, <code>iswctype</code>, <code>iswdigit</code>, <code>iswgraph</code>, <code>iswlower</code>, <code>iswprint</code>,
+<code>iswpunct</code>, <code>iswspace</code>, <code>iswupper</code>, <code>iswxdigit</code>, <code>isxdigit</code>, <code>mblen</code>,
+<code>mbrlen</code>, <code>mbrtowc</code>, <code>mbsinit</code>, <code>mbsnrtowcs</code>, <code>mbsrtowcs</code>, <code>mbstowcs</code>,
+<code>mbtowc</code>, <code>mktime</code>, <code>putwc</code>, <code>putwchar</code>, <code>scanf</code>, <code>snprintf</code>, <code>sprintf</code>,
+<code>sscanf</code>, <code>stoi</code>, <code>stol</code>, <code>stoll</code>, <code>strcasecmp</code>, <code>strcasestr</code>, <code>strcoll</code>,
+<code>strfmon</code>, <code>strftime</code>, <code>strncasecmp</code>, <code>strptime</code>, <code>strtod</code>, <code>strtof</code>,
+<code>strtoimax</code>, <code>strtol</code>, <code>strtold</code>, <code>strtoll</code>, <code>strtoq</code>, <code>strtoul</code>,
+<code>strtoull</code>, <code>strtoumax</code>, <code>strtouq</code>, <code>strxfrm</code>, <code>swprintf</code>, <code>tolower</code>,
+<code>toupper</code>, <code>towctrans</code>, <code>towlower</code>, <code>towupper</code>, <code>ungetwc</code>, <code>vasprintf</code>,
+<code>vdprintf</code>, <code>versionsort</code>, <code>vfprintf</code>, <code>vfscanf</code>, <code>vfwprintf</code>, <code>vprintf</code>,
+<code>vscanf</code>, <code>vsnprintf</code>, <code>vsprintf</code>, <code>vsscanf</code>, <code>vswprintf</code>, <code>vwprintf</code>,
+<code>wcrtomb</code>, <code>wcscasecmp</code>, <code>wcscoll</code>, <code>wcsftime</code>, <code>wcsncasecmp</code>, <code>wcsnrtombs</code>,
+<code>wcsrtombs</code>, <code>wcstod</code>, <code>wcstof</code>, <code>wcstoimax</code>, <code>wcstol</code>, <code>wcstold</code>,
+<code>wcstoll</code>, <code>wcstombs</code>, <code>wcstoul</code>, <code>wcstoull</code>, <code>wcstoumax</code>, <code>wcswidth</code>,
+<code>wcsxfrm</code>, <code>wctob</code>, <code>wctomb</code>, <code>wctrans</code>, <code>wctype</code>, <code>wcwidth</code>, <code>wprintf</code></p>
+</li>
+</ul>
+</li>
+<li>
+<p>For <code>strprintf</code>, <code>LogInfo</code>, <code>LogDebug</code>, etc formatting characters don't need size specifiers.</p>
+<ul>
+<li><em>Rationale</em>: Bitcoin Core uses tinyformat, which is type safe. Leave them out to avoid confusion.</li>
+</ul>
+</li>
+<li>
+<p>Use <code>.c_str()</code> sparingly. Its only valid use is to pass C++ strings to C functions that take NULL-terminated
+strings.</p>
+<ul>
+<li>
+<p>Do not use it when passing a sized array (so along with <code>.size()</code>). Use <code>.data()</code> instead to get a pointer
+to the raw data.</p>
+<ul>
+<li><em>Rationale</em>: Although this is guaranteed to be safe starting with C++11, <code>.data()</code> communicates the intent better.</li>
+</ul>
+</li>
+<li>
+<p>Do not use it when passing strings to <code>tfm::format</code>, <code>strprintf</code>, <code>LogInfo</code>, <code>LogDebug</code>, etc.</p>
+<ul>
+<li><em>Rationale</em>: This is redundant. Tinyformat handles strings.</li>
+</ul>
+</li>
+<li>
+<p>Do not use it to convert to <code>QString</code>. Use <code>QString::fromStdString()</code>.</p>
+<ul>
+<li><em>Rationale</em>: Qt has built-in functionality for converting their string
+type from/to C++. No need to roll your own.</li>
+</ul>
+</li>
+<li>
+<p>In cases where you do call <code>.c_str()</code>, you might want to additionally check that the string does not contain embedded '\0' characters, because
+it will (necessarily) truncate the string. This might be used to hide parts of the string from logging or to circumvent
+checks. If a use of strings is sensitive to this, take care to check the string for embedded NULL characters first
+and reject it if there are any (see <code>ParsePrechecks</code> in <code>strencodings.cpp</code> for an example).</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="shadowing"><a class="header" href="#shadowing">Shadowing</a></h2>
+<p>Although the shadowing warning (<code>-Wshadow</code>) is not enabled by default (it prevents issues arising
+from using a different variable with the same name),
+please name variables so that their names do not shadow variables defined in the source code.</p>
+<p>When using nested cycles, do not name the inner cycle variable the same as in
+the outer cycle, etc.</p>
+<h2 id="lifetimebound"><a class="header" href="#lifetimebound">Lifetimebound</a></h2>
+<p>The <a href="https://clang.llvm.org/docs/AttributeReference.html#lifetimebound">Clang <code>lifetimebound</code>
+attribute</a>
+can be used to tell the compiler that a lifetime is bound to an object and
+potentially see a compile-time warning if the object has a shorter lifetime from
+the invalid use of a temporary. You can use the attribute by adding a <code>LIFETIMEBOUND</code>
+annotation defined in <code>src/attributes.h</code>; please grep the codebase for examples.</p>
+<h2 id="threads-and-synchronization"><a class="header" href="#threads-and-synchronization">Threads and synchronization</a></h2>
+<ul>
+<li>
+<p>Prefer <code>Mutex</code> type to <code>RecursiveMutex</code> one.</p>
+</li>
+<li>
+<p>Consistently use <a href="https://clang.llvm.org/docs/ThreadSafetyAnalysis.html">Clang Thread Safety Analysis</a> annotations to
+get compile-time warnings about potential race conditions or deadlocks in code.</p>
+<ul>
+<li>
+<p>In functions that are declared separately from where they are defined, the
+thread safety annotations should be added exclusively to the function
+declaration. Annotations on the definition could lead to false positives
+(lack of compile failure) at call sites between the two.</p>
+</li>
+<li>
+<p>Prefer locks that are in a class rather than global, and that are
+internal to a class (private or protected) rather than public.</p>
+</li>
+<li>
+<p>Combine annotations in function declarations with run-time asserts in
+function definitions (<code>AssertLockNotHeld()</code> can be omitted if <code>LOCK()</code> is
+called unconditionally after it because <code>LOCK()</code> does the same check as
+<code>AssertLockNotHeld()</code> internally, for non-recursive mutexes):</p>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-C++">// txmempool.h
+class CTxMemPool
+{
+public:
+    ...
+    mutable RecursiveMutex cs;
+    ...
+    void UpdateTransactionsFromBlock(...) EXCLUSIVE_LOCKS_REQUIRED(::cs_main, cs);
+    ...
+}
+
+// txmempool.cpp
+void CTxMemPool::UpdateTransactionsFromBlock(...)
+{
+    AssertLockHeld(::cs_main);
+    AssertLockHeld(cs);
+    ...
+}
+</code></pre>
+<pre><code class="language-C++">// validation.h
+class Chainstate
+{
+protected:
+    ...
+    Mutex m_chainstate_mutex;
+    ...
+public:
+    ...
+    bool ActivateBestChain(
+        BlockValidationState&amp; state,
+        std::shared_ptr&lt;const CBlock&gt; pblock = nullptr)
+        EXCLUSIVE_LOCKS_REQUIRED(!m_chainstate_mutex)
+        LOCKS_EXCLUDED(::cs_main);
+    ...
+    bool PreciousBlock(BlockValidationState&amp; state, CBlockIndex* pindex)
+        EXCLUSIVE_LOCKS_REQUIRED(!m_chainstate_mutex)
+        LOCKS_EXCLUDED(::cs_main);
+    ...
+}
+
+// validation.cpp
+bool Chainstate::PreciousBlock(BlockValidationState&amp; state, CBlockIndex* pindex)
+{
+    AssertLockNotHeld(m_chainstate_mutex);
+    AssertLockNotHeld(::cs_main);
+    {
+        LOCK(cs_main);
+        ...
+    }
+
+    return ActivateBestChain(state, std::shared_ptr&lt;const CBlock&gt;());
+}
+</code></pre>
+<ul>
+<li>
+<p>Build and run tests with <code>-DDEBUG_LOCKORDER</code> to verify that no potential
+deadlocks are introduced. This is defined by default when
+building with <code>-DCMAKE_BUILD_TYPE=Debug</code>.</p>
+</li>
+<li>
+<p>When using <code>LOCK</code>/<code>TRY_LOCK</code> be aware that the lock exists in the context of
+the current scope, so surround the statement and the code that needs the lock
+with braces.</p>
+<p>OK:</p>
+</li>
+</ul>
+<pre><code class="language-c++">{
+    TRY_LOCK(cs_vNodes, lockNodes);
+    ...
+}
+</code></pre>
+<p>Wrong:</p>
+<pre><code class="language-c++">TRY_LOCK(cs_vNodes, lockNodes);
+{
+    ...
+}
+</code></pre>
+<h2 id="scripts"><a class="header" href="#scripts">Scripts</a></h2>
+<p>Write scripts in Python rather than bash, when possible.</p>
+<h3 id="shebang"><a class="header" href="#shebang">Shebang</a></h3>
+<ul>
+<li>
+<p>Use <code>#!/usr/bin/env bash</code> instead of obsolete <code>#!/bin/bash</code>.</p>
+<ul>
+<li>
+<p><a href="https://github.com/dylanaraps/pure-bash-bible#shebang"><em>Rationale</em></a>:</p>
+<p><code>#!/bin/bash</code> assumes it is always installed to /bin/ which can cause issues;</p>
+<p><code>#!/usr/bin/env bash</code> searches the user's PATH to find the bash binary.</p>
+</li>
+</ul>
+<p>OK:</p>
+</li>
+</ul>
+<pre><code class="language-bash">#!/usr/bin/env bash
+</code></pre>
+<p>Wrong:</p>
+<pre><code class="language-bash">#!/bin/bash
+</code></pre>
+<h2 id="source-code-organization"><a class="header" href="#source-code-organization">Source code organization</a></h2>
+<ul>
+<li>
+<p>Implementation code should go into the <code>.cpp</code> file and not the <code>.h</code>, unless necessary due to template usage or
+when performance due to inlining is critical.</p>
+<ul>
+<li><em>Rationale</em>: Shorter and simpler header files are easier to read and reduce compile time.</li>
+</ul>
+</li>
+<li>
+<p>Use only the lowercase alphanumerics (<code>a-z0-9</code>), underscore (<code>_</code>) and hyphen (<code>-</code>) in source code filenames.</p>
+<ul>
+<li><em>Rationale</em>: <code>grep</code>:ing and auto-completing filenames is easier when using a consistent
+naming pattern. Potential problems when building on case-insensitive filesystems are
+avoided when using only lowercase characters in source code filenames.</li>
+</ul>
+</li>
+<li>
+<p>Every <code>.cpp</code> and <code>.h</code> file should <code>#include</code> every header file it directly uses classes, functions or other
+definitions from, even if those headers are already included indirectly through other headers.</p>
+<ul>
+<li><em>Rationale</em>: Excluding headers because they are already indirectly included results in compilation
+failures when those indirect dependencies change. Furthermore, it obscures what the real code
+dependencies are.</li>
+</ul>
+</li>
+<li>
+<p>Don't import anything into the global namespace (<code>using namespace ...</code>). Use
+fully specified types such as <code>std::string</code>.</p>
+<ul>
+<li><em>Rationale</em>: Avoids symbol conflicts.</li>
+</ul>
+</li>
+<li>
+<p>Terminate namespaces with a comment (<code>// namespace mynamespace</code>). The comment
+should be placed on the same line as the brace closing the namespace, e.g.</p>
+</li>
+</ul>
+<pre><code class="language-c++">namespace mynamespace {
+...
+} // namespace mynamespace
+
+namespace {
+...
+} // namespace
+</code></pre>
+<ul>
+<li>
+<p><em>Rationale</em>: Avoids confusion about the namespace context.</p>
+</li>
+<li>
+<p>Use <code>#include &lt;primitives/transaction.h&gt;</code> bracket syntax instead of
+<code>#include "primitives/transactions.h"</code> quote syntax.</p>
+<ul>
+<li><em>Rationale</em>: Bracket syntax is less ambiguous because the preprocessor
+searches a fixed list of include directories without taking location of the
+source file into account. This allows quoted includes to stand out more when
+the location of the source file actually is relevant.</li>
+</ul>
+</li>
+<li>
+<p>Use include guards to avoid the problem of double inclusion. The header file
+<code>foo/bar.h</code> should use the include guard identifier <code>BITCOIN_FOO_BAR_H</code>, e.g.</p>
+</li>
+</ul>
+<pre><code class="language-c++">#ifndef BITCOIN_FOO_BAR_H
+#define BITCOIN_FOO_BAR_H
+...
+#endif // BITCOIN_FOO_BAR_H
+</code></pre>
+<h2 id="gui"><a class="header" href="#gui">GUI</a></h2>
+<ul>
+<li>
+<p>Do not display or manipulate dialogs in model code (classes <code>*Model</code>).</p>
+<ul>
+<li><em>Rationale</em>: Model classes pass through events and data from the core, they
+should not interact with the user. That's where View classes come in. The converse also
+holds: try to not directly access core data structures from Views.</li>
+</ul>
+</li>
+<li>
+<p>Avoid adding slow or blocking code in the GUI thread. In particular, do not
+add new <code>interfaces::Node</code> and <code>interfaces::Wallet</code> method calls, even if they
+may be fast now, in case they are changed to lock or communicate across
+processes in the future.</p>
+<p>Prefer to offload work from the GUI thread to worker threads (see
+<code>RPCExecutor</code> in console code as an example) or take other steps (see
+https://doc.qt.io/archives/qq/qq27-responsive-guis.html) to keep the GUI
+responsive.</p>
+<ul>
+<li><em>Rationale</em>: Blocking the GUI thread can increase latency, and lead to
+hangs and deadlocks.</li>
+</ul>
+</li>
+</ul>
+<h2 id="subtrees"><a class="header" href="#subtrees">Subtrees</a></h2>
+<p>Several parts of the repository are subtrees of software maintained elsewhere.</p>
+<p>Some of these are maintained by active developers of Bitcoin Core, in which case
+changes should go directly upstream without being PRed directly against the project.
+They will be merged back in the next subtree merge.</p>
+<p>Others are external projects without a tight relationship with our project. Changes
+to these should also be sent upstream, but bugfixes may also be prudent to PR against
+a Bitcoin Core subtree, so that they can be integrated quickly. Cosmetic changes
+should be taken upstream.</p>
+<p>There is a tool in <code>test/lint/git-subtree-check.sh</code> (<a href="../test/lint#git-subtree-checksh">instructions</a>)
+to check a subtree directory for consistency with its upstream repository.</p>
+<p>Current subtrees include:</p>
+<ul>
+<li>
+<p>src/leveldb</p>
+<ul>
+<li>Subtree at https://github.com/bitcoin-core/leveldb-subtree ; maintained by Core contributors.</li>
+<li>Upstream at https://github.com/google/leveldb ; maintained by Google. Open
+important PRs to the subtree to avoid delay.</li>
+<li><strong>Note</strong>: Follow the instructions in <a href="#upgrading-leveldb">Upgrading LevelDB</a> when
+merging upstream changes to the LevelDB subtree.</li>
+</ul>
+</li>
+<li>
+<p>src/crc32c</p>
+<ul>
+<li>Used by leveldb for hardware acceleration of CRC32C checksums for data integrity.</li>
+<li>Subtree at https://github.com/bitcoin-core/crc32c-subtree ; maintained by Core contributors.</li>
+<li>Upstream at https://github.com/google/crc32c ; maintained by Google.</li>
+</ul>
+</li>
+<li>
+<p>src/secp256k1</p>
+<ul>
+<li>Upstream at https://github.com/bitcoin-core/secp256k1/ ; maintained by Core contributors.</li>
+</ul>
+</li>
+<li>
+<p>src/crypto/ctaes</p>
+<ul>
+<li>Upstream at https://github.com/bitcoin-core/ctaes ; maintained by Core contributors.</li>
+</ul>
+</li>
+<li>
+<p>src/minisketch</p>
+<ul>
+<li>Upstream at https://github.com/sipa/minisketch ; maintained by Core contributors.</li>
+</ul>
+</li>
+</ul>
+<h2 id="upgrading-leveldb"><a class="header" href="#upgrading-leveldb">Upgrading LevelDB</a></h2>
+<p>Extra care must be taken when upgrading LevelDB. This section explains issues
+you must be aware of.</p>
+<h3 id="file-descriptor-counts"><a class="header" href="#file-descriptor-counts">File Descriptor Counts</a></h3>
+<p>In most configurations, we use the default LevelDB value for <code>max_open_files</code>,
+which is 1000 at the time of this writing. If LevelDB actually uses this many
+file descriptors, it will cause problems with Bitcoin's <code>select()</code> loop, because
+it may cause new sockets to be created where the fd value is &gt;= 1024. For this
+reason, on 64-bit Unix systems, we rely on an internal LevelDB optimization that
+uses <code>mmap()</code> + <code>close()</code> to open table files without actually retaining
+references to the table file descriptors. If you are upgrading LevelDB, you must
+sanity check the changes to make sure that this assumption remains valid.</p>
+<p>In addition to reviewing the upstream changes in <code>env_posix.cc</code>, you can use <code>lsof</code> to
+check this. For example, on Linux this command will show open <code>.ldb</code> file counts:</p>
+<pre><code class="language-bash">$ lsof -p $(pidof bitcoind) |\
+    awk 'BEGIN { fd=0; mem=0; } /ldb$/ { if ($4 == "mem") mem++; else fd++ } END { printf "mem = %s, fd = %s\n", mem, fd}'
+mem = 119, fd = 0
+</code></pre>
+<p>The <code>mem</code> value shows how many files are mmap'ed, and the <code>fd</code> value shows you
+many file descriptors these files are using. You should check that <code>fd</code> is a
+small number (usually 0 on 64-bit hosts).</p>
+<p>See the notes in the <code>SetMaxOpenFiles()</code> function in <code>dbwrapper.cc</code> for more
+details.</p>
+<h3 id="consensus-compatibility"><a class="header" href="#consensus-compatibility">Consensus Compatibility</a></h3>
+<p>It is possible for LevelDB changes to inadvertently change consensus
+compatibility between nodes. This happened in Bitcoin 0.8 (when LevelDB was
+first introduced). When upgrading LevelDB, you should review the upstream changes
+to check for issues affecting consensus compatibility.</p>
+<p>For example, if LevelDB had a bug that accidentally prevented a key from being
+returned in an edge case, and that bug was fixed upstream, the bug "fix" would
+be an incompatible consensus change. In this situation, the correct behavior
+would be to revert the upstream fix before applying the updates to Bitcoin's
+copy of LevelDB. In general, you should be wary of any upstream changes affecting
+what data is returned from LevelDB queries.</p>
+<h2 id="scripted-diffs"><a class="header" href="#scripted-diffs">Scripted diffs</a></h2>
+<p>For reformatting and refactoring commits where the changes can be easily automated using a bash script, we use
+scripted-diff commits. The bash script is included in the commit message and our CI job checks that
+the result of the script is identical to the commit. This aids reviewers since they can verify that the script
+does exactly what it is supposed to do. It is also helpful for rebasing (since the same script can just be re-run
+on the new master commit).</p>
+<p>To create a scripted-diff:</p>
+<ul>
+<li>start the commit message with <code>scripted-diff:</code> (and then a description of the diff on the same line)</li>
+<li>in the commit message include the bash script between lines containing just the following text:
+<ul>
+<li><code>-BEGIN VERIFY SCRIPT-</code></li>
+<li><code>-END VERIFY SCRIPT-</code></li>
+</ul>
+</li>
+</ul>
+<p>The scripted-diff is verified by the tool <code>test/lint/commit-script-check.sh</code>. The tool's default behavior, when supplied
+with a commit is to verify all scripted-diffs from the beginning of time up to said commit. Internally, the tool passes
+the first supplied argument to <code>git rev-list --reverse</code> to determine which commits to verify script-diffs for, ignoring
+commits that don't conform to the commit message format described above.</p>
+<p>For development, it might be more convenient to verify all scripted-diffs in a range <code>A..B</code>, for example:</p>
+<pre><code class="language-bash">test/lint/commit-script-check.sh origin/master..HEAD
+</code></pre>
+<h3 id="suggestions-and-examples"><a class="header" href="#suggestions-and-examples">Suggestions and examples</a></h3>
+<p>If you need to replace in multiple files, prefer <code>git ls-files</code> to <code>find</code> or globbing, and <code>git grep</code> to <code>grep</code>, to
+avoid changing files that are not under version control.</p>
+<p>For efficient replacement scripts, reduce the selection to the files that potentially need to be modified, so for
+example, instead of a blanket <code>git ls-files src | xargs sed -i s/apple/orange/</code>, use
+<code>git grep -l apple src | xargs sed -i s/apple/orange/</code>.</p>
+<p>Also, it is good to keep the selection of files as specific as possible — for example, replace only in directories where
+you expect replacements — because it reduces the risk that a rebase of your commit by re-running the script will
+introduce accidental changes.</p>
+<p>Some good examples of scripted-diff:</p>
+<ul>
+<li>
+<p><a href="https://github.com/bitcoin/bitcoin/commit/301bd41a2e6765b185bd55f4c541f9e27aeea29d">scripted-diff: Rename InitInterfaces to NodeContext</a>
+uses an elegant script to replace occurrences of multiple terms in all source files.</p>
+</li>
+<li>
+<p><a href="https://github.com/bitcoin/bitcoin/commit/8922d7f6b751a3e6b3b9f6fb7961c442877fb65a">scripted-diff: Remove g_connman, g_banman globals</a>
+replaces specific terms in a list of specific source files.</p>
+</li>
+<li>
+<p><a href="https://github.com/bitcoin/bitcoin/commit/fac03ec43a15ad547161e37e53ea82482cc508f9">scripted-diff: Replace fprintf with tfm::format</a>
+does a global replacement but excludes certain directories.</p>
+</li>
+</ul>
+<p>To find all previous uses of scripted diffs in the repository, do:</p>
+<pre><code>git log --grep="-BEGIN VERIFY SCRIPT-"
+</code></pre>
+<h2 id="release-notes"><a class="header" href="#release-notes">Release notes</a></h2>
+<p>Release notes should be written for any PR that:</p>
+<ul>
+<li>introduces a notable new feature</li>
+<li>fixes a significant bug</li>
+<li>changes an API or configuration model</li>
+<li>makes any other visible change to the end-user experience.</li>
+</ul>
+<p>Release notes should be added to a PR-specific release note file at
+<code>/doc/release-notes-&lt;PR number&gt;.md</code> to avoid conflicts between multiple PRs.
+All <code>release-notes*</code> files are merged into a single <code>release-notes-&lt;version&gt;.md</code> file prior to the release.</p>
+<h2 id="rpc-interface-guidelines"><a class="header" href="#rpc-interface-guidelines">RPC interface guidelines</a></h2>
+<p>A few guidelines for introducing and reviewing new RPC interfaces:</p>
+<ul>
+<li>
+<p>Method naming: use consecutive lower-case names such as <code>getrawtransaction</code> and <code>submitblock</code>.</p>
+<ul>
+<li><em>Rationale</em>: Consistency with the existing interface.</li>
+</ul>
+</li>
+<li>
+<p>Argument and field naming: please consider whether there is already a naming
+style or spelling convention in the API for the type of object in question
+(<code>blockhash</code>, for example), and if so, try to use that. If not, use snake case
+<code>fee_delta</code> (and not, e.g. <code>feedelta</code> or camel case <code>feeDelta</code>).</p>
+<ul>
+<li><em>Rationale</em>: Consistency with the existing interface.</li>
+</ul>
+</li>
+<li>
+<p>Use the JSON parser for parsing, don't manually parse integers or strings from
+arguments unless absolutely necessary.</p>
+<ul>
+<li>
+<p><em>Rationale</em>: Introduces hand-rolled string manipulation code at both the caller and callee sites,
+which is error-prone, and it is easy to get things such as escaping wrong.
+JSON already supports nested data structures, no need to re-invent the wheel.</p>
+</li>
+<li>
+<p><em>Exception</em>: AmountFromValue can parse amounts as string. This was introduced because many JSON
+parsers and formatters hard-code handling decimal numbers as floating-point
+values, resulting in potential loss of precision. This is unacceptable for
+monetary values. <strong>Always</strong> use <code>AmountFromValue</code> and <code>ValueFromAmount</code> when
+inputting or outputting monetary values. The only exceptions to this are
+<code>prioritisetransaction</code> and <code>getblocktemplate</code> because their interface
+is specified as-is in BIP22.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Missing arguments and 'null' should be treated the same: as default values. If there is no
+default value, both cases should fail in the same way. The easiest way to follow this
+guideline is to detect unspecified arguments with <code>params[x].isNull()</code> instead of
+<code>params.size() &lt;= x</code>. The former returns true if the argument is either null or missing,
+while the latter returns true if is missing, and false if it is null.</p>
+<ul>
+<li><em>Rationale</em>: Avoids surprises when switching to name-based arguments. Missing name-based arguments
+are passed as 'null'.</li>
+</ul>
+</li>
+<li>
+<p>Try not to overload methods on argument type. E.g. don't make <code>getblock(true)</code> and <code>getblock("hash")</code>
+do different things.</p>
+<ul>
+<li>
+<p><em>Rationale</em>: This is impossible to use with <code>bitcoin-cli</code>, and can be surprising to users.</p>
+</li>
+<li>
+<p><em>Exception</em>: Some RPC calls can take both an <code>int</code> and <code>bool</code>, most notably when a bool was switched
+to a multi-value, or due to other historical reasons. <strong>Always</strong> have false map to 0 and
+true to 1 in this case.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>For new RPC methods, if implementing a <code>verbosity</code> argument, use integer verbosity rather than boolean.
+Disallow usage of boolean verbosity (see <code>ParseVerbosity()</code> in <a href="/src/rpc/util.h">util.h</a>).</p>
+<ul>
+<li><em>Rationale</em>: Integer verbosity allows for multiple values. Undocumented boolean verbosity is deprecated
+and new RPC methods should prevent its use.</li>
+</ul>
+</li>
+<li>
+<p>Don't forget to fill in the argument names correctly in the RPC command table.</p>
+<ul>
+<li><em>Rationale</em>: If not, the call cannot be used with name-based arguments.</li>
+</ul>
+</li>
+<li>
+<p>Add every non-string RPC argument <code>(method, idx, name)</code> to the table <code>vRPCConvertParams</code> in <code>rpc/client.cpp</code>.</p>
+<ul>
+<li><em>Rationale</em>: <code>bitcoin-cli</code> and the GUI debug console use this table to determine how to
+convert a plaintext command line to JSON. If the types don't match, the method can be unusable
+from there.</li>
+</ul>
+</li>
+<li>
+<p>A RPC method must either be a wallet method or a non-wallet method. Do not
+introduce new methods that differ in behavior based on the presence of a wallet.</p>
+<ul>
+<li><em>Rationale</em>: As well as complicating the implementation and interfering
+with the introduction of multi-wallet, wallet and non-wallet code should be
+separated to avoid introducing circular dependencies between code units.</li>
+</ul>
+</li>
+<li>
+<p>Try to make the RPC response a JSON object.</p>
+<ul>
+<li><em>Rationale</em>: If a RPC response is not a JSON object, then it is harder to avoid API breakage if
+new data in the response is needed.</li>
+</ul>
+</li>
+<li>
+<p>Wallet RPCs call BlockUntilSyncedToCurrentChain to maintain consistency with
+<code>getblockchaininfo</code>'s state immediately prior to the call's execution. Wallet
+RPCs whose behavior does <em>not</em> depend on the current chainstate may omit this
+call.</p>
+<ul>
+<li><em>Rationale</em>: In previous versions of Bitcoin Core, the wallet was always
+in-sync with the chainstate (by virtue of them all being updated in the
+same cs_main lock). In order to maintain the behavior that wallet RPCs
+return results as of at least the highest best-known block an RPC
+client may be aware of prior to entering a wallet RPC call, we must block
+until the wallet is caught up to the chainstate as of the RPC call's entry.
+This also makes the API much easier for RPC clients to reason about.</li>
+</ul>
+</li>
+<li>
+<p>Be aware of RPC method aliases and generally avoid registering the same
+callback function pointer for different RPCs.</p>
+<ul>
+<li>
+<p><em>Rationale</em>: RPC methods registered with the same function pointer will be
+considered aliases and only the first method name will show up in the
+<code>help</code> RPC command list.</p>
+</li>
+<li>
+<p><em>Exception</em>: Using RPC method aliases may be appropriate in cases where a
+new RPC is replacing a deprecated RPC, to avoid both RPCs confusingly
+showing up in the command list.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Use <em>invalid</em> bech32 addresses (e.g. in the constant array <code>EXAMPLE_ADDRESS</code>) for
+<code>RPCExamples</code> help documentation.</p>
+<ul>
+<li><em>Rationale</em>: Prevent accidental transactions by users and encourage the use
+of bech32 addresses by default.</li>
+</ul>
+</li>
+<li>
+<p>Use the <code>UNIX_EPOCH_TIME</code> constant when describing UNIX epoch time or
+timestamps in the documentation.</p>
+<ul>
+<li><em>Rationale</em>: User-facing consistency.</li>
+</ul>
+</li>
+<li>
+<p>Use <code>fs::path::u8string()</code>/<code>fs::path::utf8string()</code> and <code>fs::u8path()</code> functions when converting path
+to JSON strings, not <code>fs::PathToString</code> and <code>fs::PathFromString</code></p>
+<ul>
+<li><em>Rationale</em>: JSON strings are Unicode strings, not byte strings, and
+RFC8259 requires JSON to be encoded as UTF-8.</li>
+</ul>
+</li>
+</ul>
+<h2 id="internal-interface-guidelines"><a class="header" href="#internal-interface-guidelines">Internal interface guidelines</a></h2>
+<p>Internal interfaces between parts of the codebase that are meant to be
+independent (node, wallet, GUI), are defined in
+<a href="../src/interfaces/"><code>src/interfaces/</code></a>. The main interface classes defined
+there are <a href="../src/interfaces/chain.h"><code>interfaces::Chain</code></a>, used by wallet to
+access the node's latest chain state,
+<a href="../src/interfaces/node.h"><code>interfaces::Node</code></a>, used by the GUI to control the
+node, <a href="../src/interfaces/wallet.h"><code>interfaces::Wallet</code></a>, used by the GUI
+to control an individual wallet and <a href="../src/interfaces/mining.h"><code>interfaces::Mining</code></a>,
+used by RPC to generate block templates. There are also more specialized interface
+types like <a href="../src/interfaces/handler.h"><code>interfaces::Handler</code></a>
+<a href="../src/interfaces/chain.h"><code>interfaces::ChainClient</code></a> passed to and from
+various interface methods.</p>
+<p>Interface classes are written in a particular style so node, wallet, and GUI
+code doesn't need to run in the same process, and so the class declarations
+work more easily with tools and libraries supporting interprocess
+communication:</p>
+<ul>
+<li>
+<p>Interface classes should be abstract and have methods that are <a href="https://en.cppreference.com/w/cpp/language/abstract_class">pure
+virtual</a>. This
+allows multiple implementations to inherit from the same interface class,
+particularly so one implementation can execute functionality in the local
+process, and other implementations can forward calls to remote processes.</p>
+</li>
+<li>
+<p>Interface method definitions should wrap existing functionality instead of
+implementing new functionality. Any substantial new node or wallet
+functionality should be implemented in <a href="../src/node/"><code>src/node/</code></a> or
+<a href="../src/wallet/"><code>src/wallet/</code></a> and just exposed in
+<a href="../src/interfaces/"><code>src/interfaces/</code></a> instead of being implemented there,
+so it can be more modular and accessible to unit tests.</p>
+</li>
+<li>
+<p>Interface method parameter and return types should either be serializable or
+be other interface classes. Interface methods shouldn't pass references to
+objects that can't be serialized or accessed from another process.</p>
+<p>Examples:</p>
+<pre><code class="language-c++">// Good: takes string argument and returns interface class pointer
+virtual unique_ptr&lt;interfaces::Wallet&gt; loadWallet(std::string filename) = 0;
+
+// Bad: returns CWallet reference that can't be used from another process
+virtual CWallet&amp; loadWallet(std::string filename) = 0;
+</code></pre>
+<pre><code class="language-c++">// Good: accepts and returns primitive types
+virtual bool findBlock(const uint256&amp; hash, int&amp; out_height, int64_t&amp; out_time) = 0;
+
+// Bad: returns pointer to internal node in a linked list inaccessible to
+// other processes
+virtual const CBlockIndex* findBlock(const uint256&amp; hash) = 0;
+</code></pre>
+<pre><code class="language-c++">// Good: takes plain callback type and returns interface pointer
+using TipChangedFn = std::function&lt;void(int block_height, int64_t block_time)&gt;;
+virtual std::unique_ptr&lt;interfaces::Handler&gt; handleTipChanged(TipChangedFn fn) = 0;
+
+// Bad: returns boost connection specific to local process
+using TipChangedFn = std::function&lt;void(int block_height, int64_t block_time)&gt;;
+virtual boost::signals2::scoped_connection connectTipChanged(TipChangedFn fn) = 0;
+</code></pre>
+</li>
+<li>
+<p>Interface methods should not be overloaded.</p>
+<p><em>Rationale</em>: consistency and friendliness to code generation tools.</p>
+<p>Example:</p>
+<pre><code class="language-c++">// Good: method names are unique
+virtual bool disconnectByAddress(const CNetAddr&amp; net_addr) = 0;
+virtual bool disconnectById(NodeId id) = 0;
+
+// Bad: methods are overloaded by type
+virtual bool disconnect(const CNetAddr&amp; net_addr) = 0;
+virtual bool disconnect(NodeId id) = 0;
+</code></pre>
+</li>
+</ul>
+<h3 id="internal-interface-naming-style"><a class="header" href="#internal-interface-naming-style">Internal interface naming style</a></h3>
+<ul>
+<li>
+<p>Interface method names should be <code>lowerCamelCase</code> and standalone function names should be
+<code>UpperCamelCase</code>.</p>
+<p><em>Rationale</em>: consistency and friendliness to code generation tools.</p>
+<p>Examples:</p>
+<pre><code class="language-c++">// Good: lowerCamelCase method name
+virtual void blockConnected(const CBlock&amp; block, int height) = 0;
+
+// Bad: uppercase class method
+virtual void BlockConnected(const CBlock&amp; block, int height) = 0;
+</code></pre>
+<pre><code class="language-c++">// Good: UpperCamelCase standalone function name
+std::unique_ptr&lt;Node&gt; MakeNode(LocalInit&amp; init);
+
+// Bad: lowercase standalone function
+std::unique_ptr&lt;Node&gt; makeNode(LocalInit&amp; init);
+</code></pre>
+<p>Note: This last convention isn't generally followed outside of
+<a href="../src/interfaces/"><code>src/interfaces/</code></a>, though it did come up for discussion
+before in <a href="https://github.com/bitcoin/bitcoin/pull/14635">#14635</a>.</p>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../doc/descriptors.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../doc/dnsseed-policy.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../doc/descriptors.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../doc/dnsseed-policy.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

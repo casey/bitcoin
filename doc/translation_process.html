@@ -1,0 +1,263 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>translation_process - Bitcoin Core Developer Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bitcoin Core Developer Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="translations"><a class="header" href="#translations">Translations</a></h1>
+<p>The Bitcoin-Core project has been designed to support multiple localisations. This makes adding new phrases, and completely new languages easily achievable. For managing all application translations, Bitcoin-Core makes use of the Transifex online translation management tool.</p>
+<h3 id="helping-to-translate-using-transifex"><a class="header" href="#helping-to-translate-using-transifex">Helping to translate (using Transifex)</a></h3>
+<p>Transifex is setup to monitor the GitHub repo for updates, and when code containing new translations is found, Transifex will process any changes. It may take several hours after a pull-request has been merged, to appear in the Transifex web interface.</p>
+<p>Multiple language support is critical in assisting Bitcoin’s global adoption, and growth. One of Bitcoin’s greatest strengths is cross-border money transfers, any help making that easier is greatly appreciated.</p>
+<p>See the <a href="https://www.transifex.com/bitcoin/bitcoin/">Transifex Bitcoin project</a> to assist in translations. You should also join the translation mailing list for announcements - see details below.</p>
+<h3 id="writing-code-with-translations"><a class="header" href="#writing-code-with-translations">Writing code with translations</a></h3>
+<p>We use automated scripts to help extract translations in both Qt, and non-Qt source files. It is rarely necessary to manually edit the files in <code>src/qt/locale/</code>. The translation source files must adhere to the following format:
+<code>bitcoin_xx_YY.ts or bitcoin_xx.ts</code></p>
+<p><code>src/qt/locale/bitcoin_en.ts</code> is treated in a special way. It is used as the source for all other translations. Whenever a string in the source code is changed, this file must be updated to reflect those changes. A custom script is used to extract strings from the non-Qt parts. This script makes use of <code>gettext</code>, so make sure that utility is installed (ie, <code>apt-get install gettext</code> on Ubuntu/Debian). Once this has been updated, <code>lupdate</code> (included in the Qt SDK) is used to update <code>bitcoin_en.ts</code>.</p>
+<p>To automatically regenerate the <code>bitcoin_en.ts</code> file, run the following commands:</p>
+<pre><code class="language-sh">cmake -B build --preset dev-mode -DWITH_BDB=ON -DBUILD_GUI=ON
+cmake --build build --target translate
+</code></pre>
+<p><strong>Example Qt translation</strong></p>
+<pre><code class="language-cpp">QToolBar *toolbar = addToolBar(tr("Tabs toolbar"));
+</code></pre>
+<h3 id="creating-a-pull-request"><a class="header" href="#creating-a-pull-request">Creating a pull-request</a></h3>
+<p>For general PRs, you shouldn’t include any updates to the translation source files. They will be updated periodically, primarily around pre-releases, allowing time for any new phrases to be translated before public releases. This is also important in avoiding translation related merge conflicts.</p>
+<p>When an updated source file is merged into the GitHub repo, Transifex will automatically detect it (although it can take several hours). Once processed, the new strings will show up as "Remaining" in the Transifex web interface and are ready for translators.</p>
+<p>To create the pull-request, use the following commands:</p>
+<pre><code>git add src/qt/bitcoinstrings.cpp src/qt/locale/bitcoin_en.ts
+git commit
+</code></pre>
+<h3 id="creating-a-transifex-account"><a class="header" href="#creating-a-transifex-account">Creating a Transifex account</a></h3>
+<p>Visit the <a href="https://www.transifex.com/signup/">Transifex Signup</a> page to create an account. Take note of your username and password, as they will be required to configure the command-line tool.</p>
+<p>You can find the Bitcoin translation project at <a href="https://www.transifex.com/bitcoin/bitcoin/">https://www.transifex.com/bitcoin/bitcoin/</a>.</p>
+<h3 id="installing-the-transifex-client-command-line-tool"><a class="header" href="#installing-the-transifex-client-command-line-tool">Installing the Transifex client command-line tool</a></h3>
+<p>The client is used to fetch updated translations. Please check installation instructions and any other details at https://developers.transifex.com/docs/cli.</p>
+<p>The Transifex Bitcoin project config file is included as part of the repo. It can be found at <code>.tx/config</code>, however you shouldn’t need to change anything.</p>
+<h3 id="synchronising-translations"><a class="header" href="#synchronising-translations">Synchronising translations</a></h3>
+<p>To assist in updating translations, a helper script is available in the <a href="https://github.com/bitcoin-core/bitcoin-maintainer-tools">maintainer-tools repo</a>. To use it and commit the result, simply do:</p>
+<pre><code>python3 ../bitcoin-maintainer-tools/update-translations.py
+git commit -a
+</code></pre>
+<p><strong>Do not directly download translations</strong> one by one from the Transifex website, as we do a few post-processing steps before committing the translations.</p>
+<h3 id="handling-plurals-in-source-files"><a class="header" href="#handling-plurals-in-source-files">Handling Plurals (in source files)</a></h3>
+<p>When new plurals are added to the source file, it's important to do the following steps:</p>
+<ol>
+<li>Open <code>bitcoin_en.ts</code> in Qt Linguist (included in the Qt SDK)</li>
+<li>Search for <code>%n</code>, which will take you to the parts in the translation that use plurals</li>
+<li>Look for empty <code>English Translation (Singular)</code> and <code>English Translation (Plural)</code> fields</li>
+<li>Add the appropriate strings for the singular and plural form of the base string</li>
+<li>Mark the item as done (via the green arrow symbol in the toolbar)</li>
+<li>Repeat from step 2, until all singular and plural forms are in the source file</li>
+<li>Save the source file</li>
+</ol>
+<h3 id="translating-a-new-language"><a class="header" href="#translating-a-new-language">Translating a new language</a></h3>
+<p>To create a new language template, you will need to edit the languages manifest file <code>src/qt/bitcoin_locale.qrc</code> and add a new entry. Below is an example of the English language entry.</p>
+<pre><code class="language-xml">&lt;qresource prefix="/translations"&gt;
+    &lt;file alias="en"&gt;locale/bitcoin_en.qm&lt;/file&gt;
+    ...
+&lt;/qresource&gt;
+</code></pre>
+<p><strong>Note:</strong> that the language translation file <strong>must end in <code>.qm</code></strong> (the compiled extension), and not <code>.ts</code>.</p>
+<h3 id="questions-and-general-assistance"><a class="header" href="#questions-and-general-assistance">Questions and general assistance</a></h3>
+<p>If you are a translator, you should also subscribe to the mailing list, https://groups.google.com/forum/#!forum/bitcoin-translators. Announcements will be posted during application pre-releases to notify translators to check for updates.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../doc/tracing.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../doc/translation_strings_policy.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../doc/tracing.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../doc/translation_strings_policy.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,339 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>build-unix - Bitcoin Core Developer Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bitcoin Core Developer Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="unix-build-notes"><a class="header" href="#unix-build-notes">UNIX BUILD NOTES</a></h1>
+<p>Some notes on how to build Bitcoin Core in Unix.</p>
+<p>(For BSD specific instructions, see <code>build-*bsd.md</code> in this directory.)</p>
+<h2 id="to-build"><a class="header" href="#to-build">To Build</a></h2>
+<pre><code class="language-bash">cmake -B build
+cmake --build build    # use "-j N" for N parallel jobs
+cmake --install build  # optional
+</code></pre>
+<p>See below for instructions on how to <a href="#linux-distribution-specific-instructions">install the dependencies on popular Linux
+distributions</a>, or the
+<a href="#dependencies">dependencies</a> section for a complete overview.</p>
+<h2 id="memory-requirements"><a class="header" href="#memory-requirements">Memory Requirements</a></h2>
+<p>C++ compilers are memory-hungry. It is recommended to have at least 1.5 GB of
+memory available when compiling Bitcoin Core. On systems with less, gcc can be
+tuned to conserve memory with additional <code>CMAKE_CXX_FLAGS</code>:</p>
+<pre><code>cmake -B build -DCMAKE_CXX_FLAGS="--param ggc-min-expand=1 --param ggc-min-heapsize=32768"
+</code></pre>
+<p>Alternatively, or in addition, debugging information can be skipped for compilation.
+For the default build type <code>RelWithDebInfo</code>, the default compile flags are
+<code>-O2 -g</code>, and can be changed with:</p>
+<pre><code>cmake -B build -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O2 -g0"
+</code></pre>
+<p>Finally, clang (often less resource hungry) can be used instead of gcc, which is used by default:</p>
+<pre><code>cmake -B build -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang
+</code></pre>
+<h2 id="linux-distribution-specific-instructions"><a class="header" href="#linux-distribution-specific-instructions">Linux Distribution Specific Instructions</a></h2>
+<h3 id="ubuntu--debian"><a class="header" href="#ubuntu--debian">Ubuntu &amp; Debian</a></h3>
+<h4 id="dependency-build-instructions"><a class="header" href="#dependency-build-instructions">Dependency Build Instructions</a></h4>
+<p>Build requirements:</p>
+<pre><code>sudo apt-get install build-essential cmake pkg-config python3
+</code></pre>
+<p>Now, you can either build from self-compiled <a href="#dependencies">depends</a> or install the required dependencies:</p>
+<pre><code>sudo apt-get install libevent-dev libboost-dev
+</code></pre>
+<p>SQLite is required for the descriptor wallet:</p>
+<pre><code>sudo apt install libsqlite3-dev
+</code></pre>
+<p>Berkeley DB is only required for the legacy wallet. Ubuntu and Debian have their own <code>libdb-dev</code> and <code>libdb++-dev</code> packages,
+but these will install Berkeley DB 5.3 or later. This will break binary wallet compatibility with the distributed
+executables, which are based on BerkeleyDB 4.8. Otherwise, you can build Berkeley DB <a href="#berkeley-db">yourself</a>.</p>
+<p>To build Bitcoin Core without wallet, see <a href="#disable-wallet-mode"><em>Disable-wallet mode</em></a></p>
+<p>ZMQ dependencies (provides ZMQ API):</p>
+<pre><code>sudo apt-get install libzmq3-dev
+</code></pre>
+<p>User-Space, Statically Defined Tracing (USDT) dependencies:</p>
+<pre><code>sudo apt install systemtap-sdt-dev
+</code></pre>
+<p>GUI dependencies:</p>
+<p>Bitcoin Core includes a GUI built with the cross-platform Qt Framework. To compile the GUI, we need to install
+the necessary parts of Qt, the libqrencode and pass <code>-DBUILD_GUI=ON</code>. Skip if you don't intend to use the GUI.</p>
+<pre><code>sudo apt-get install qtbase5-dev qttools5-dev qttools5-dev-tools
+</code></pre>
+<p>Additionally, to support Wayland protocol for modern desktop environments:</p>
+<pre><code>sudo apt install qtwayland5
+</code></pre>
+<p>The GUI will be able to encode addresses in QR codes unless this feature is explicitly disabled. To install libqrencode, run:</p>
+<pre><code>sudo apt-get install libqrencode-dev
+</code></pre>
+<p>Otherwise, if you don't need QR encoding support, use the <code>-DWITH_QRENCODE=OFF</code> option to disable this feature in order to compile the GUI.</p>
+<h3 id="fedora"><a class="header" href="#fedora">Fedora</a></h3>
+<h4 id="dependency-build-instructions-1"><a class="header" href="#dependency-build-instructions-1">Dependency Build Instructions</a></h4>
+<p>Build requirements:</p>
+<pre><code>sudo dnf install gcc-c++ cmake make python3
+</code></pre>
+<p>Now, you can either build from self-compiled <a href="#dependencies">depends</a> or install the required dependencies:</p>
+<pre><code>sudo dnf install libevent-devel boost-devel
+</code></pre>
+<p>SQLite is required for the descriptor wallet:</p>
+<pre><code>sudo dnf install sqlite-devel
+</code></pre>
+<p>Berkeley DB is only required for the legacy wallet. Fedora releases have only <code>libdb-devel</code> and <code>libdb-cxx-devel</code> packages, but these will install
+Berkeley DB 5.3 or later. This will break binary wallet compatibility with the distributed executables, which
+are based on Berkeley DB 4.8. Otherwise, you can build Berkeley DB <a href="#berkeley-db">yourself</a>.</p>
+<p>To build Bitcoin Core without wallet, see <a href="#disable-wallet-mode"><em>Disable-wallet mode</em></a></p>
+<p>ZMQ dependencies (provides ZMQ API):</p>
+<pre><code>sudo dnf install zeromq-devel
+</code></pre>
+<p>User-Space, Statically Defined Tracing (USDT) dependencies:</p>
+<pre><code>sudo dnf install systemtap-sdt-devel
+</code></pre>
+<p>GUI dependencies:</p>
+<p>Bitcoin Core includes a GUI built with the cross-platform Qt Framework. To compile the GUI, we need to install
+the necessary parts of Qt, the libqrencode and pass <code>-DBUILD_GUI=ON</code>. Skip if you don't intend to use the GUI.</p>
+<pre><code>sudo dnf install qt5-qttools-devel qt5-qtbase-devel
+</code></pre>
+<p>Additionally, to support Wayland protocol for modern desktop environments:</p>
+<pre><code>sudo dnf install qt5-qtwayland
+</code></pre>
+<p>The GUI will be able to encode addresses in QR codes unless this feature is explicitly disabled. To install libqrencode, run:</p>
+<pre><code>sudo dnf install qrencode-devel
+</code></pre>
+<p>Otherwise, if you don't need QR encoding support, use the <code>-DWITH_QRENCODE=OFF</code> option to disable this feature in order to compile the GUI.</p>
+<h2 id="dependencies"><a class="header" href="#dependencies">Dependencies</a></h2>
+<p>See <a href="dependencies.html">dependencies.md</a> for a complete overview, and
+<a href="/depends/README.html">depends</a> on how to compile them yourself, if you wish to
+not use the packages of your Linux distribution.</p>
+<h3 id="berkeley-db"><a class="header" href="#berkeley-db">Berkeley DB</a></h3>
+<p>The legacy wallet uses Berkeley DB. To ensure backwards compatibility it is
+recommended to use Berkeley DB 4.8. If you have to build it yourself, and don't
+want to use any other libraries built in depends, you can do:</p>
+<pre><code class="language-bash">make -C depends NO_BOOST=1 NO_LIBEVENT=1 NO_QT=1 NO_SQLITE=1 NO_ZMQ=1 NO_USDT=1
+...
+to: /path/to/bitcoin/depends/x86_64-pc-linux-gnu
+</code></pre>
+<p>and configure using the following:</p>
+<pre><code class="language-bash">export BDB_PREFIX="/path/to/bitcoin/depends/x86_64-pc-linux-gnu"
+
+cmake -B build -DBerkeleyDB_INCLUDE_DIR:PATH="${BDB_PREFIX}/include" -DWITH_BDB=ON
+</code></pre>
+<p><strong>Note</strong>: Make sure that <code>BDB_PREFIX</code> is an absolute path.</p>
+<p><strong>Note</strong>: You only need Berkeley DB if the legacy wallet is enabled (see <a href="#disable-wallet-mode"><em>Disable-wallet mode</em></a>).</p>
+<h2 id="disable-wallet-mode"><a class="header" href="#disable-wallet-mode">Disable-wallet mode</a></h2>
+<p>When the intention is to only run a P2P node, without a wallet, Bitcoin Core can
+be compiled in disable-wallet mode with:</p>
+<pre><code>cmake -B build -DENABLE_WALLET=OFF
+</code></pre>
+<p>In this case there is no dependency on SQLite or Berkeley DB.</p>
+<p>Mining is also possible in disable-wallet mode using the <code>getblocktemplate</code> RPC call.</p>
+<h2 id="additional-configure-flags"><a class="header" href="#additional-configure-flags">Additional Configure Flags</a></h2>
+<p>A list of additional configure flags can be displayed with:</p>
+<pre><code>cmake -B build -LH
+</code></pre>
+<h2 id="setup-and-build-example-arch-linux"><a class="header" href="#setup-and-build-example-arch-linux">Setup and Build Example: Arch Linux</a></h2>
+<p>This example lists the steps necessary to setup and build a command line only distribution of the latest changes on Arch Linux:</p>
+<pre><code>pacman --sync --needed cmake boost gcc git libevent make python sqlite
+git clone https://github.com/bitcoin/bitcoin.git
+cd bitcoin/
+cmake -B build
+cmake --build build
+ctest --test-dir build
+./build/src/bitcoind
+</code></pre>
+<p>If you intend to work with legacy Berkeley DB wallets, see <a href="#berkeley-db">Berkeley DB</a> section.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../doc/build-osx.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../doc/build-windows-msvc.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../doc/build-osx.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../doc/build-windows-msvc.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

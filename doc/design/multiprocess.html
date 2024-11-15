@@ -1,0 +1,473 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>multiprocess - Bitcoin Core Developer Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../../highlight.css">
+        <link rel="stylesheet" href="../../tomorrow-night.css">
+        <link rel="stylesheet" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bitcoin Core Developer Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="multiprocess-bitcoin-design-document"><a class="header" href="#multiprocess-bitcoin-design-document">Multiprocess Bitcoin Design Document</a></h1>
+<p>Guide to the design and architecture of the Bitcoin Core multiprocess feature</p>
+<p><em>This document describes the design of the multiprocess feature. For usage information, see the top-level <a href="../multiprocess.html">multiprocess.md</a> file.</em></p>
+<h2 id="table-of-contents"><a class="header" href="#table-of-contents">Table of contents</a></h2>
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#current-architecture">Current Architecture</a></li>
+<li><a href="#proposed-architecture">Proposed Architecture</a></li>
+<li><a href="#component-overview-navigating-the-ipc-framework">Component Overview: Navigating the IPC Framework</a></li>
+<li><a href="#design-considerations">Design Considerations</a>
+<ul>
+<li><a href="#selection-of-capn-proto">Selection of Cap’n Proto</a></li>
+<li><a href="#hiding-ipc">Hiding IPC</a></li>
+<li><a href="#interface-definition-maintenance">Interface Definition Maintenance</a></li>
+<li><a href="#interface-stability">Interface Stability</a></li>
+</ul>
+</li>
+<li><a href="#security-considerations">Security Considerations</a></li>
+<li><a href="#example-use-cases-and-flows">Example Use Cases and Flows</a>
+<ul>
+<li><a href="#retrieving-a-block-hash">Retrieving a Block Hash</a></li>
+</ul>
+</li>
+<li><a href="#future-enhancements">Future Enhancements</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#appendices">Appendices</a>
+<ul>
+<li><a href="#glossary-of-terms">Glossary of Terms</a></li>
+<li><a href="#references">References</a></li>
+</ul>
+</li>
+<li><a href="#acknowledgements">Acknowledgements</a></li>
+</ul>
+<h2 id="introduction"><a class="header" href="#introduction">Introduction</a></h2>
+<p>The Bitcoin Core software has historically employed a monolithic architecture. The existing design has integrated functionality like P2P network operations, wallet management, and a GUI into a single executable. While effective, it has limitations in flexibility, security, and scalability. This project introduces changes that transition Bitcoin Core to a more modular architecture. It aims to enhance security, improve usability, and facilitate maintenance and development of the software in the long run.</p>
+<h2 id="current-architecture"><a class="header" href="#current-architecture">Current Architecture</a></h2>
+<p>The current system features two primary executables: <code>bitcoind</code> and <code>bitcoin-qt</code>. <code>bitcoind</code> combines a Bitcoin P2P node with an integrated JSON-RPC server, wallet, and indexes. <code>bitcoin-qt</code> extends this by incorporating a Qt-based GUI. This monolithic structure, although robust, presents challenges such as limited operational flexibility and increased security risks due to the tight integration of components.</p>
+<h2 id="proposed-architecture"><a class="header" href="#proposed-architecture">Proposed Architecture</a></h2>
+<p>The new architecture divides the existing code into three specialized executables:</p>
+<ul>
+<li><code>bitcoin-node</code>: Manages the P2P node, indexes, and JSON-RPC server.</li>
+<li><code>bitcoin-wallet</code>: Handles all wallet functionality.</li>
+<li><code>bitcoin-gui</code>: Provides a standalone Qt-based GUI.</li>
+</ul>
+<p>This modular approach is designed to enhance security through component isolation and improve usability by allowing independent operation of each module. This allows for new use-cases, such as running the node on a dedicated machine and operating wallets and GUIs on separate machines with the flexibility to start and stop them as needed.</p>
+<p>This subdivision could be extended in the future. For example, indexes could be removed from the <code>bitcoin-node</code> executable and run in separate executables. And JSON-RPC servers could be added to wallet and index executables, so they can listen and respond to RPC requests on their own ports, without needing to forward RPC requests through <code>bitcoin-node</code>.</p>
+<table><tr><td>
+<pre><code class="language-mermaid">flowchart LR
+    node[bitcoin-node] -- listens on --&gt; socket["&amp;lt;datadir&amp;gt;/node.sock"]
+    wallet[bitcoin-wallet] -- connects to --&gt; socket
+    gui[bitcoin-gui] -- connects to --&gt; socket
+</code></pre>
+</td></tr><tr><td>
+Processes and socket connection.
+</td></tr></table>
+<h2 id="component-overview-navigating-the-ipc-framework"><a class="header" href="#component-overview-navigating-the-ipc-framework">Component Overview: Navigating the IPC Framework</a></h2>
+<p>This section describes the major components of the Inter-Process Communication (IPC) framework covering the relevant source files, generated files, tools, and libraries.</p>
+<h3 id="abstract-c-classes-in-srcinterfaces"><a class="header" href="#abstract-c-classes-in-srcinterfaces">Abstract C++ Classes in <a href="../../src/interfaces/"><code>src/interfaces/</code></a></a></h3>
+<ul>
+<li>The foundation of the IPC implementation lies in the abstract C++ classes within the <a href="../../src/interfaces/"><code>src/interfaces/</code></a> directory. These classes define pure virtual methods that code in <a href="../../src/node/"><code>src/node/</code></a>, <a href="../../src/wallet/"><code>src/wallet/</code></a>, and <a href="../../src/qt/"><code>src/qt/</code></a> directories call to interact with each other.</li>
+<li>Each abstract class in this directory represents a distinct interface that the different modules (node, wallet, GUI) implement and use for cross-process communication.</li>
+<li>The classes are written following conventions described in <a href="../developer-notes.html#internal-interface-guidelines">Internal Interface
+Guidelines</a> to ensure
+compatibility with Cap'n Proto.</li>
+</ul>
+<h3 id="capn-proto-files-in-srcipccapnp"><a class="header" href="#capn-proto-files-in-srcipccapnp">Cap’n Proto Files in <a href="../../src/ipc/capnp/"><code>src/ipc/capnp/</code></a></a></h3>
+<ul>
+<li>Corresponding to each abstract class, there are <code>.capnp</code> files within the <a href="../../src/ipc/capnp/"><code>src/ipc/capnp/</code></a> directory. These files are used as input to the <code>mpgen</code> tool (described below) to generate C++ code.</li>
+<li>These Cap’n Proto files (<a href="https://capnproto.org/rpc.html">learn more about Cap'n Proto RPC</a>) define the structure and format of messages that are exchanged over IPC. They serve as blueprints for generating C++ code that bridges the gap between high-level C++ interfaces and low-level socket communication.</li>
+</ul>
+<h3 id="the-mpgen-code-generation-tool"><a class="header" href="#the-mpgen-code-generation-tool">The <code>mpgen</code> Code Generation Tool</a></h3>
+<ul>
+<li>A central component of the IPC framework is the <code>mpgen</code> tool which is part the <a href="https://github.com/chaincodelabs/libmultiprocess"><code>libmultiprocess</code> project</a>. This tool takes the <code>.capnp</code> files as input and generates C++ code.</li>
+<li>The generated code handles IPC communication, translating interface calls into socket reads and writes.</li>
+</ul>
+<h3 id="c-client-subclasses-in-generated-code"><a class="header" href="#c-client-subclasses-in-generated-code">C++ Client Subclasses in Generated Code</a></h3>
+<ul>
+<li>In the generated code, we have C++ client subclasses that inherit from the abstract classes in <a href="../../src/interfaces/"><code>src/interfaces/</code></a>. These subclasses are the workhorses of the IPC mechanism.</li>
+<li>They implement all the methods of the interface, marshalling arguments into a structured format, sending them as requests to the IPC server via a UNIX socket, and handling the responses.</li>
+<li>These subclasses effectively mask the complexity of IPC, presenting a familiar C++ interface to developers.</li>
+<li>Internally, the client subclasses generated by the <code>mpgen</code> tool wrap <a href="https://capnproto.org/cxxrpc.html#clients">client classes generated by Cap'n Proto</a>, and use them to send IPC requests. The Cap'n Proto client classes are low-level, with non-blocking methods that use asynchronous I/O and pass request and response objects, while mpgen client subclasses provide normal C++ methods that block while executing and convert between request/response objects and arguments/return values.</li>
+</ul>
+<h3 id="c-server-classes-in-generated-code"><a class="header" href="#c-server-classes-in-generated-code">C++ Server Classes in Generated Code</a></h3>
+<ul>
+<li>On the server side, corresponding generated C++ classes receive IPC requests. These server classes are responsible for unmarshalling method arguments, invoking the corresponding methods in the local <a href="../../src/interfaces/"><code>src/interfaces/</code></a> objects, and creating the IPC response.</li>
+<li>The server classes ensure that return values (including output argument values and thrown exceptions) are marshalled and sent back to the client, completing the communication cycle.</li>
+<li>Internally, the server subclasses generated by the <code>mpgen</code> tool inherit from <a href="https://capnproto.org/cxxrpc.html#servers">server classes generated by Cap'n Proto</a>, and use them to process IPC requests.</li>
+</ul>
+<h3 id="the-libmultiprocess-runtime-library"><a class="header" href="#the-libmultiprocess-runtime-library">The <code>libmultiprocess</code> Runtime Library</a></h3>
+<ul>
+<li><strong>Core Functionality</strong>: The <code>libmultiprocess</code> runtime library's primary function is to instantiate the generated client and server classes as needed.</li>
+<li><strong>Bootstrapping IPC Connections</strong>: It provides functions for starting new IPC connections, specifically binding generated client and server classes for an initial <code>interfaces::Init</code> interface (defined in <a href="../../src/interfaces/init.h"><code>src/interfaces/init.h</code></a>) to a UNIX socket. This initial interface has methods returning other interfaces that different Bitcoin Core modules use to communicate after the bootstrapping phase.</li>
+<li><strong>Asynchronous I/O and Thread Management</strong>: The library is also responsible for managing I/O and threading. Particularly, it ensures that IPC requests never block each other and that new threads on either side of a connection can always make client calls. It also manages worker threads on the server side of calls, ensuring that calls from the same client thread always execute on the same server thread (to avoid locking issues and support nested callbacks).</li>
+</ul>
+<h3 id="type-hooks-in-srcipccapnp-typesh"><a class="header" href="#type-hooks-in-srcipccapnp-typesh">Type Hooks in <a href="../../src/ipc/capnp/"><code>src/ipc/capnp/*-types.h</code></a></a></h3>
+<ul>
+<li><strong>Custom Type Conversions</strong>: In <a href="../../src/ipc/capnp/"><code>src/ipc/capnp/*-types.h</code></a>, function overloads of <code>libmultiprocess</code> C++ functions, <code>mp::CustomReadField</code>, <code>mp::CustomBuildField</code>, <code>mp::CustomReadMessage</code> and <code>mp::CustomBuildMessage</code>, are defined. These overloads are used for customizing the conversion of specific C++ types to and from Cap’n Proto types.</li>
+<li><strong>Handling Special Cases</strong>: The <code>mpgen</code> tool and <code>libmultiprocess</code> library can convert most C++ types to and from Cap’n Proto types automatically, including interface types, primitive C++ types, standard C++ types like <code>std::vector</code>, <code>std::set</code>, <code>std::map</code>, <code>std::tuple</code>, and <code>std::function</code>, as well as simple C++ structs that consist of aforementioned types and whose fields correspond 1:1 with Cap’n Proto struct fields. For other types, <code>*-types.h</code> files provide custom code to convert between C++ and Cap’n Proto data representations.</li>
+</ul>
+<h3 id="protocol-agnostic-ipc-code-in-srcipc"><a class="header" href="#protocol-agnostic-ipc-code-in-srcipc">Protocol-Agnostic IPC Code in <a href="../../src/ipc/"><code>src/ipc/</code></a></a></h3>
+<ul>
+<li><strong>Broad Applicability</strong>: Unlike the Cap’n Proto-specific code in <a href="../../src/ipc/capnp/"><code>src/ipc/capnp/</code></a>, the code in the <a href="../../src/ipc/"><code>src/ipc/</code></a> directory is protocol-agnostic. This enables potential support for other protocols, such as gRPC or a custom protocol in the future.</li>
+<li><strong>Process Management and Socket Operations</strong>: The main purpose of this component is to provide functions for spawning new processes and creating and connecting to UNIX sockets.</li>
+<li><strong>ipc::Exception Class</strong>: This code also defines an <code>ipc::Exception</code> class which is thrown from the generated C++ client class methods when there is an unexpected IPC error, such as a disconnection.</li>
+</ul>
+<table><tr><td>
+<pre><code class="language-mermaid">flowchart TD
+    capnpFile[ipc/capnp/chain.capnp] --&gt;|Input to| mpgenTool([mpgen Tool])
+    mpgenTool --&gt;|Generates| proxyTypesH[ipc/capnp/chain.capnp.proxy-types.h]
+    mpgenTool --&gt; proxyClientCpp[ipc/capnp/chain.capnp.proxy-client.c++]
+    mpgenTool --&gt; proxyServerCpp[ipc/capnp/chain.capnp.proxy-server.c++]
+    proxyTypesH -.-&gt;|Includes| interfaces/chain.h
+    proxyClientCpp -.-&gt; interfaces/chain.h
+    proxyServerCpp -.-&gt; interfaces/chain.h
+</code></pre>
+</td></tr><tr><td>
+Diagram showing generated source files and includes.
+</td></tr></table>
+<h2 id="design-considerations"><a class="header" href="#design-considerations">Design Considerations</a></h2>
+<h3 id="selection-of-capn-proto"><a class="header" href="#selection-of-capn-proto">Selection of Cap’n Proto</a></h3>
+<p>The choice to use <a href="https://capnproto.org/">Cap’n Proto</a> for IPC was primarily influenced by its support for passing object references and managing object lifetimes, which would have to be implemented manually with a framework that only supported plain requests and responses like <a href="https://grpc.io/">gRPC</a>. The support is especially helpful for passing callback objects like <code>std::function</code> and enabling bidirectional calls between processes.</p>
+<p>The choice to use an RPC framework at all instead of a custom protocol was necessitated by the size of Bitcoin Core internal interfaces which consist of around 150 methods that pass complex data structures and are called in complicated ways (in parallel, and from callbacks that can be nested and stored). Writing a custom protocol to wrap these complicated interfaces would be a lot more work, akin to writing a new RPC framework.</p>
+<h3 id="hiding-ipc"><a class="header" href="#hiding-ipc">Hiding IPC</a></h3>
+<p>The IPC mechanism is deliberately isolated from the rest of the codebase so less code has to be concerned with IPC.</p>
+<p>Building Bitcoin Core with IPC support is optional, and node, wallet, and GUI code can be compiled to either run in the same process or separate processes. The build system also ensures Cap’n Proto library headers can only be used within the <a href="../../src/ipc/capnp/"><code>src/ipc/capnp/</code></a> directory, not in other parts of the codebase.</p>
+<p>The libmultiprocess runtime is designed to place as few constraints as possible on IPC interfaces and to make IPC calls act like normal function calls. Method arguments, return values, and exceptions are automatically serialized and sent between processes. Object references and <code>std::function</code> arguments are tracked to allow invoked code to call back into invoking code at any time. And there is a 1:1 threading model where every client thread has a corresponding server thread responsible for executing incoming calls from that thread (there can be multiple calls from the same thread due to callbacks) without blocking, and holding the same thread-local variables and locks so behavior is the same whether IPC is used or not.</p>
+<h3 id="interface-definition-maintenance"><a class="header" href="#interface-definition-maintenance">Interface Definition Maintenance</a></h3>
+<p>The choice to maintain interface definitions and C++ type mappings as <code>.capnp</code> files in the <a href="../../src/ipc/capnp/"><code>src/ipc/capnp/</code></a> was mostly done for convenience, and probably something that could be improved in the future.</p>
+<p>In the current design, class names, method names, and parameter names are duplicated between C++ interfaces in <a href="../../src/interfaces/"><code>src/interfaces/</code></a> and Cap’n Proto files in <a href="../../src/ipc/capnp/"><code>src/ipc/capnp/</code></a>. While this keeps C++ interface headers simple and free of references to IPC, it is a maintenance burden because it means inconsistencies between C++ declarations and Cap’n Proto declarations will result in compile errors. (Static type checking ensures these are not runtime errors.)</p>
+<p>An alternate approach could use custom <a href="https://en.cppreference.com/w/cpp/language/attributes">C++ Attributes</a> embedded in interface declarations to automatically generate <code>.capnp</code> files from C++ headers. This has not been pursued because parsing C++ headers is more complicated than parsing Cap’n Proto interface definitions, especially portably on multiple platforms.</p>
+<p>In the meantime, the developer guide <a href="../developer-notes.html#internal-interface-guidelines">Internal interface guidelines</a> can provide guidance on keeping interfaces consistent and functional and avoiding compile errors.</p>
+<h3 id="interface-stability"><a class="header" href="#interface-stability">Interface Stability</a></h3>
+<p>The currently defined IPC interfaces are unstable, and can change freely with no backwards compatibility. The decision to allow this stems from the recognition that our current interfaces are still evolving and not yet ideal for external use. As these interfaces mature and become more refined, there may be an opportunity to declare them stable and use Cap’n Proto's support for protocol evolution (<a href="https://capnproto.org/language.html#evolving-your-protocol">Cap'n Proto - Evolving Your Protocol</a>) to allow them to be extended while remaining backwards compatible. This could allow different versions of node, GUI, and wallet binaries to interoperate, and potentially open doors for external tools to utilize these interfaces, such as creating custom indexes through a stable indexing interface. However, for now, the priority is to improve the interfaces internally. Given their current state and the advantages of using JSON-RPC for most common tasks, it's more practical to focus on internal development rather than external applicability.</p>
+<h2 id="security-considerations"><a class="header" href="#security-considerations">Security Considerations</a></h2>
+<p>The integration of <a href="https://capnproto.org/">Cap’n Proto</a> and <a href="https://github.com/chaincodelabs/libmultiprocess">libmultiprocess</a> into the Bitcoin Core architecture increases its potential attack surface. Cap’n Proto, being a complex and substantial new dependency, introduces potential sources of vulnerability, particularly through the creation of new UNIX sockets. The inclusion of libmultiprocess, while a smaller external dependency, also contributes to this risk. However, plans are underway to incorporate libmultiprocess as a git subtree, aligning it more closely with the project's well-reviewed internal libraries. While adopting these multiprocess features does introduce some risk, it's worth noting that they can be disabled, allowing builds without these new dependencies. This flexibility ensures that users can balance functionality with security considerations as needed.</p>
+<h2 id="example-use-cases-and-flows"><a class="header" href="#example-use-cases-and-flows">Example Use Cases and Flows</a></h2>
+<h3 id="retrieving-a-block-hash"><a class="header" href="#retrieving-a-block-hash">Retrieving a Block Hash</a></h3>
+<p>Let’s walk through an example where the <code>bitcoin-wallet</code> process requests the hash of a block at a specific height from the <code>bitcoin-node</code> process. This example demonstrates the practical application of the IPC mechanism, specifically the interplay between C++ method calls and Cap’n Proto-generated RPC calls.</p>
+<table><tr><td>
+<pre><code class="language-mermaid">sequenceDiagram
+    box "bitcoin-wallet process"
+    participant WalletCode as Wallet code
+    participant ChainClient as Generated Chain client class&lt;br/&gt;ProxyClient&lt;messages::Chain&gt;
+    end
+    box "bitcoin-node process"
+    participant ChainServer as Generated Chain server class&lt;br/&gt;ProxyServer&lt;messages::Chain&gt;
+    participant LocalChain as Chain object&lt;br/&gt;node::ChainImpl
+    end
+
+    WalletCode-&gt;&gt;ChainClient: getBlockHash(height)
+    ChainClient-&gt;&gt;ChainServer: Send RPC getBlockHash request
+    ChainServer-&gt;&gt;LocalChain: getBlockHash(height)
+    LocalChain-&gt;&gt;ChainServer: Return block hash
+    ChainServer-&gt;&gt;ChainClient: Send response with block hash
+    ChainClient-&gt;&gt;WalletCode: Return block hash
+</code></pre>
+</td></tr><tr><td>
+<code>Chain::getBlockHash</code> call diagram
+</td></tr></table>
+<ol>
+<li>
+<p><strong>Initiation in bitcoin-wallet</strong></p>
+<ul>
+<li>The wallet process calls the <code>getBlockHash</code> method on a <code>Chain</code> object. This method is defined as a virtual method in <a href="../../src/interfaces/chain.h"><code>src/interfaces/chain.h</code></a>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Translation to Cap’n Proto RPC</strong></p>
+<ul>
+<li>The <code>Chain::getBlockHash</code> virtual method is overridden by the <code>Chain</code> <a href="#c-client-subclasses-in-generated-code">client subclass</a> to translate the method call into a Cap’n Proto RPC call.</li>
+<li>The client subclass is automatically generated by the <code>mpgen</code> tool from the <a href="https://github.com/ryanofsky/bitcoin/blob/pr/ipc/src/ipc/capnp/chain.capnp"><code>chain.capnp</code></a> file in <a href="../../src/ipc/capnp/"><code>src/ipc/capnp/</code></a>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Request Preparation and Dispatch</strong></p>
+<ul>
+<li>The <code>getBlockHash</code> method of the generated <code>Chain</code> client subclass in <code>bitcoin-wallet</code> populates a Cap’n Proto request with the <code>height</code> parameter, sends it to <code>bitcoin-node</code> process, and waits for a response.</li>
+</ul>
+</li>
+<li>
+<p><strong>Handling in bitcoin-node</strong></p>
+<ul>
+<li>Upon receiving the request, the Cap'n Proto dispatching code in the <code>bitcoin-node</code> process calls the <code>getBlockHash</code> method of the <code>Chain</code> <a href="#c-server-classes-in-generated-code">server class</a>.</li>
+<li>The server class is automatically generated by the <code>mpgen</code> tool from the <a href="https://github.com/ryanofsky/bitcoin/blob/pr/ipc/src/ipc/capnp/chain.capnp"><code>chain.capnp</code></a> file in <a href="../../src/ipc/capnp/"><code>src/ipc/capnp/</code></a>.</li>
+<li>The <code>getBlockHash</code> method of the generated <code>Chain</code> server subclass in <code>bitcoin-wallet</code> receives a Cap’n Proto request object with the <code>height</code> parameter, and calls the <code>getBlockHash</code> method on its local <code>Chain</code> object with the provided <code>height</code>.</li>
+<li>When the call returns, it encapsulates the return value in a Cap’n Proto response, which it sends back to the <code>bitcoin-wallet</code> process.</li>
+</ul>
+</li>
+<li>
+<p><strong>Response and Return</strong></p>
+<ul>
+<li>The <code>getBlockHash</code> method of the generated <code>Chain</code> client subclass in <code>bitcoin-wallet</code> which sent the request now receives the response.</li>
+<li>It extracts the block hash value from the response, and returns it to the original caller.</li>
+</ul>
+</li>
+</ol>
+<h2 id="future-enhancements"><a class="header" href="#future-enhancements">Future Enhancements</a></h2>
+<p>Further improvements are possible such as:</p>
+<ul>
+<li>Separating indexes from <code>bitcoin-node</code>, and running indexing code in separate processes (see <a href="https://github.com/bitcoin/bitcoin/pull/24230">indexes: Stop using node internal types #24230</a>).</li>
+<li>Enabling wallet processes to listen for JSON-RPC requests on their own ports instead of needing the node process to listen and forward requests to them.</li>
+<li>Automatically generating <code>.capnp</code> files from C++ interface definitions (see <a href="#interface-definition-maintenance">Interface Definition Maintenance</a>).</li>
+<li>Simplifying and stabilizing interfaces (see <a href="#interface-stability">Interface Stability</a>).</li>
+<li>Adding sandbox features, restricting subprocess access to resources and data (see <a href="https://eklitzke.org/multiprocess-bitcoin">https://eklitzke.org/multiprocess-bitcoin</a>).</li>
+<li>Using Cap'n Proto's support for <a href="https://capnproto.org/otherlang.html">other languages</a>, such as <a href="https://github.com/capnproto/capnproto-rust">Rust</a>, to allow code written in other languages to call Bitcoin Core C++ code, and vice versa (see <a href="https://github.com/chaincodelabs/libmultiprocess/issues/56">How to rustify libmultiprocess? #56</a>).</li>
+</ul>
+<h2 id="conclusion"><a class="header" href="#conclusion">Conclusion</a></h2>
+<p>This modularization represents an advancement in Bitcoin Core's architecture, offering enhanced security, flexibility, and maintainability. The project invites collaboration and feedback from the community.</p>
+<h2 id="appendices"><a class="header" href="#appendices">Appendices</a></h2>
+<h3 id="glossary-of-terms"><a class="header" href="#glossary-of-terms">Glossary of Terms</a></h3>
+<ul>
+<li>
+<p><strong>abstract class</strong>: A class in C++ that consists of virtual functions. In the Bitcoin Core project, they define interfaces for inter-component communication.</p>
+</li>
+<li>
+<p><strong>asynchronous I/O</strong>: A form of input/output processing that allows a program to continue other operations while a transmission is in progress.</p>
+</li>
+<li>
+<p><strong>Cap’n Proto</strong>: A high-performance data serialization and RPC library, chosen for its support for object references and bidirectional communication.</p>
+</li>
+<li>
+<p><strong>Cap’n Proto interface</strong>: A set of methods defined in Cap’n Proto to facilitate structured communication between different software components.</p>
+</li>
+<li>
+<p><strong>Cap’n Proto struct</strong>: A structured data format used in Cap’n Proto, similar to structs in C++, for organizing and transporting data across different processes.</p>
+</li>
+<li>
+<p><strong>client class (in generated code)</strong>: A C++ class generated from a Cap’n Proto interface which inherits from a Bitcoin Core abstract class, and implements each virtual method to send IPC requests to another process. (see also <a href="#c-client-subclasses-in-generated-code">components section</a>)</p>
+</li>
+<li>
+<p><strong>IPC (inter-process communication)</strong>: Mechanisms that enable processes to exchange requests and data.</p>
+</li>
+<li>
+<p><strong>ipc::Exception class</strong>: A class within Bitcoin Core's protocol-agnostic IPC code that is thrown by client class methods when there is an IPC error.</p>
+</li>
+<li>
+<p><strong>libmultiprocess</strong>: A custom library and code generation tool used for creating IPC interfaces and managing IPC connections.</p>
+</li>
+<li>
+<p><strong>marshalling</strong>: Transforming an object’s memory representation for transmission.</p>
+</li>
+<li>
+<p><strong>mpgen tool</strong>: A tool within the <code>libmultiprocess</code> suite that generates C++ code from Cap’n Proto files, facilitating IPC.</p>
+</li>
+<li>
+<p><strong>protocol-agnostic code</strong>: Generic IPC code in <a href="../../src/ipc/"><code>src/ipc/</code></a> that does not rely on Cap’n Proto and could be used with other protocols. Distinct from code in <a href="../../src/ipc/capnp/"><code>src/ipc/capnp/</code></a> which relies on Cap’n Proto.</p>
+</li>
+<li>
+<p><strong>RPC (remote procedure call)</strong>: A protocol that enables a program to request a service from another program in a different address space or network. Bitcoin Core uses <a href="https://en.wikipedia.org/wiki/JSON-RPC">JSON-RPC</a> for RPC.</p>
+</li>
+<li>
+<p><strong>server class (in generated code)</strong>: A C++ class generated from a Cap’n Proto interface which handles requests sent by a <em>client class</em> in another process. The request handled by calling a local Bitcoin Core interface method, and the return values (if any) are sent back in a response. (see also: <a href="#c-server-classes-in-generated-code">components section</a>)</p>
+</li>
+<li>
+<p><strong>unix socket</strong>: Communication endpoint which is a filesystem path, used for exchanging data between processes running on the same host.</p>
+</li>
+<li>
+<p><strong>virtual method</strong>: A function or method whose behavior can be overridden within an inheriting class by a function with the same signature.</p>
+</li>
+</ul>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li><strong>Cap’n Proto RPC protocol description</strong>: https://capnproto.org/rpc.html</li>
+<li><strong>libmultiprocess project page</strong>: https://github.com/chaincodelabs/libmultiprocess</li>
+</ul>
+<h2 id="acknowledgements"><a class="header" href="#acknowledgements">Acknowledgements</a></h2>
+<p>This design doc was written by @ryanofsky, who is grateful to all the reviewers who gave feedback and tested <a href="https://github.com/bitcoin/bitcoin/pull/28722">multiprocess PRs</a>, and everyone else who's helped with this project. Particular thanks to @ariard who deeply reviewed IPC code and improved the design of the IPC library and initialization process. @jnewbery who championed the early refactoring PRs and helped guide them through development and review. @sjors who has reviewed and repeatedly tested multiprocess code, reporting many issues and helping debug them. @hebasto, @fanquake, and @maflcko who made significant improvements to the build system and fixed countless build issues. @vasild and @jamesob who were brave contributors to the libmultiprocess library. And Chaincode Labs for making this work possible. Also thanks to ChatGPT, who actually wrote most of this document (not @ryanofsky).</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../doc/design/libraries.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../../doc/policy/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../doc/design/libraries.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../../doc/policy/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
+
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

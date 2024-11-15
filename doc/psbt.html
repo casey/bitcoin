@@ -1,0 +1,344 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>psbt - Bitcoin Core Developer Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bitcoin Core Developer Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="psbt-howto-for-bitcoin-core"><a class="header" href="#psbt-howto-for-bitcoin-core">PSBT Howto for Bitcoin Core</a></h1>
+<p>Since Bitcoin Core 0.17, an RPC interface exists for Partially Signed Bitcoin
+Transactions (PSBTs, as specified in
+<a href="https://github.com/bitcoin/bips/blob/master/bip-0174.mediawiki">BIP 174</a>).</p>
+<p>This document describes the overall workflow for producing signed transactions
+through the use of PSBT, and the specific RPC commands used in typical
+scenarios.</p>
+<h2 id="psbt-in-general"><a class="header" href="#psbt-in-general">PSBT in general</a></h2>
+<p>PSBT is an interchange format for Bitcoin transactions that are not fully signed
+yet, together with relevant metadata to help entities work towards signing it.
+It is intended to simplify workflows where multiple parties need to cooperate to
+produce a transaction. Examples include hardware wallets, multisig setups, and
+<a href="https://bitcointalk.org/?topic=279249">CoinJoin</a> transactions.</p>
+<h3 id="overall-workflow"><a class="header" href="#overall-workflow">Overall workflow</a></h3>
+<p>Overall, the construction of a fully signed Bitcoin transaction goes through the
+following steps:</p>
+<ul>
+<li>A <strong>Creator</strong> proposes a particular transaction to be created. They construct
+a PSBT that contains certain inputs and outputs, but no additional metadata.</li>
+<li>For each input, an <strong>Updater</strong> adds information about the UTXOs being spent by
+the transaction to the PSBT. They also add information about the scripts and
+public keys involved in each of the inputs (and possibly outputs) of the PSBT.</li>
+<li><strong>Signers</strong> inspect the transaction and its metadata to decide whether they
+agree with the transaction. They can use amount information from the UTXOs
+to assess the values and fees involved. If they agree, they produce a
+partial signature for the inputs for which they have relevant key(s).</li>
+<li>A <strong>Finalizer</strong> is run for each input to convert the partial signatures and
+possibly script information into a final <code>scriptSig</code> and/or <code>scriptWitness</code>.</li>
+<li>An <strong>Extractor</strong> produces a valid Bitcoin transaction (in network format)
+from a PSBT for which all inputs are finalized.</li>
+</ul>
+<p>Generally, each of the above (excluding Creator and Extractor) will simply
+add more and more data to a particular PSBT, until all inputs are fully signed.
+In a naive workflow, they all have to operate sequentially, passing the PSBT
+from one to the next, until the Extractor can convert it to a real transaction.
+In order to permit parallel operation, <strong>Combiners</strong> can be employed which merge
+metadata from different PSBTs for the same unsigned transaction.</p>
+<p>The names above in bold are the names of the roles defined in BIP174. They're
+useful in understanding the underlying steps, but in practice, software and
+hardware implementations will typically implement multiple roles simultaneously.</p>
+<h2 id="psbt-in-bitcoin-core"><a class="header" href="#psbt-in-bitcoin-core">PSBT in Bitcoin Core</a></h2>
+<h3 id="rpcs"><a class="header" href="#rpcs">RPCs</a></h3>
+<ul>
+<li><strong><code>converttopsbt</code> (Creator)</strong> is a utility RPC that converts an
+unsigned raw transaction to PSBT format. It ignores existing signatures.</li>
+<li><strong><code>createpsbt</code> (Creator)</strong> is a utility RPC that takes a list of inputs and
+outputs and converts them to a PSBT with no additional information. It is
+equivalent to calling <code>createrawtransaction</code> followed by <code>converttopsbt</code>.</li>
+<li><strong><code>walletcreatefundedpsbt</code> (Creator, Updater)</strong> is a wallet RPC that creates a
+PSBT with the specified inputs and outputs, adds additional inputs and change
+to it to balance it out, and adds relevant metadata. In particular, for inputs
+that the wallet knows about (counting towards its normal or watch-only
+balance), UTXO information will be added. For outputs and inputs with UTXO
+information present, key and script information will be added which the wallet
+knows about. It is equivalent to running <code>createrawtransaction</code>, followed by
+<code>fundrawtransaction</code>, and <code>converttopsbt</code>.</li>
+<li><strong><code>walletprocesspsbt</code> (Updater, Signer, Finalizer)</strong> is a wallet RPC that takes as
+input a PSBT, adds UTXO, key, and script data to inputs and outputs that miss
+it, and optionally signs inputs. Where possible it also finalizes the partial
+signatures.</li>
+<li><strong><code>descriptorprocesspsbt</code> (Updater, Signer, Finalizer)</strong> is a node RPC that takes
+as input a PSBT and a list of descriptors. It updates SegWit inputs with
+information available from the UTXO set and the mempool and signs the inputs using
+the provided descriptors. Where possible it also finalizes the partial signatures.</li>
+<li><strong><code>utxoupdatepsbt</code> (Updater)</strong> is a node RPC that takes a PSBT and updates it
+to include information available from the UTXO set (works only for SegWit
+inputs).</li>
+<li><strong><code>finalizepsbt</code> (Finalizer, Extractor)</strong> is a utility RPC that finalizes any
+partial signatures, and if all inputs are finalized, converts the result to a
+fully signed transaction which can be broadcast with <code>sendrawtransaction</code>.</li>
+<li><strong><code>combinepsbt</code> (Combiner)</strong> is a utility RPC that implements a Combiner. It
+can be used at any point in the workflow to merge information added to
+different versions of the same PSBT. In particular it is useful to combine the
+output of multiple Updaters or Signers.</li>
+<li><strong><code>joinpsbts</code></strong> (Creator) is a utility RPC that joins multiple PSBTs together,
+concatenating the inputs and outputs. This can be used to construct CoinJoin
+transactions.</li>
+<li><strong><code>decodepsbt</code></strong> is a diagnostic utility RPC which will show all information in
+a PSBT in human-readable form, as well as compute its eventual fee if known.</li>
+<li><strong><code>analyzepsbt</code></strong> is a utility RPC that examines a PSBT and reports the
+current status of its inputs, the next step in the workflow if known, and if
+possible, computes the fee of the resulting transaction and estimates the
+final weight and feerate.</li>
+</ul>
+<h3 id="workflows"><a class="header" href="#workflows">Workflows</a></h3>
+<h4 id="multisig-with-multiple-bitcoin-core-instances"><a class="header" href="#multisig-with-multiple-bitcoin-core-instances">Multisig with multiple Bitcoin Core instances</a></h4>
+<p>For a quick start see <a href="./descriptors.html#basic-multisig-example">Basic M-of-N multisig example using descriptor wallets and PSBTs</a>.
+If you are using legacy wallets feel free to continue with the example provided here.</p>
+<p>Alice, Bob, and Carol want to create a 2-of-3 multisig address. They're all using
+Bitcoin Core. We assume their wallets only contain the multisig funds. In case
+they also have a personal wallet, this can be accomplished through the
+multiwallet feature - possibly resulting in a need to add <code>-rpcwallet=name</code> to
+the command line in case <code>bitcoin-cli</code> is used.</p>
+<p>Setup:</p>
+<ul>
+<li>All three call <code>getnewaddress</code> to create a new address; call these addresses
+<em>Aalice</em>, <em>Abob</em>, and <em>Acarol</em>.</li>
+<li>All three call <code>getaddressinfo "X"</code>, with <em>X</em> their respective address, and
+remember the corresponding public keys. Call these public keys <em>Kalice</em>,
+<em>Kbob</em>, and <em>Kcarol</em>.</li>
+<li>All three now run <code>addmultisigaddress 2 ["Kalice","Kbob","Kcarol"]</code> to teach
+their wallet about the multisig script. Call the address produced by this
+command <em>Amulti</em>. They may be required to explicitly specify the same
+addresstype option each, to avoid constructing different versions due to
+differences in configuration.</li>
+<li>They also run <code>importaddress "Amulti" "" false</code> to make their wallets treat
+payments to <em>Amulti</em> as contributing to the watch-only balance.</li>
+<li>Others can verify the produced address by running
+<code>createmultisig 2 ["Kalice","Kbob","Kcarol"]</code>, and expecting <em>Amulti</em> as
+output. Again, it may be necessary to explicitly specify the addresstype
+in order to get a result that matches. This command won't enable them to
+initiate transactions later, however.</li>
+<li>They can now give out <em>Amulti</em> as address others can pay to.</li>
+</ul>
+<p>Later, when <em>V</em> BTC has been received on <em>Amulti</em>, and Bob and Carol want to
+move the coins in their entirety to address <em>Asend</em>, with no change. Alice
+does not need to be involved.</p>
+<ul>
+<li>One of them - let's assume Carol here - initiates the creation. She runs
+<code>walletcreatefundedpsbt [] {"Asend":V} 0 {"subtractFeeFromOutputs":[0], "includeWatching":true}</code>.
+We call the resulting PSBT <em>P</em>. <em>P</em> does not contain any signatures.</li>
+<li>Carol needs to sign the transaction herself. In order to do so, she runs
+<code>walletprocesspsbt "P"</code>, and gives the resulting PSBT <em>P2</em> to Bob.</li>
+<li>Bob inspects the PSBT using <code>decodepsbt "P2"</code> to determine if the transaction
+has indeed just the expected input, and an output to <em>Asend</em>, and the fee is
+reasonable. If he agrees, he calls <code>walletprocesspsbt "P2"</code> to sign. The
+resulting PSBT <em>P3</em> contains both Carol's and Bob's signature.</li>
+<li>Now anyone can call <code>finalizepsbt "P3"</code> to extract a fully signed transaction
+<em>T</em>.</li>
+<li>Finally anyone can broadcast the transaction using <code>sendrawtransaction "T"</code>.</li>
+</ul>
+<p>In case there are more signers, it may be advantageous to let them all sign in
+parallel, rather than passing the PSBT from one signer to the next one. In the
+above example this would translate to Carol handing a copy of <em>P</em> to each signer
+separately. They can then all invoke <code>walletprocesspsbt "P"</code>, and end up with
+their individually-signed PSBT structures. They then all send those back to
+Carol (or anyone) who can combine them using <code>combinepsbt</code>. The last two steps
+(<code>finalizepsbt</code> and <code>sendrawtransaction</code>) remain unchanged.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../doc/productivity.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../doc/reduce-memory.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../doc/productivity.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../doc/reduce-memory.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

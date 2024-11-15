@@ -1,0 +1,352 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>multisig-tutorial - Bitcoin Core Developer Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bitcoin Core Developer Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="1-multisig-tutorial"><a class="header" href="#1-multisig-tutorial">1. Multisig Tutorial</a></h1>
+<p>Currently, it is possible to create a multisig wallet using Bitcoin Core only.</p>
+<p>Although there is already a brief explanation about the multisig in the <a href="https://github.com/bitcoin/bitcoin/blob/master/doc/descriptors.md#multisig">Descriptors documentation</a>, this tutorial proposes to use the signet (instead of regtest), bringing the reader closer to a real environment and explaining some functions in more detail.</p>
+<p>This tutorial uses <a href="https://github.com/stedolan/jq">jq</a> JSON processor to process the results from RPC and stores the relevant values in bash variables. This makes the tutorial reproducible and easier to follow step by step.</p>
+<p>Before starting this tutorial, start the bitcoin node on the signet network.</p>
+<pre><code class="language-bash">./build/src/bitcoind -signet -daemon
+</code></pre>
+<p>This tutorial also uses the default WPKH derivation path to get the xpubs and does not conform to <a href="https://github.com/bitcoin/bips/blob/master/bip-0045.mediawiki">BIP 45</a> or <a href="https://github.com/bitcoin/bips/blob/master/bip-0087.mediawiki">BIP 87</a>.</p>
+<p>At the time of writing, there is no way to extract a specific path from wallets in Bitcoin Core. For this, an external signer/xpub can be used.</p>
+<h2 id="11-basic-multisig-workflow"><a class="header" href="#11-basic-multisig-workflow">1.1 Basic Multisig Workflow</a></h2>
+<h3 id="11-create-the-descriptor-wallets"><a class="header" href="#11-create-the-descriptor-wallets">1.1 Create the Descriptor Wallets</a></h3>
+<p>For a 2-of-3 multisig, create 3 descriptor wallets. It is important that they are of the descriptor type in order to retrieve the wallet descriptors. These wallets contain HD seed and private keys, which will be used to sign the PSBTs and derive the xpub.</p>
+<p>These three wallets should not be used directly for privacy reasons (public key reuse). They should only be used to sign transactions for the (watch-only) multisig wallet.</p>
+<pre><code class="language-bash">for ((n=1;n&lt;=3;n++))
+do
+ ./build/src/bitcoin-cli -signet createwallet "participant_${n}"
+done
+</code></pre>
+<p>Extract the xpub of each wallet. To do this, the <code>listdescriptors</code> RPC is used. By default, Bitcoin Core single-sig wallets are created using path <code>m/44'/1'/0'</code> for PKH, <code>m/84'/1'/0'</code> for WPKH, <code>m/49'/1'/0'</code> for P2WPKH-nested-in-P2SH and <code>m/86'/1'/0'</code> for P2TR based accounts. Each of them uses the chain 0 for external addresses and chain 1 for internal ones, as shown in the example below.</p>
+<pre><code>wpkh([1004658e/84'/1'/0']tpubDCBEcmVKbfC9KfdydyLbJ2gfNL88grZu1XcWSW9ytTM6fitvaRmVyr8Ddf7SjZ2ZfMx9RicjYAXhuh3fmLiVLPodPEqnQQURUfrBKiiVZc8/0/*)#g8l47ngv
+
+wpkh([1004658e/84'/1'/0']tpubDCBEcmVKbfC9KfdydyLbJ2gfNL88grZu1XcWSW9ytTM6fitvaRmVyr8Ddf7SjZ2ZfMx9RicjYAXhuh3fmLiVLPodPEqnQQURUfrBKiiVZc8/1/*)#en65rxc5
+</code></pre>
+<p>The suffix (after #) is the checksum. Descriptors can optionally be suffixed with a checksum to protect against typos or copy-paste errors.
+All RPCs in Bitcoin Core will include the checksum in their output.</p>
+<pre><code class="language-bash">declare -A xpubs
+
+for ((n=1;n&lt;=3;n++))
+do
+ xpubs["internal_xpub_${n}"]=$(./build/src/bitcoin-cli -signet -rpcwallet="participant_${n}" listdescriptors | jq '.descriptors | [.[] | select(.desc | startswith("wpkh") and contains("/1/*"))][0] | .desc' | grep -Po '(?&lt;=\().*(?=\))')
+
+ xpubs["external_xpub_${n}"]=$(./build/src/bitcoin-cli -signet -rpcwallet="participant_${n}" listdescriptors | jq '.descriptors | [.[] | select(.desc | startswith("wpkh") and contains("/0/*") )][0] | .desc' | grep -Po '(?&lt;=\().*(?=\))')
+done
+</code></pre>
+<p><code>jq</code> is used to extract the xpub from the <code>wpkh</code> descriptor.</p>
+<p>The following command can be used to verify if the xpub was generated correctly.</p>
+<pre><code class="language-bash">for x in "${!xpubs[@]}"; do printf "[%s]=%s\n" "$x" "${xpubs[$x]}" ; done
+</code></pre>
+<p>As previously mentioned, this step extracts the <code>m/84'/1'/0'</code> account instead of the path defined in <a href="https://github.com/bitcoin/bips/blob/master/bip-0045.mediawiki">BIP 45</a> or <a href="https://github.com/bitcoin/bips/blob/master/bip-0087.mediawiki">BIP 87</a>, since there is no way to extract a specific path in Bitcoin Core at the time of writing.</p>
+<h3 id="12-define-the-multisig-descriptors"><a class="header" href="#12-define-the-multisig-descriptors">1.2 Define the Multisig Descriptors</a></h3>
+<p>Define the external and internal multisig descriptors, add the checksum and then, join both in a JSON array.</p>
+<pre><code class="language-bash">external_desc="wsh(sortedmulti(2,${xpubs["external_xpub_1"]},${xpubs["external_xpub_2"]},${xpubs["external_xpub_3"]}))"
+internal_desc="wsh(sortedmulti(2,${xpubs["internal_xpub_1"]},${xpubs["internal_xpub_2"]},${xpubs["internal_xpub_3"]}))"
+
+external_desc_sum=$(./build/src/bitcoin-cli -signet getdescriptorinfo $external_desc | jq '.descriptor')
+internal_desc_sum=$(./build/src/bitcoin-cli -signet getdescriptorinfo $internal_desc | jq '.descriptor')
+
+multisig_ext_desc="{\"desc\": $external_desc_sum, \"active\": true, \"internal\": false, \"timestamp\": \"now\"}"
+multisig_int_desc="{\"desc\": $internal_desc_sum, \"active\": true, \"internal\": true, \"timestamp\": \"now\"}"
+
+multisig_desc="[$multisig_ext_desc, $multisig_int_desc]"
+</code></pre>
+<p><code>external_desc</code> and <code>internal_desc</code> specify the output type (<code>wsh</code>, in this case) and the xpubs involved. They also use BIP 67 (<code>sortedmulti</code>), so the wallet can be recreated without worrying about the order of xpubs. Conceptually, descriptors describe a list of scriptPubKey (along with information for spending from it) [<a href="https://github.com/bitcoin/bitcoin/issues/21199#issuecomment-780772418">source</a>].</p>
+<p>Note that at least two descriptors are usually used, one for internal derivation paths and one for external ones. There are discussions about eliminating this redundancy, as can be seen in the issue <a href="https://github.com/bitcoin/bitcoin/issues/17190">#17190</a>.</p>
+<p>After creating the descriptors, it is necessary to add the checksum, which is required by the <code>importdescriptors</code> RPC.</p>
+<p>The checksum for a descriptor without one can be computed using the <code>getdescriptorinfo</code> RPC. The response has the <code>descriptor</code> field, which is the descriptor with the checksum added.</p>
+<p>There are other fields that can be added to the descriptors:</p>
+<ul>
+<li><code>active</code>: Sets the descriptor to be the active one for the corresponding output type (<code>wsh</code>, in this case).</li>
+<li><code>internal</code>: Indicates whether matching outputs should be treated as something other than incoming payments (e.g. change).</li>
+<li><code>timestamp</code>: Sets the time from which to start rescanning the blockchain for the descriptor, in UNIX epoch time.</li>
+</ul>
+<p>Documentation for these and other parameters can be found by typing <code>./build/src/bitcoin-cli help importdescriptors</code>.</p>
+<p><code>multisig_desc</code> concatenates external and internal descriptors in a JSON array and then it will be used to create the multisig wallet.</p>
+<h3 id="13-create-the-multisig-wallet"><a class="header" href="#13-create-the-multisig-wallet">1.3 Create the Multisig Wallet</a></h3>
+<p>To create the multisig wallet, first create an empty one (no keys, HD seed and private keys disabled).</p>
+<p>Then import the descriptors created in the previous step using the <code>importdescriptors</code> RPC.</p>
+<p>After that, <code>getwalletinfo</code> can be used to check if the wallet was created successfully.</p>
+<pre><code class="language-bash">./build/src/bitcoin-cli -signet -named createwallet wallet_name="multisig_wallet_01" disable_private_keys=true blank=true
+
+./build/src/bitcoin-cli  -signet -rpcwallet="multisig_wallet_01" importdescriptors "$multisig_desc"
+
+./build/src/bitcoin-cli  -signet -rpcwallet="multisig_wallet_01" getwalletinfo
+</code></pre>
+<p>Once the wallets have already been created and this tutorial needs to be repeated or resumed, it is not necessary to recreate them, just load them with the command below:</p>
+<pre><code class="language-bash">for ((n=1;n&lt;=3;n++)); do ./build/src/bitcoin-cli -signet loadwallet "participant_${n}"; done
+</code></pre>
+<h3 id="14-fund-the-wallet"><a class="header" href="#14-fund-the-wallet">1.4 Fund the wallet</a></h3>
+<p>The wallet can receive signet coins by generating a new address and passing it as parameters to <code>getcoins.py</code> script.</p>
+<p>This script will print a captcha in dot-matrix to the terminal, using unicode Braille characters. After solving the captcha, the coins will be sent directly to the address or wallet (according to the parameters).</p>
+<p>The url used by the script can also be accessed directly. At time of writing, the url is <a href="https://signetfaucet.com"><code>https://signetfaucet.com</code></a>.</p>
+<p>Coins received by the wallet must have at least 1 confirmation before they can be spent. It is necessary to wait for a new block to be mined before continuing.</p>
+<pre><code class="language-bash">receiving_address=$(./build/src/bitcoin-cli -signet -rpcwallet="multisig_wallet_01" getnewaddress)
+
+./contrib/signet/getcoins.py -c ./build/src/bitcoin-cli -a $receiving_address
+</code></pre>
+<p>To copy the receiving address onto the clipboard, use the following command. This can be useful when getting coins via the signet faucet mentioned above.</p>
+<pre><code class="language-bash">echo -n "$receiving_address" | xclip -sel clip
+</code></pre>
+<p>The <code>getbalances</code> RPC may be used to check the balance. Coins with <code>trusted</code> status can be spent.</p>
+<pre><code class="language-bash">./build/src/bitcoin-cli -signet -rpcwallet="multisig_wallet_01" getbalances
+</code></pre>
+<h3 id="15-create-a-psbt"><a class="header" href="#15-create-a-psbt">1.5 Create a PSBT</a></h3>
+<p>Unlike singlesig wallets, multisig wallets cannot create and sign transactions directly because they require the signatures of the co-signers. Instead they create a Partially Signed Bitcoin Transaction (PSBT).</p>
+<p>PSBT is a data format that allows wallets and other tools to exchange information about a Bitcoin transaction and the signatures necessary to complete it. [<a href="https://bitcoinops.org/en/topics/psbt/">source</a>]</p>
+<p>The current PSBT version (v0) is defined in <a href="https://github.com/bitcoin/bips/blob/master/bip-0174.mediawiki">BIP 174</a>.</p>
+<p>For simplicity, the destination address is taken from the <code>participant_1</code> wallet in the code above, but it can be any valid bitcoin address.</p>
+<p>The <code>walletcreatefundedpsbt</code> RPC is used to create and fund a transaction in the PSBT format. It is the first step in creating the PSBT.</p>
+<pre><code class="language-bash">balance=$(./build/src/bitcoin-cli -signet -rpcwallet="multisig_wallet_01" getbalance)
+
+amount=$(echo "$balance * 0.8" | bc -l | sed -e 's/^\./0./' -e 's/^-\./-0./')
+
+destination_addr=$(./build/src/bitcoin-cli -signet -rpcwallet="participant_1" getnewaddress)
+
+funded_psbt=$(./build/src/bitcoin-cli -signet -named -rpcwallet="multisig_wallet_01" walletcreatefundedpsbt outputs="{\"$destination_addr\": $amount}" | jq -r '.psbt')
+</code></pre>
+<p>There is also the <code>createpsbt</code> RPC, which serves the same purpose, but it has no access to the wallet or to the UTXO set. It is functionally the same as <code>createrawtransaction</code> and just drops the raw transaction into an otherwise blank PSBT. [<a href="https://bitcointalk.org/index.php?topic=5131043.msg50573609#msg50573609">source</a>] In most cases, <code>walletcreatefundedpsbt</code> solves the problem.</p>
+<p>The <code>send</code> RPC can also return a PSBT if more signatures are needed to sign the transaction.</p>
+<h3 id="16-decode-or-analyze-the-psbt"><a class="header" href="#16-decode-or-analyze-the-psbt">1.6 Decode or Analyze the PSBT</a></h3>
+<p>Optionally, the PSBT can be decoded to a JSON format using <code>decodepsbt</code> RPC.</p>
+<p>The <code>analyzepsbt</code> RPC analyzes and provides information about the current status of a PSBT and its inputs, e.g. missing signatures.</p>
+<pre><code class="language-bash">./build/src/bitcoin-cli -signet decodepsbt $funded_psbt
+
+./build/src/bitcoin-cli -signet analyzepsbt $funded_psbt
+</code></pre>
+<h3 id="17-update-the-psbt"><a class="header" href="#17-update-the-psbt">1.7 Update the PSBT</a></h3>
+<p>In the code above, two PSBTs are created. One signed by <code>participant_1</code> wallet and other, by the <code>participant_2</code> wallet.</p>
+<p>The <code>walletprocesspsbt</code> is used by the wallet to sign a PSBT.</p>
+<pre><code class="language-bash">psbt_1=$(./build/src/bitcoin-cli -signet -rpcwallet="participant_1" walletprocesspsbt $funded_psbt | jq '.psbt')
+
+psbt_2=$(./build/src/bitcoin-cli -signet -rpcwallet="participant_2" walletprocesspsbt $funded_psbt | jq '.psbt')
+</code></pre>
+<h3 id="18-combine-the-psbt"><a class="header" href="#18-combine-the-psbt">1.8 Combine the PSBT</a></h3>
+<p>The PSBT, if signed separately by the co-signers, must be combined into one transaction before being finalized. This is done by <code>combinepsbt</code> RPC.</p>
+<pre><code class="language-bash">combined_psbt=$(./build/src/bitcoin-cli -signet combinepsbt "[$psbt_1, $psbt_2]")
+</code></pre>
+<p>There is an RPC called <code>joinpsbts</code>, but it has a different purpose than <code>combinepsbt</code>. <code>joinpsbts</code> joins the inputs from multiple distinct PSBTs into one PSBT.</p>
+<p>In the example above, the PSBTs are the same, but signed by different participants. If the user tries to merge them using <code>joinpsbts</code>, the error <code>Input txid:pos exists in multiple PSBTs</code> is returned. To be able to merge different PSBTs into one, they must have different inputs and outputs.</p>
+<h3 id="19-finalize-and-broadcast-the-psbt"><a class="header" href="#19-finalize-and-broadcast-the-psbt">1.9 Finalize and Broadcast the PSBT</a></h3>
+<p>The <code>finalizepsbt</code> RPC is used to produce a network serialized transaction which can be broadcast with <code>sendrawtransaction</code>.</p>
+<p>It checks that all inputs have complete scriptSigs and scriptWitnesses and, if so, encodes them into network serialized transactions.</p>
+<pre><code class="language-bash">finalized_psbt_hex=$(./build/src/bitcoin-cli -signet finalizepsbt $combined_psbt | jq -r '.hex')
+
+./build/src/bitcoin-cli -signet sendrawtransaction $finalized_psbt_hex
+</code></pre>
+<h3 id="110-alternative-workflow-psbt-sequential-signatures"><a class="header" href="#110-alternative-workflow-psbt-sequential-signatures">1.10 Alternative Workflow (PSBT sequential signatures)</a></h3>
+<p>Instead of each wallet signing the original PSBT and combining them later, the wallets can also sign the PSBTs sequentially. This is less scalable than the previously presented parallel workflow, but it works.</p>
+<p>After that, the rest of the process is the same: the PSBT is finalized and transmitted to the network.</p>
+<pre><code class="language-bash">psbt_1=$(./build/src/bitcoin-cli -signet -rpcwallet="participant_1" walletprocesspsbt $funded_psbt | jq -r '.psbt')
+
+psbt_2=$(./build/src/bitcoin-cli -signet -rpcwallet="participant_2" walletprocesspsbt $psbt_1 | jq -r '.psbt')
+
+finalized_psbt_hex=$(./build/src/bitcoin-cli -signet finalizepsbt $psbt_2 | jq -r '.hex')
+
+./build/src/bitcoin-cli -signet sendrawtransaction $finalized_psbt_hex
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../doc/multiprocess.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../doc/offline-signing-tutorial.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../doc/multiprocess.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../doc/offline-signing-tutorial.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

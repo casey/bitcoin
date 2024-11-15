@@ -1,0 +1,310 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>assumeutxo - Bitcoin Core Developer Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../../highlight.css">
+        <link rel="stylesheet" href="../../tomorrow-night.css">
+        <link rel="stylesheet" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bitcoin Core Developer Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="assumeutxo-design"><a class="header" href="#assumeutxo-design">Assumeutxo Design</a></h1>
+<p>For notes on the usage of Assumeutxo, please refer to <a href="/doc/assumeutxo.html">the usage doc</a>.</p>
+<h2 id="general-background"><a class="header" href="#general-background">General background</a></h2>
+<ul>
+<li><a href="https://github.com/jamesob/assumeutxo-docs/tree/2019-04-proposal/proposal">assumeutxo proposal</a></li>
+<li><a href="https://github.com/bitcoin/bitcoin/issues/15605">Github issue</a></li>
+<li><a href="https://github.com/bitcoin/bitcoin/pull/15606">draft PR</a></li>
+</ul>
+<h2 id="design-notes"><a class="header" href="#design-notes">Design notes</a></h2>
+<ul>
+<li>
+<p>The concept of UTXO snapshots is treated as an implementation detail that lives
+behind the ChainstateManager interface. The external presentation of the changes
+required to facilitate the use of UTXO snapshots is the understanding that there are
+now certain regions of the chain that can be temporarily assumed to be valid.
+In certain cases, e.g. wallet rescanning, this is very similar to dealing with
+a pruned chain.</p>
+<p>Logic outside ChainstateManager should try not to know about snapshots, instead
+preferring to work in terms of more general states like assumed-valid.</p>
+</li>
+</ul>
+<h2 id="chainstate-phases"><a class="header" href="#chainstate-phases">Chainstate phases</a></h2>
+<p>Chainstate within the system goes through a number of phases when UTXO snapshots are
+used, as managed by <code>ChainstateManager</code>. At various points there can be multiple
+<code>Chainstate</code> objects in existence to facilitate both maintaining the network tip and
+performing historical validation of the assumed-valid chain.</p>
+<p>It is worth noting that though there are multiple separate chainstates, those
+chainstates share use of a common block index (i.e. they hold the same <code>BlockManager</code>
+reference).</p>
+<p>The subheadings below outline the phases and the corresponding changes to chainstate
+data.</p>
+<h3 id="normal-operation-via-initial-block-download"><a class="header" href="#normal-operation-via-initial-block-download">"Normal" operation via initial block download</a></h3>
+<p><code>ChainstateManager</code> manages a single Chainstate object, for which
+<code>m_from_snapshot_blockhash</code> is <code>std::nullopt</code>. This chainstate is (maybe obviously)
+considered active. This is the "traditional" mode of operation for bitcoind.</p>
+<div class="table-wrapper"><table><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>number of chainstates</td><td>1</td></tr>
+<tr><td>active chainstate</td><td>ibd</td></tr>
+</tbody></table>
+</div>
+<h3 id="user-loads-a-utxo-snapshot-via-loadtxoutset-rpc"><a class="header" href="#user-loads-a-utxo-snapshot-via-loadtxoutset-rpc">User loads a UTXO snapshot via <code>loadtxoutset</code> RPC</a></h3>
+<p><code>ChainstateManager</code> initializes a new chainstate (see <code>ActivateSnapshot()</code>) to load the
+snapshot contents into. During snapshot load and validation (see
+<code>PopulateAndValidateSnapshot()</code>), the new chainstate is not considered active and the
+original chainstate remains in use as active.</p>
+<div class="table-wrapper"><table><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>number of chainstates</td><td>2</td></tr>
+<tr><td>active chainstate</td><td>ibd</td></tr>
+</tbody></table>
+</div>
+<p>Once the snapshot chainstate is loaded and validated, it is promoted to active
+chainstate and a sync to tip begins. A new chainstate directory is created in the
+datadir for the snapshot chainstate called <code>chainstate_snapshot</code>.</p>
+<p>When this directory is present in the datadir, the snapshot chainstate will be detected
+and loaded as active on node startup (via <code>DetectSnapshotChainstate()</code>).</p>
+<p>A special file is created within that directory, <code>base_blockhash</code>, which contains the
+serialized <code>uint256</code> of the base block of the snapshot. This is used to reinitialize
+the snapshot chainstate on subsequent inits. Otherwise, the directory is a normal
+leveldb database.</p>
+<div class="table-wrapper"><table><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>number of chainstates</td><td>2</td></tr>
+<tr><td>active chainstate</td><td>snapshot</td></tr>
+</tbody></table>
+</div>
+<p>The snapshot begins to sync to tip from its base block, technically in parallel with
+the original chainstate, but it is given priority during block download and is
+allocated most of the cache (see <code>MaybeRebalanceCaches()</code> and usages) as our chief
+goal is getting to network tip.</p>
+<p><strong>Failure consideration:</strong> if shutdown happens at any point during this phase, both
+chainstates will be detected during the next init and the process will resume.</p>
+<h3 id="snapshot-chainstate-hits-network-tip"><a class="header" href="#snapshot-chainstate-hits-network-tip">Snapshot chainstate hits network tip</a></h3>
+<p>Once the snapshot chainstate leaves IBD, caches are rebalanced
+(via <code>MaybeRebalanceCaches()</code> in <code>ActivateBestChain()</code>) and more cache is given
+to the background chainstate, which is responsible for doing full validation of the
+assumed-valid parts of the chain.</p>
+<p><strong>Note:</strong> at this point, ValidationInterface callbacks will be coming in from both
+chainstates. Considerations here must be made for indexing, which may no longer be happening
+sequentially.</p>
+<h3 id="background-chainstate-hits-snapshot-base-block"><a class="header" href="#background-chainstate-hits-snapshot-base-block">Background chainstate hits snapshot base block</a></h3>
+<p>Once the tip of the background chainstate hits the base block of the snapshot
+chainstate, we stop use of the background chainstate by setting <code>m_disabled</code>, in
+<code>MaybeCompleteSnapshotValidation()</code>, which is checked in <code>ActivateBestChain()</code>). We hash the
+background chainstate's UTXO set contents and ensure it matches the compiled value in
+<code>CMainParams::m_assumeutxo_data</code>.</p>
+<div class="table-wrapper"><table><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>number of chainstates</td><td>2 (ibd has <code>m_disabled=true</code>)</td></tr>
+<tr><td>active chainstate</td><td>snapshot</td></tr>
+</tbody></table>
+</div>
+<p>The background chainstate data lingers on disk until the program is restarted.</p>
+<h3 id="bitcoind-restarts-sometime-after-snapshot-validation-has-completed"><a class="header" href="#bitcoind-restarts-sometime-after-snapshot-validation-has-completed">Bitcoind restarts sometime after snapshot validation has completed</a></h3>
+<p>After a shutdown and subsequent restart, <code>LoadChainstate()</code> cleans up the background
+chainstate with <code>ValidatedSnapshotCleanup()</code>, which renames the <code>chainstate_snapshot</code>
+datadir as <code>chainstate</code> and removes the now unnecessary background chainstate data.</p>
+<div class="table-wrapper"><table><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>number of chainstates</td><td>1</td></tr>
+<tr><td>active chainstate</td><td>ibd (was snapshot, but is now fully validated)</td></tr>
+</tbody></table>
+</div>
+<p>What began as the snapshot chainstate is now indistinguishable from a chainstate that
+has been built from the traditional IBD process, and will be initialized as such.</p>
+<p>A file will be left in <code>chainstate/base_blockhash</code>, which indicates that the
+chainstate, even though now fully validated, was originally started from a snapshot
+with the corresponding base blockhash.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../doc/design/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../../doc/design/libraries.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../doc/design/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../../doc/design/libraries.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
+
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>verify-binaries - Bitcoin Core Developer Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../../highlight.css">
+        <link rel="stylesheet" href="../../tomorrow-night.css">
+        <link rel="stylesheet" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bitcoin Core Developer Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h3 id="verify-binaries"><a class="header" href="#verify-binaries">Verify Binaries</a></h3>
+<h4 id="preparation"><a class="header" href="#preparation">Preparation</a></h4>
+<p>As of Bitcoin Core v22.0, releases are signed by a number of public keys on the basis
+of the <a href="https://github.com/bitcoin-core/guix.sigs/">guix.sigs repository</a>. When
+verifying binary downloads, you (the end user) decide which of these public keys you
+trust and then use that trust model to evaluate the signature on a file that contains
+hashes of the release binaries. The downloaded binaries are then hashed and compared to
+the signed checksum file.</p>
+<p>First, you have to figure out which public keys to recognize. Browse the <a href="https://github.com/bitcoin-core/guix.sigs/tree/main/builder-keys">list of frequent
+builder-keys</a> and
+decide which of these keys you would like to trust. For each key you want to trust, you
+must obtain that key for your local GPG installation.</p>
+<p>You can obtain these keys by</p>
+<ul>
+<li>through a browser using a key server (e.g. keyserver.ubuntu.com),</li>
+<li>manually using the <code>gpg --keyserver &lt;url&gt; --recv-keys &lt;key&gt;</code> command, or</li>
+<li>you can run the packaged <code>verify.py --import-keys ...</code> script to
+have it automatically retrieve unrecognized keys.</li>
+</ul>
+<h4 id="usage"><a class="header" href="#usage">Usage</a></h4>
+<p>This script attempts to download the checksum file (<code>SHA256SUMS</code>) and corresponding
+signature file <code>SHA256SUMS.asc</code> from https://bitcoincore.org and https://bitcoin.org.</p>
+<p>It first checks if the checksum file is valid based upon a plurality of signatures, and
+then downloads the release files specified in the checksum file, and checks if the
+hashes of the release files are as expected.</p>
+<p>If we encounter pubkeys in the signature file that we do not recognize, the script
+can prompt the user as to whether they'd like to download the pubkeys. To enable
+this behavior, use the <code>--import-keys</code> flag.</p>
+<p>The script returns 0 if everything passes the checks. It returns 1 if either the
+signature check or the hash check doesn't pass. An exit code of &gt;2 indicates an error.</p>
+<p>See the <code>Config</code> object for various options.</p>
+<h4 id="examples"><a class="header" href="#examples">Examples</a></h4>
+<p>Validate releases with default settings:</p>
+<pre><code class="language-sh">./contrib/verify-binaries/verify.py pub 22.0
+./contrib/verify-binaries/verify.py pub 22.0-rc3
+</code></pre>
+<p>Get JSON output and don't prompt for user input (no auto key import):</p>
+<pre><code class="language-sh">./contrib/verify-binaries/verify.py --json pub 22.0-x86
+./contrib/verify-binaries/verify.py --json pub 23.0-rc5-linux-gnu
+</code></pre>
+<p>Rely only on local GPG state and manually specified keys, while requiring a
+threshold of at least 10 trusted signatures:</p>
+<pre><code class="language-sh">./contrib/verify-binaries/verify.py \
+    --trusted-keys 74E2DEF5D77260B98BC19438099BAD163C70FBFA,9D3CC86A72F8494342EA5FD10A41BDC3F4FAFF1C \
+    --min-good-sigs 10 pub 22.0-linux
+</code></pre>
+<p>If you only want to download the binaries for a certain architecture and/or platform, add the corresponding suffix, e.g.:</p>
+<pre><code class="language-sh">./contrib/verify-binaries/verify.py pub 25.2-x86_64-linux
+./contrib/verify-binaries/verify.py pub 24.1-rc1-darwin
+./contrib/verify-binaries/verify.py pub 27.0-win64-setup.exe
+</code></pre>
+<p>If you do not want to keep the downloaded binaries, specify the cleanup option.</p>
+<pre><code class="language-sh">./contrib/verify-binaries/verify.py pub --cleanup 22.0
+</code></pre>
+<p>Use the bin subcommand to verify all files listed in a local checksum file</p>
+<pre><code class="language-sh">./contrib/verify-binaries/verify.py bin SHA256SUMS
+</code></pre>
+<p>Verify only a subset of the files listed in a local checksum file</p>
+<pre><code class="language-sh">./contrib/verify-binaries/verify.py bin ~/Downloads/SHA256SUMS \
+    ~/Downloads/bitcoin-24.0.1-x86_64-linux-gnu.tar.gz \
+    ~/Downloads/bitcoin-24.0.1-arm-linux-gnueabihf.tar.gz
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../contrib/tracing/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../../contrib/verify-commits/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../contrib/tracing/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../../contrib/verify-commits/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
+
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

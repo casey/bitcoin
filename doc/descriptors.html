@@ -1,0 +1,492 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>descriptors - Bitcoin Core Developer Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bitcoin Core Developer Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="support-for-output-descriptors-in-bitcoin-core"><a class="header" href="#support-for-output-descriptors-in-bitcoin-core">Support for Output Descriptors in Bitcoin Core</a></h1>
+<p>Since Bitcoin Core v0.17, there is support for Output Descriptors. This is a
+simple language which can be used to describe collections of output scripts.
+Supporting RPCs are:</p>
+<ul>
+<li><code>scantxoutset</code> takes as input descriptors to scan for, and also reports
+specialized descriptors for the matching UTXOs.</li>
+<li><code>getdescriptorinfo</code> analyzes a descriptor, and reports a canonicalized version
+with checksum added.</li>
+<li><code>deriveaddresses</code> takes as input a descriptor and computes the corresponding
+addresses.</li>
+<li><code>listunspent</code> outputs a specialized descriptor for the reported unspent outputs.</li>
+<li><code>getaddressinfo</code> outputs a descriptor for solvable addresses (since v0.18).</li>
+<li><code>importmulti</code> takes as input descriptors to import into a legacy wallet
+(since v0.18).</li>
+<li><code>generatetodescriptor</code> takes as input a descriptor and generates coins to it
+(<code>regtest</code> only, since v0.19).</li>
+<li><code>utxoupdatepsbt</code> takes as input descriptors to add information to the psbt
+(since v0.19).</li>
+<li><code>createmultisig</code> and <code>addmultisigaddress</code> return descriptors as well (since v0.20).</li>
+<li><code>importdescriptors</code> takes as input descriptors to import into a descriptor wallet
+(since v0.21).</li>
+<li><code>listdescriptors</code> outputs descriptors imported into a descriptor wallet (since v22).</li>
+<li><code>scanblocks</code> takes as input descriptors to scan for in blocks and returns the
+relevant blockhashes (since v25).</li>
+</ul>
+<p>This document describes the language. For the specifics on usage, see the RPC
+documentation for the functions mentioned above.</p>
+<h2 id="features"><a class="header" href="#features">Features</a></h2>
+<p>Output descriptors currently support:</p>
+<ul>
+<li>Pay-to-pubkey scripts (P2PK), through the <code>pk</code> function.</li>
+<li>Pay-to-pubkey-hash scripts (P2PKH), through the <code>pkh</code> function.</li>
+<li>Pay-to-witness-pubkey-hash scripts (P2WPKH), through the <code>wpkh</code> function.</li>
+<li>Pay-to-script-hash scripts (P2SH), through the <code>sh</code> function.</li>
+<li>Pay-to-witness-script-hash scripts (P2WSH), through the <code>wsh</code> function.</li>
+<li>Pay-to-taproot outputs (P2TR), through the <code>tr</code> function.</li>
+<li>Multisig scripts, through the <code>multi</code> function.</li>
+<li>Multisig scripts where the public keys are sorted lexicographically, through the <code>sortedmulti</code> function.</li>
+<li>Multisig scripts inside taproot script trees, through the <code>multi_a</code> (and <code>sortedmulti_a</code>) function.</li>
+<li>Any type of supported address through the <code>addr</code> function.</li>
+<li>Raw hex scripts through the <code>raw</code> function.</li>
+<li>Public keys (compressed and uncompressed) in hex notation, or BIP32 extended pubkeys with derivation paths.</li>
+</ul>
+<h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
+<ul>
+<li><code>pk(0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798)</code> describes a P2PK output with the specified public key.</li>
+<li><code>pkh(02c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5)</code> describes a P2PKH output with the specified public key.</li>
+<li><code>wpkh(02f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9)</code> describes a P2WPKH output with the specified public key.</li>
+<li><code>sh(wpkh(03fff97bd5755eeea420453a14355235d382f6472f8568a18b2f057a1460297556))</code> describes a P2SH-P2WPKH output with the specified public key.</li>
+<li><code>combo(0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798)</code> describes any P2PK, P2PKH, P2WPKH, or P2SH-P2WPKH output with the specified public key.</li>
+<li><code>sh(wsh(pkh(02e493dbf1c10d80f3581e4904930b1404cc6c13900ee0758474fa94abe8c4cd13)))</code> describes an (overly complicated) P2SH-P2WSH-P2PKH output with the specified public key.</li>
+<li><code>multi(1,022f8bde4d1a07209355b4a7250a5c5128e88b84bddc619ab7cba8d569b240efe4,025cbdf0646e5db4eaa398f365f2ea7a0e3d419b7e0330e39ce92bddedcac4f9bc)</code> describes a bare <em>1-of-2</em> multisig output with keys in the specified order.</li>
+<li><code>sh(multi(2,022f01e5e15cca351daff3843fb70f3c2f0a1bdd05e5af888a67784ef3e10a2a01,03acd484e2f0c7f65309ad178a9f559abde09796974c57e714c35f110dfc27ccbe))</code> describes a P2SH <em>2-of-2</em> multisig output with keys in the specified order.</li>
+<li><code>sh(sortedmulti(2,03acd484e2f0c7f65309ad178a9f559abde09796974c57e714c35f110dfc27ccbe,022f01e5e15cca351daff3843fb70f3c2f0a1bdd05e5af888a67784ef3e10a2a01))</code> describes a P2SH <em>2-of-2</em> multisig output with keys sorted lexicographically in the resulting redeemScript.</li>
+<li><code>wsh(multi(2,03a0434d9e47f3c86235477c7b1ae6ae5d3442d49b1943c2b752a68e2a47e247c7,03774ae7f858a9411e5ef4246b70c65aac5649980be5c17891bbec17895da008cb,03d01115d548e7561b15c38f004d734633687cf4419620095bc5b0f47070afe85a))</code> describes a P2WSH <em>2-of-3</em> multisig output with keys in the specified order.</li>
+<li><code>sh(wsh(multi(1,03f28773c2d975288bc7d1d205c3748651b075fbc6610e58cddeeddf8f19405aa8,03499fdf9e895e719cfd64e67f07d38e3226aa7b63678949e6e49b241a60e823e4,02d7924d4f7d43ea965a465ae3095ff41131e5946f3c85f79e44adbcf8e27e080e)))</code> describes a P2SH-P2WSH <em>1-of-3</em> multisig output with keys in the specified order.</li>
+<li><code>pk(xpub661MyMwAqRbcFtXgS5sYJABqqG9YLmC4Q1Rdap9gSE8NqtwybGhePY2gZ29ESFjqJoCu1Rupje8YtGqsefD265TMg7usUDFdp6W1EGMcet8)</code> describes a P2PK output with the public key of the specified xpub.</li>
+<li><code>pkh(xpub68Gmy5EdvgibQVfPdqkBBCHxA5htiqg55crXYuXoQRKfDBFA1WEjWgP6LHhwBZeNK1VTsfTFUHCdrfp1bgwQ9xv5ski8PX9rL2dZXvgGDnw/1/2)</code> describes a P2PKH output with child key <em>1/2</em> of the specified xpub.</li>
+<li><code>pkh([d34db33f/44'/0'/0']xpub6ERApfZwUNrhLCkDtcHTcxd75RbzS1ed54G1LkBUHQVHQKqhMkhgbmJbZRkrgZw4koxb5JaHWkY4ALHY2grBGRjaDMzQLcgJvLJuZZvRcEL/1/*)</code> describes a set of P2PKH outputs, but additionally specifies that the specified xpub is a child of a master with fingerprint <code>d34db33f</code>, and derived using path <code>44'/0'/0'</code>.</li>
+<li><code>wsh(multi(1,xpub661MyMwAqRbcFW31YEwpkMuc5THy2PSt5bDMsktWQcFF8syAmRUapSCGu8ED9W6oDMSgv6Zz8idoc4a6mr8BDzTJY47LJhkJ8UB7WEGuduB/1/0/*,xpub69H7F5d8KSRgmmdJg2KhpAK8SR3DjMwAdkxj3ZuxV27CprR9LgpeyGmXUbC6wb7ERfvrnKZjXoUmmDznezpbZb7ap6r1D3tgFxHmwMkQTPH/0/0/*))</code> describes a set of <em>1-of-2</em> P2WSH multisig outputs where the first multisig key is the <em>1/0/<code>i</code></em> child of the first specified xpub and the second multisig key is the <em>0/0/<code>i</code></em> child of the second specified xpub, and <code>i</code> is any number in a configurable range (<code>0-1000</code> by default).</li>
+<li><code>wsh(sortedmulti(1,xpub661MyMwAqRbcFW31YEwpkMuc5THy2PSt5bDMsktWQcFF8syAmRUapSCGu8ED9W6oDMSgv6Zz8idoc4a6mr8BDzTJY47LJhkJ8UB7WEGuduB/1/0/*,xpub69H7F5d8KSRgmmdJg2KhpAK8SR3DjMwAdkxj3ZuxV27CprR9LgpeyGmXUbC6wb7ERfvrnKZjXoUmmDznezpbZb7ap6r1D3tgFxHmwMkQTPH/0/0/*))</code> describes a set of <em>1-of-2</em> P2WSH multisig outputs where one multisig key is the <em>1/0/<code>i</code></em> child of the first specified xpub and the other multisig key is the <em>0/0/<code>i</code></em> child of the second specified xpub, and <code>i</code> is any number in a configurable range (<code>0-1000</code> by default). The order of public keys in the resulting witnessScripts is determined by the lexicographic order of the public keys at that index.</li>
+<li><code>tr(c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5,{pk(fff97bd5755eeea420453a14355235d382f6472f8568a18b2f057a1460297556),pk(e493dbf1c10d80f3581e4904930b1404cc6c13900ee0758474fa94abe8c4cd13)})</code> describes a P2TR output with the <code>c6...</code> x-only pubkey as internal key, and two script paths.</li>
+<li><code>tr(c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5,sortedmulti_a(2,2f8bde4d1a07209355b4a7250a5c5128e88b84bddc619ab7cba8d569b240efe4,5cbdf0646e5db4eaa398f365f2ea7a0e3d419b7e0330e39ce92bddedcac4f9bc))</code> describes a P2TR output with the <code>c6...</code> x-only pubkey as internal key, and a single <code>multi_a</code> script that needs 2 signatures with 2 specified x-only keys, which will be sorted lexicographically.</li>
+<li><code>wsh(sortedmulti(2,[6f53d49c/44h/1h/0h]tpubDDjsCRDQ9YzyaAq9rspCfq8RZFrWoBpYnLxK6sS2hS2yukqSczgcYiur8Scx4Hd5AZatxTuzMtJQJhchufv1FRFanLqUP7JHwusSSpfcEp2/0/*,[e6807791/44h/1h/0h]tpubDDAfvogaaAxaFJ6c15ht7Tq6ZmiqFYfrSmZsHu7tHXBgnjMZSHAeHSwhvjARNA6Qybon4ksPksjRbPDVp7yXA1KjTjSd5x18KHqbppnXP1s/0/*,[367c9cfa/44h/1h/0h]tpubDDtPnSgWYk8dDnaDwnof4ehcnjuL5VoUt1eW2MoAed1grPHuXPDnkX1fWMvXfcz3NqFxPbhqNZ3QBdYjLz2hABeM9Z2oqMR1Gt2HHYDoCgh/0/*))#av0kxgw0</code> describes a <em>2-of-3</em> multisig. For brevity, the internal "change" descriptor accompanying the above external "receiving" descriptor is not included here, but it typically differs only in the xpub derivation steps, ending in <code>/1/*</code> for change addresses.</li>
+</ul>
+<h2 id="reference"><a class="header" href="#reference">Reference</a></h2>
+<p>Descriptors consist of several types of expressions. The top level expression is either a <code>SCRIPT</code>, or <code>SCRIPT#CHECKSUM</code> where <code>CHECKSUM</code> is an 8-character alphanumeric descriptor checksum.</p>
+<p><code>SCRIPT</code> expressions:</p>
+<ul>
+<li><code>sh(SCRIPT)</code> (top level only): P2SH embed the argument.</li>
+<li><code>wsh(SCRIPT)</code> (top level or inside <code>sh</code> only): P2WSH embed the argument.</li>
+<li><code>pk(KEY)</code> (anywhere): P2PK output for the given public key.</li>
+<li><code>pkh(KEY)</code> (not inside <code>tr</code>): P2PKH output for the given public key (use <code>addr</code> if you only know the pubkey hash).</li>
+<li><code>wpkh(KEY)</code> (top level or inside <code>sh</code> only): P2WPKH output for the given compressed pubkey.</li>
+<li><code>combo(KEY)</code> (top level only): an alias for the collection of <code>pk(KEY)</code> and <code>pkh(KEY)</code>. If the key is compressed, it also includes <code>wpkh(KEY)</code> and <code>sh(wpkh(KEY))</code>.</li>
+<li><code>multi(k,KEY_1,KEY_2,...,KEY_n)</code> (not inside <code>tr</code>): k-of-n multisig script using OP_CHECKMULTISIG.</li>
+<li><code>sortedmulti(k,KEY_1,KEY_2,...,KEY_n)</code> (not inside <code>tr</code>): k-of-n multisig script with keys sorted lexicographically in the resulting script.</li>
+<li><code>multi_a(k,KEY_1,KEY_2,...,KEY_N)</code> (only inside <code>tr</code>): k-of-n multisig script using OP_CHECKSIG, OP_CHECKSIGADD, and OP_NUMEQUAL.</li>
+<li><code>sortedmulti_a(k,KEY_1,KEY_2,...,KEY_N)</code> (only inside <code>tr</code>): similar to <code>multi_a</code>, but the (x-only) public keys in it will be sorted lexicographically.</li>
+<li><code>tr(KEY)</code> or <code>tr(KEY,TREE)</code> (top level only): P2TR output with the specified key as internal key, and optionally a tree of script paths.</li>
+<li><code>addr(ADDR)</code> (top level only): the script which ADDR expands to.</li>
+<li><code>raw(HEX)</code> (top level only): the script whose hex encoding is HEX.</li>
+<li><code>rawtr(KEY)</code> (top level only): P2TR output with the specified key as output key. NOTE: while it's possible to use this to construct wallets, it has several downsides, like being unable to prove no hidden script path exists. Use at your own risk.</li>
+</ul>
+<p><code>KEY</code> expressions:</p>
+<ul>
+<li>Optionally, key origin information, consisting of:
+<ul>
+<li>An open bracket <code>[</code></li>
+<li>Exactly 8 hex characters for the fingerprint of the key where the derivation starts (see BIP32 for details)</li>
+<li>Followed by zero or more <code>/NUM</code> or <code>/NUM'</code> path elements to indicate unhardened or hardened derivation steps between the fingerprint and the key or xpub/xprv root that follows</li>
+<li>A closing bracket <code>]</code></li>
+</ul>
+</li>
+<li>Followed by the actual key, which is either:
+<ul>
+<li>Hex encoded public keys (either 66 characters starting with <code>02</code> or <code>03</code> for a compressed pubkey, or 130 characters starting with <code>04</code> for an uncompressed pubkey).
+<ul>
+<li>Inside <code>wpkh</code> and <code>wsh</code>, only compressed public keys are permitted.</li>
+<li>Inside <code>tr</code> and <code>rawtr</code>, x-only pubkeys are also permitted (64 hex characters).</li>
+</ul>
+</li>
+<li><a href="https://en.bitcoin.it/wiki/Wallet_import_format">WIF</a> encoded private keys may be specified instead of the corresponding public key, with the same meaning.</li>
+<li><code>xpub</code> encoded extended public key or <code>xprv</code> encoded extended private key (as defined in <a href="https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki">BIP 32</a>).
+<ul>
+<li>Followed by zero or more <code>/NUM</code> unhardened and <code>/NUM'</code> hardened BIP32 derivation steps.
+<ul>
+<li>No more than one of these derivation steps may be of the form <code>&lt;NUM;NUM;...;NUM&gt;</code> (including hardened indicators with either or both <code>NUM</code>). If such specifiers are included, the descriptor will be parsed as multiple descriptors where the first descriptor uses all of the first <code>NUM</code> in the pair, and the second descriptor uses the second <code>NUM</code> in the pair for all <code>KEY</code> expressions, and so on.</li>
+</ul>
+</li>
+<li>Optionally followed by a single <code>/*</code> or <code>/*'</code> final step to denote all (direct) unhardened or hardened children.</li>
+<li>The usage of hardened derivation steps requires providing the private key.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>(Anywhere a <code>'</code> suffix is permitted to denote hardened derivation, the suffix <code>h</code> can be used instead.)</p>
+<p><code>TREE</code> expressions:</p>
+<ul>
+<li>any <code>SCRIPT</code> expression</li>
+<li>An open brace <code>{</code>, a <code>TREE</code> expression, a comma <code>,</code>, a <code>TREE</code> expression, and a closing brace <code>}</code></li>
+</ul>
+<p><code>ADDR</code> expressions are any type of supported address:</p>
+<ul>
+<li>P2PKH addresses (base58, of the form <code>1...</code> for mainnet or <code>[nm]...</code> for testnet). Note that P2PKH addresses in descriptors cannot be used for P2PK outputs (use the <code>pk</code> function instead).</li>
+<li>P2SH addresses (base58, of the form <code>3...</code> for mainnet or <code>2...</code> for testnet, defined in <a href="https://github.com/bitcoin/bips/blob/master/bip-0013.mediawiki">BIP 13</a>).</li>
+<li>Segwit addresses (bech32 and bech32m, of the form <code>bc1...</code> for mainnet or <code>tb1...</code> for testnet, defined in <a href="https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki">BIP 173</a> and <a href="https://github.com/bitcoin/bips/blob/master/bip-0350.mediawiki">BIP 350</a>).</li>
+</ul>
+<h2 id="explanation"><a class="header" href="#explanation">Explanation</a></h2>
+<h3 id="single-key-scripts"><a class="header" href="#single-key-scripts">Single-key scripts</a></h3>
+<p>Many single-key constructions are used in practice, generally including
+P2PK, P2PKH, P2WPKH, and P2SH-P2WPKH. Many more combinations are
+imaginable, though they may not be optimal: P2SH-P2PK, P2SH-P2PKH,
+P2WSH-P2PK, P2WSH-P2PKH, P2SH-P2WSH-P2PK, P2SH-P2WSH-P2PKH.</p>
+<p>To describe these, we model these as functions. The functions <code>pk</code>
+(P2PK), <code>pkh</code> (P2PKH) and <code>wpkh</code> (P2WPKH) take as input a <code>KEY</code> expression, and return the
+corresponding <em>scriptPubKey</em>. The functions <code>sh</code> (P2SH) and <code>wsh</code> (P2WSH)
+take as input a <code>SCRIPT</code> expression, and return the script describing P2SH and P2WSH
+outputs with the input as embedded script. The names of the functions do
+not contain "p2" for brevity.</p>
+<h3 id="multisig"><a class="header" href="#multisig">Multisig</a></h3>
+<p>Several pieces of software use multi-signature (multisig) scripts based
+on Bitcoin's OP_CHECKMULTISIG opcode. To support these, we introduce the
+<code>multi(k,key_1,key_2,...,key_n)</code> and <code>sortedmulti(k,key_1,key_2,...,key_n)</code>
+functions. They represent a <em>k-of-n</em>
+multisig policy, where any <em>k</em> out of the <em>n</em> provided <code>KEY</code> expressions must
+sign.</p>
+<p>Key order is significant for <code>multi()</code>. A <code>multi()</code> expression describes a multisig script
+with keys in the specified order, and in a search for TXOs, it will not match
+outputs with multisig scriptPubKeys that have the same keys in a different
+order. Also, to prevent a combinatorial explosion of the search space, if more
+than one of the <code>multi()</code> key arguments is a BIP32 wildcard path ending in <code>/*</code>
+or <code>*'</code>, the <code>multi()</code> expression only matches multisig scripts with the <code>i</code>th
+child key from each wildcard path in lockstep, rather than scripts with any
+combination of child keys from each wildcard path.</p>
+<p>Key order does not matter for <code>sortedmulti()</code>. <code>sortedmulti()</code> behaves in the same way
+as <code>multi()</code> does but the keys are reordered in the resulting script such that they
+are lexicographically ordered as described in BIP67.</p>
+<h4 id="basic-multisig-example"><a class="header" href="#basic-multisig-example">Basic multisig example</a></h4>
+<p>For a good example of a basic M-of-N multisig between multiple participants using descriptor
+wallets and PSBTs, as well as a signing flow, see <a href="/test/functional/wallet_multisig_descriptor_psbt.py">this functional test</a>.</p>
+<p>Disclaimers: It is important to note that this example serves as a quick-start and is kept basic for readability. A downside of the approach
+outlined here is that each participant must maintain (and backup) two separate wallets: a signer and the corresponding multisig.
+It should also be noted that privacy best-practices are not "by default" here - participants should take care to only use the signer to sign
+transactions related to the multisig. Lastly, it is not recommended to use anything other than a Bitcoin Core descriptor wallet to serve as your
+signer(s). Other wallets, whether hardware or software, likely impose additional checks and safeguards to prevent users from signing transactions that
+could lead to loss of funds, or are deemed security hazards. Conforming to various 3rd-party checks and verifications is not in the scope of this example.</p>
+<p>The basic steps are:</p>
+<ol>
+<li>Every participant generates an xpub. The most straightforward way is to create a new descriptor wallet which we will refer to as
+the participant's signer wallet. Avoid reusing this wallet for any purpose other than signing transactions from the
+corresponding multisig we are about to create. Hint: extract the wallet's xpubs using <code>listdescriptors</code> and pick the one from the
+<code>pkh</code> descriptor since it's least likely to be accidentally reused (legacy addresses)</li>
+<li>Create a watch-only descriptor wallet (blank, private keys disabled). Now the multisig is created by importing the external and internal descriptors:
+<code>wsh(sortedmulti(&lt;M&gt;,XPUB1/0/*,XPUB2/0/*,…,XPUBN/0/*))</code> and <code>wsh(sortedmulti(&lt;M&gt;,XPUB1/1/*,XPUB2/1/*,…,XPUBN/1/*))</code>
+(one descriptor w/ <code>0</code> for receiving addresses and another w/ <code>1</code> for change). Every participant does this. All key origin information (master key fingerprint and all derivation steps) should be included with xpubs for proper support of hardware devices / external signers</li>
+<li>A receiving address is generated for the multisig. As a check to ensure step 2 was done correctly, every participant
+should verify they get the same addresses</li>
+<li>Funds are sent to the resulting address</li>
+<li>A sending transaction from the multisig is created using <code>walletcreatefundedpsbt</code> (anyone can initiate this). It is simple to do
+this in the GUI by going to the <code>Send</code> tab in the multisig wallet and creating an unsigned transaction (PSBT)</li>
+<li>At least <code>M</code> participants check the PSBT with their multisig using <code>decodepsbt</code> to verify the transaction is OK before signing it.</li>
+<li>(If OK) the participant signs the PSBT with their signer wallet using <code>walletprocesspsbt</code>. It is simple to do this in the GUI by
+loading the PSBT from file and signing it</li>
+<li>The signed PSBTs are collected with <code>combinepsbt</code>, finalized w/ <code>finalizepsbt</code>, and then the resulting transaction is broadcasted
+to the network. Note that any wallet (eg one of the signers or multisig) is capable of doing this.</li>
+<li>Checks that balances are correct after the transaction has been included in a block</li>
+</ol>
+<p>You may prefer a daisy chained signing flow where each participant signs the PSBT one after another until
+the PSBT has been signed <code>M</code> times and is "complete." For the most part, the steps above remain the same, except (6, 7)
+change slightly from signing the original PSBT in parallel to signing it in series. <code>combinepsbt</code> is not necessary with
+this signing flow and the last (<code>m</code>th) signer can just broadcast the PSBT after signing. Note that a parallel signing flow may be
+preferable in cases where there are more signers. This signing flow is also included in the test / Python example.
+<a href="/test/functional/wallet_multisig_descriptor_psbt.py">The test</a> is meant to be documentation as much as it is a functional test, so
+it is kept as simple and readable as possible.</p>
+<h3 id="bip32-derived-keys-and-chains"><a class="header" href="#bip32-derived-keys-and-chains">BIP32 derived keys and chains</a></h3>
+<p>Most modern wallet software and hardware uses keys that are derived using
+BIP32 ("HD keys"). We support these directly by permitting strings
+consisting of an extended public key (commonly referred to as an <em>xpub</em>)
+plus derivation path anywhere a public key is expected. The derivation
+path consists of a sequence of 0 or more integers (in the range
+<em>0..2<sup>31</sup>-1</em>) each optionally followed by <code>'</code> or <code>h</code>, and
+separated by <code>/</code> characters. The string may optionally end with the
+literal <code>/*</code> or <code>/*'</code> (or <code>/*h</code>) to refer to all unhardened or hardened
+child keys in a configurable range (by default <code>0-1000</code>, inclusive).</p>
+<p>Whenever a public key is described using a hardened derivation step, the
+script cannot be computed without access to the corresponding private
+key.</p>
+<h3 id="key-origin-identification"><a class="header" href="#key-origin-identification">Key origin identification</a></h3>
+<p>In order to describe scripts whose signing keys reside on another device,
+it may be necessary to identify the master key and derivation path an
+xpub was derived with.</p>
+<p>For example, when following BIP44, it would be useful to describe a
+change chain directly as <code>xpub.../44'/0'/0'/1/*</code> where <code>xpub...</code>
+corresponds with the master key <code>m</code>. Unfortunately, since there are
+hardened derivation steps that follow the xpub, this descriptor does not
+let you compute scripts without access to the corresponding private keys.
+Instead, it should be written as <code>xpub.../1/*</code>, where xpub corresponds to
+<code>m/44'/0'/0'</code>.</p>
+<p>When interacting with a hardware device, it may be necessary to include
+the entire path from the master down. <a href="https://github.com/bitcoin/bips/blob/master/bip-0174.mediawiki">BIP174</a> standardizes this by
+providing the master key <em>fingerprint</em> (first 32 bit of the Hash160 of
+the master pubkey), plus all derivation steps. To support constructing
+these, we permit providing this key origin information inside the
+descriptor language, even though it does not affect the actual
+scriptPubKeys it refers to.</p>
+<p>Every public key can be prefixed by an 8-character hexadecimal
+fingerprint plus optional derivation steps (hardened and unhardened)
+surrounded by brackets, identifying the master and derivation path the key or xpub
+that follows was derived with.</p>
+<p>Note that the fingerprint of the parent only serves as a fast way to detect
+parent and child nodes in software, and software must be willing to deal with
+collisions.</p>
+<h3 id="including-private-keys"><a class="header" href="#including-private-keys">Including private keys</a></h3>
+<p>Often it is useful to communicate a description of scripts along with the
+necessary private keys. For this reason, anywhere a public key or xpub is
+supported, a private key in WIF format or xprv may be provided instead.
+This is useful when private keys are necessary for hardened derivation
+steps, for signing transactions, or for dumping wallet descriptors
+including private key material.</p>
+<p>For example, after importing the following 2-of-3 multisig descriptor
+into a wallet, one could use <code>signrawtransactionwithwallet</code>
+to sign a transaction with the first key:</p>
+<pre><code>sh(multi(2,xprv.../84'/0'/0'/0/0,xpub1...,xpub2...))
+</code></pre>
+<p>Note how the first key is an xprv private key with a specific derivation path,
+while the other two are public keys.</p>
+<h3 id="specifying-receiving-and-change-descriptors-in-one-descriptor"><a class="header" href="#specifying-receiving-and-change-descriptors-in-one-descriptor">Specifying receiving and change descriptors in one descriptor</a></h3>
+<p>Since receiving and change addresses are frequently derived from the same
+extended key(s) but with a single derivation index changed, it is convenient
+to be able to specify a descriptor that can derive at the two different
+indexes. Thus a single tuple of indexes is allowed in each derivation path
+following the extended key. When this descriptor is parsed, multiple descriptors
+will be produced, the first one will use the first index in the tuple for all
+key expressions, the second will use the second index, the third will use the
+third index, and so on..</p>
+<p>For example, a descriptor of the form:</p>
+<pre><code>multi(2,xpub.../&lt;0;1;2&gt;/0/*,xpub.../&lt;2;3;4&gt;/*)
+</code></pre>
+<p>will expand to the two descriptors</p>
+<p>multi(2,xpub.../0/0/<em>,xpub.../2/</em>)
+multi(2,xpub.../1/0/<em>,xpub.../3/</em>)
+multi(2,xpub.../2/0/<em>,xpub.../4</em>)</p>
+<p>When this tuple contains only two elements, wallet implementations can use the
+first descriptor for receiving addresses and the second descriptor for change addresses.</p>
+<h3 id="compatibility-with-old-wallets"><a class="header" href="#compatibility-with-old-wallets">Compatibility with old wallets</a></h3>
+<p>In order to easily represent the sets of scripts currently supported by
+existing Bitcoin Core wallets, a convenience function <code>combo</code> is
+provided, which takes as input a public key, and describes a set of P2PK,
+P2PKH, P2WPKH, and P2SH-P2WPKH scripts for that key. In case the key is
+uncompressed, the set only includes P2PK and P2PKH scripts.</p>
+<h3 id="checksums"><a class="header" href="#checksums">Checksums</a></h3>
+<p>Descriptors can optionally be suffixed with a checksum to protect against
+typos or copy-paste errors.</p>
+<p>These checksums consist of 8 alphanumeric characters. As long as errors are
+restricted to substituting characters in <code>0123456789()[],'/*abcdefgh@:$%{}</code>
+for others in that set and changes in letter case, up to 4 errors will always
+be detected in descriptors up to 501 characters, and up to 3 errors in longer
+ones. For larger numbers of errors, or other types of errors, there is a
+roughly 1 in a trillion chance of not detecting the errors.</p>
+<p>All RPCs in Bitcoin Core will include the checksum in their output. Only
+certain RPCs require checksums on input, including <code>deriveaddresses</code> and
+<code>importmulti</code>. The checksum for a descriptor without one can be computed
+using the <code>getdescriptorinfo</code> RPC.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../doc/dependencies.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../doc/developer-notes.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../doc/dependencies.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../doc/developer-notes.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

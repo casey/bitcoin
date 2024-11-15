@@ -1,0 +1,440 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>offline-signing-tutorial - Bitcoin Core Developer Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bitcoin Core Developer Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="offline-signing-tutorial"><a class="header" href="#offline-signing-tutorial">Offline Signing Tutorial</a></h1>
+<p>This tutorial will describe how to use two instances of Bitcoin Core, one online and one offline, to greatly increase security by not having private keys reside on a networked device.</p>
+<p>Maintaining an air-gap between private keys and any network connections drastically reduces the opportunity for those keys to be exfiltrated from the user.</p>
+<p>This workflow uses <a href="https://github.com/bitcoin/bitcoin/blob/master/doc/psbt.md">Partially Signed Bitcoin Transactions</a> (PSBTs) to transfer the transaction to and from the offline wallet for signing using the private keys.</p>
+<blockquote>
+<p>[!NOTE]
+While this tutorial demonstrates the process using <code>signet</code> network, you should omit the <code>-signet</code> flag in the provided commands when working with <code>mainnet</code>.</p>
+</blockquote>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>In this tutorial we have two hosts, both running Bitcoin v25.0</p>
+<ul>
+<li><code>offline</code> host which is disconnected from all networks (internet, Tor, wifi, bluetooth etc.) and does not have, or need, a copy of the blockchain.</li>
+<li><code>online</code> host which is a regular online node with a synced blockchain.</li>
+</ul>
+<p>We are going to first create an <code>offline_wallet</code> on the offline host. We will then create a <code>watch_only_wallet</code> on the online host using public key descriptors exported from the <code>offline_wallet</code>. Next we will receive some coins into the wallet. In order to spend these coins we'll create an unsigned PSBT using the <code>watch_only_wallet</code>, sign the PSBT using the private keys in the <code>offline_wallet</code>, and finally broadcast the signed PSBT using the online host.</p>
+<h3 id="requirements"><a class="header" href="#requirements">Requirements</a></h3>
+<ul>
+<li><a href="https://jqlang.github.io/jq/">jq</a> installation - This tutorial uses jq to process certain fields from JSON RPC responses, but this convenience is optional.</li>
+</ul>
+<h3 id="create-and-prepare-the-offline_wallet"><a class="header" href="#create-and-prepare-the-offline_wallet">Create and Prepare the <code>offline_wallet</code></a></h3>
+<ol>
+<li>On the offline machine create a wallet named <code>offline_wallet</code> secured by a wallet <code>passphrase</code>. This wallet will contain private keys and must remain unconnected to any networks at all times.</li>
+</ol>
+<pre><code class="language-sh">[offline]$ ./build/src/bitcoin-cli -signet -named createwallet \
+                wallet_name="offline_wallet" \
+                passphrase="** enter passphrase **"
+
+{
+  "name": "offline_wallet"
+}
+</code></pre>
+<blockquote>
+<p>[!NOTE]
+The use of a passphrase is crucial to encrypt the wallet.dat file. This encryption ensures that even if an unauthorized individual gains access to the offline host, they won't be able to access the wallet's contents. Further details about securing your wallet can be found in  <a href="https://github.com/bitcoin/bitcoin/blob/master/doc/managing-wallets.md#12-encrypting-the-wallet">Managing the Wallet</a></p>
+</blockquote>
+<ol start="2">
+<li>Export the public key-only descriptors from the offline host to a JSON file named <code>descriptors.json</code>. We use <code>jq</code> here to extract the <code>.descriptors</code> field from the full RPC response.</li>
+</ol>
+<pre><code class="language-sh">[offline]$ ./build/src/bitcoin-cli -signet -rpcwallet="offline_wallet" listdescriptors \
+             | jq -r '.descriptors' \
+             &gt;&gt; /path/to/descriptors.json
+</code></pre>
+<blockquote>
+<p>[!NOTE]
+The <code>descriptors.json</code> file will be transferred to the online machine (e.g. using a USB flash drive) where it can be imported to create a related watch-only wallet.</p>
+</blockquote>
+<h3 id="create-the-online-watch_only_wallet"><a class="header" href="#create-the-online-watch_only_wallet">Create the online <code>watch_only_wallet</code></a></h3>
+<ol>
+<li>On the online machine create a blank watch-only wallet which has private keys disabled and is named <code>watch_only_wallet</code>. This is achieved by using the <code>createwallet</code> options: <code>disable_private_keys=true, blank=true</code>.</li>
+</ol>
+<p>The <code>watch_only_wallet</code> wallet will be used to track and validate incoming transactions, create unsigned PSBTs when spending coins, and broadcast signed and finalized PSBTs.</p>
+<blockquote>
+<p>[!NOTE]
+<code>disable_private_keys</code> indicates that the wallet should refuse to import private keys, i.e. will be a dedicated watch-only wallet.</p>
+</blockquote>
+<pre><code class="language-sh">[online]$ ./build/src/bitcoin-cli -signet -named createwallet \
+              wallet_name="watch_only_wallet" \
+              disable_private_keys=true \
+              blank=true
+
+{
+  "name": "watch_only_wallet"
+}
+</code></pre>
+<ol start="2">
+<li>Import the <code>offline_wallet</code>s public key descriptors to the online <code>watch_only_wallet</code> using the <code>descriptors.json</code> file created on the offline wallet.</li>
+</ol>
+<pre><code class="language-sh">[online]$ ./build/src/bitcoin-cli -signet -rpcwallet="watch_only_wallet" importdescriptors "$(cat /path/to/descriptors.json)"
+
+[
+  {
+    "success": true
+  },
+  {
+    "success": true
+  },
+  {
+    "success": true
+  },
+  {
+    "success": true
+  },
+  {
+    "success": true
+  },
+  {
+    "success": true
+  },
+  {
+    "success": true
+  },
+  {
+    "success": true
+  }
+]
+</code></pre>
+<blockquote>
+<p>[!NOTE]
+Multiple success values indicate that multiple descriptors, for different address types, have been successfully imported. This allows generating different address types on the <code>watch_only_wallet</code>.</p>
+</blockquote>
+<h3 id="fund-the-offline_wallet"><a class="header" href="#fund-the-offline_wallet">Fund the <code>offline_wallet</code></a></h3>
+<p>At this point, it's important to understand that both the <code>offline_wallet</code> and online <code>watch_only_wallet</code> share the same public keys. As a result, they generate the same addresses. Transactions can be created using either wallet, but valid signatures can only be added by the <code>offline_wallet</code> as only it has the private keys.</p>
+<ol>
+<li>Generate an address to receive coins. You can use <em>either</em> the <code>offline_wallet</code> or the online <code>watch_only_wallet</code> to generate this address, as they will produce the same addresses. For the sake of this guide, we'll use the online <code>watch_only_wallet</code> to generate the address.</li>
+</ol>
+<pre><code class="language-sh">[online]$ ./build/src/bitcoin-cli -signet -rpcwallet="watch_only_wallet" getnewaddress
+
+tb1qtu5qgc6ddhmqm5yqjvhg83qgk2t4ewajg0h6yh
+</code></pre>
+<ol start="2">
+<li>
+<p>Visit a faucet like https://signetfaucet.com and enter your address from the previous command to receive a small amount of signet coins to this address.</p>
+</li>
+<li>
+<p>Confirm that coins were received using the online <code>watch_only_wallet</code>. Note that the transaction may take a few moments before being received on your local node, depending on its connectivity. Just re-run the command periodically until the transaction is received.</p>
+</li>
+</ol>
+<pre><code class="language-sh">[online]$ ./build/src/bitcoin-cli -signet -rpcwallet="watch_only_wallet" listunspent
+
+[
+  {
+    "txid": "0f3953dfc3eb8e753cd1633151837c5b9953992914ff32b7de08c47f1f29c762",
+    "vout": 1,
+    "address": "tb1qtu5qgc6ddhmqm5yqjvhg83qgk2t4ewajg0h6yh",
+    "label": "",
+    "scriptPubKey": "00145f2804634d6df60dd080932e83c408b2975cbbb2",
+    "amount": 0.01000000,
+    "confirmations": 4,
+    "spendable": true,
+    "solvable": true,
+    "desc": "wpkh([306c734f/84h/1h/0h/0/0]025932ccee7590158f7e08bb36290d135d30a0b045163da896e1cd7645ec4223a9)#xytvyr4a",
+    "parent_descs": [
+      "wpkh([306c734f/84h/1h/0h]tpubDCJnY92ib4Zu3qd6wrBXEjG436tQdA2tDiJU2iSJYjkNS1darssPWKaBfojhjUF5vMLBcxbN2r93pmFMz2zyTEZuNx9JDo9rWqoHhATW3Uz/0/*)#7mh08dkg"
+    ],
+    "safe": true
+  }
+]
+</code></pre>
+<h3 id="create-and-export-an-unsigned-psbt"><a class="header" href="#create-and-export-an-unsigned-psbt">Create and Export an Unsigned PSBT</a></h3>
+<ol>
+<li>
+<p>Get a destination address for the transaction. In this tutorial we'll be sending funds to the address <code>tb1q9k5w0nhnhyeh78snpxh0t5t7c3lxdeg3erez32</code>, but if you don't need the coins for further testing you could send the coins back to the faucet.</p>
+</li>
+<li>
+<p>Create a funded but unsigned PSBT to the destination address with the online <code>watch_only_wallet</code> by using <code>send [{"address":amount},...]</code> and export the unsigned PSBT to a file <code>funded_psbt.txt</code> for easy portability to the <code>offline_wallet</code> for signing:</p>
+</li>
+</ol>
+<pre><code class="language-sh">[online]$ ./build/src/bitcoin-cli -signet -rpcwallet="watch_only_wallet" send \
+              '{"tb1q9k5w0nhnhyeh78snpxh0t5t7c3lxdeg3erez32": 0.009}' \
+              | jq -r '.psbt' \
+              &gt;&gt; /path/to/funded_psbt.txt
+
+[online]$ cat /path/to/funded_psbt.txt
+
+cHNidP8BAHECAAAAAWLHKR9/xAjetzL/FCmZU5lbfINRMWPRPHWO68PfUzkPAQAAAAD9////AoA4AQAAAAAAFgAULajnzvO5M38eEwmu9dF+xH5m5RGs0g0AAAAAABYAFMaT0f/Wp2DCZzL6dkJ3GhWj4Y9vAAAAAAABAHECAAAAAY+dRPEBrGopkw4ugSzS9npzJDEIrE/bq1XXI0KbYnYrAQAAAAD+////ArKaXgAAAAAAFgAUwEc4LdoxSjbWo/2Ue+HS+QjwfiBAQg8AAAAAABYAFF8oBGNNbfYN0ICTLoPECLKXXLuyYW8CAAEBH0BCDwAAAAAAFgAUXygEY01t9g3QgJMug8QIspdcu7IiBgJZMszudZAVj34IuzYpDRNdMKCwRRY9qJbhzXZF7EIjqRgwbHNPVAAAgAEAAIAAAACAAAAAAAAAAAAAACICA7BlBnyAR4F2UkKuSX9MFhYCsn6j//z9i7lHDm1O0CU0GDBsc09UAACAAQAAgAAAAIABAAAAAAAAAAA=
+</code></pre>
+<blockquote>
+<p>[!NOTE]
+Leaving the <code>input</code> array empty in the above <code>walletcreatefundedpsbt</code> command is permitted and will cause the wallet to automatically select appropriate inputs for the transaction.</p>
+</blockquote>
+<h3 id="decode-and-analyze-the-unsigned-psbt"><a class="header" href="#decode-and-analyze-the-unsigned-psbt">Decode and Analyze the Unsigned PSBT</a></h3>
+<p>Decode and analyze the unsigned PSBT on the <code>offline_wallet</code> using the <code>funded_psbt.txt</code> file:</p>
+<pre><code class="language-sh">[offline]$ ./build/src/bitcoin-cli -signet decodepsbt $(cat /path/to/funded_psbt.txt)
+
+{
+    ...
+}
+
+[offline]$ ./build/src/bitcoin-cli -signet analyzepsbt $(cat /path/to/funded_psbt.txt)
+
+{
+  "inputs": [
+    {
+      "has_utxo": true,
+      "is_final": false,
+      "next": "signer",
+      "missing": {
+        "signatures": [
+          "5f2804634d6df60dd080932e83c408b2975cbbb2"
+        ]
+      }
+    }
+  ],
+  "estimated_vsize": 141,
+  "estimated_feerate": 0.00100000,
+  "fee": 0.00014100,
+  "next": "signer"
+}
+</code></pre>
+<p>Notice that the analysis of the PSBT shows that "signatures" are missing and should be provided by the private key corresponding to the public key hash (hash160) "5f2804634d6df60dd080932e83c408b2975cbbb2"</p>
+<h3 id="process-and-sign-the-psbt"><a class="header" href="#process-and-sign-the-psbt">Process and Sign the PSBT</a></h3>
+<ol>
+<li>Unlock the <code>offline_wallet</code> with the Passphrase:</li>
+</ol>
+<p>Use the walletpassphrase command to unlock the <code>offline_wallet</code> with the passphrase. You should specify the passphrase and a timeout (in seconds) for how long you want the wallet to remain unlocked.</p>
+<pre><code class="language-sh">[offline]$ ./build/src/bitcoin-cli -signet -rpcwallet="offline_wallet" walletpassphrase "** enter passphrase **" 60
+</code></pre>
+<ol start="2">
+<li>Process, sign and finalize the PSBT on the <code>offline_wallet</code> using the <code>walletprocesspsbt</code> command, saving the output to a file <code>final_psbt.txt</code>.</li>
+</ol>
+<pre><code class="language-sh">[offline]$ ./build/src/bitcoin-cli -signet -rpcwallet="offline_wallet" walletprocesspsbt \
+               $(cat /path/to/funded_psbt.txt) \
+               | jq -r .hex \
+               &gt;&gt; /path/to/final_psbt.txt
+</code></pre>
+<h3 id="broadcast-the-signed-and-finalized-psbt"><a class="header" href="#broadcast-the-signed-and-finalized-psbt">Broadcast the Signed and Finalized PSBT</a></h3>
+<p>Broadcast the funded, signed and finalized PSBT <code>final_psbt.txt</code> using <code>sendrawtransaction</code> with an online node:</p>
+<pre><code class="language-sh">[online]$ ./build/src/bitcoin-cli -signet sendrawtransaction $(cat /path/to/final_psbt.txt)
+
+c2430a0e46df472b04b0ca887bbcd5c4abf7b2ce2eb71de981444a80e2b96d52
+</code></pre>
+<h3 id="confirm-wallet-balance"><a class="header" href="#confirm-wallet-balance">Confirm Wallet Balance</a></h3>
+<p>Confirm the updated balance of the offline wallet using the <code>watch_only_wallet</code>.</p>
+<pre><code class="language-sh">[online]$ ./build/src/bitcoin-cli -signet -rpcwallet="watch_only_wallet" getbalances
+
+{
+  "mine": {
+    "trusted": 0.00085900,
+    "untrusted_pending": 0.00000000,
+    "immature": 0.00000000
+  },
+  "lastprocessedblock": {
+    "hash": "0000003065c0669fff27edb4a71928cb48e5a6cfcdf06f491a83fd86822d18a6",
+    "height": 159592
+  }
+}
+</code></pre>
+<p>You can also show transactions related to the wallet using <code>listtransactions</code></p>
+<pre><code class="language-sh">[online]$ ./build/src/bitcoin-cli -signet -rpcwallet="watch_only_wallet" listtransactions
+
+{
+    ...
+}
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../doc/multisig-tutorial.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../doc/p2p-bad-ports.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../doc/multisig-tutorial.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../doc/p2p-bad-ports.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

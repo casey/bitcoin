@@ -1,0 +1,420 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>test - Bitcoin Core Developer Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bitcoin Core Developer Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <p>This directory contains integration tests that test bitcoind and its
+utilities in their entirety. It does not contain unit tests, which
+can be found in <a href="/src/test">/src/test</a>, <a href="/src/wallet/test">/src/wallet/test</a>,
+etc.</p>
+<p>This directory contains the following sets of tests:</p>
+<ul>
+<li><a href="/test/fuzz">fuzz</a> A runner to execute all fuzz targets from
+<a href="/src/test/fuzz">/src/test/fuzz</a>.</li>
+<li><a href="/test/functional">functional</a> which test the functionality of
+bitcoind and bitcoin-qt by interacting with them through the RPC and P2P
+interfaces.</li>
+<li><a href="/test/util">util</a> which tests the utilities (bitcoin-util, bitcoin-tx, ...).</li>
+<li><a href="/test/lint/">lint</a> which perform various static analysis checks.</li>
+</ul>
+<p>The util tests are run as part of <code>ctest</code> invocation. The fuzz tests, functional
+tests and lint scripts can be run as explained in the sections below.</p>
+<h1 id="running-tests-locally"><a class="header" href="#running-tests-locally">Running tests locally</a></h1>
+<p>Before tests can be run locally, Bitcoin Core must be built.  See the <a href="/doc#building">building instructions</a> for help.</p>
+<p>The following examples assume that the build directory is named <code>build</code>.</p>
+<h2 id="fuzz-tests"><a class="header" href="#fuzz-tests">Fuzz tests</a></h2>
+<p>See <a href="/doc/fuzzing.html">/doc/fuzzing.md</a></p>
+<h3 id="functional-tests"><a class="header" href="#functional-tests">Functional tests</a></h3>
+<h4 id="dependencies-and-prerequisites"><a class="header" href="#dependencies-and-prerequisites">Dependencies and prerequisites</a></h4>
+<p>The ZMQ functional test requires a python ZMQ library. To install it:</p>
+<ul>
+<li>on Unix, run <code>sudo apt-get install python3-zmq</code></li>
+<li>on mac OS, run <code>pip3 install pyzmq</code></li>
+</ul>
+<p>On Windows the <code>PYTHONUTF8</code> environment variable must be set to 1:</p>
+<pre><code class="language-cmd">set PYTHONUTF8=1
+</code></pre>
+<h4 id="running-the-tests"><a class="header" href="#running-the-tests">Running the tests</a></h4>
+<p>Individual tests can be run by directly calling the test script, e.g.:</p>
+<pre><code>build/test/functional/feature_rbf.py
+</code></pre>
+<p>or can be run through the test_runner harness, eg:</p>
+<pre><code>build/test/functional/test_runner.py feature_rbf.py
+</code></pre>
+<p>You can run any combination (incl. duplicates) of tests by calling:</p>
+<pre><code>build/test/functional/test_runner.py &lt;testname1&gt; &lt;testname2&gt; &lt;testname3&gt; ...
+</code></pre>
+<p>Wildcard test names can be passed, if the paths are coherent and the test runner
+is called from a <code>bash</code> shell or similar that does the globbing. For example,
+to run all the wallet tests:</p>
+<pre><code>build/test/functional/test_runner.py test/functional/wallet*
+functional/test_runner.py functional/wallet*  # (called from the build/test/ directory)
+test_runner.py wallet*  # (called from the build/test/functional/ directory)
+</code></pre>
+<p>but not</p>
+<pre><code>build/test/functional/test_runner.py wallet*
+</code></pre>
+<p>Combinations of wildcards can be passed:</p>
+<pre><code>build/test/functional/test_runner.py ./test/functional/tool* test/functional/mempool*
+test_runner.py tool* mempool*
+</code></pre>
+<p>Run the regression test suite with:</p>
+<pre><code>build/test/functional/test_runner.py
+</code></pre>
+<p>Run all possible tests with</p>
+<pre><code>build/test/functional/test_runner.py --extended
+</code></pre>
+<p>In order to run backwards compatibility tests, first run:</p>
+<pre><code>test/get_previous_releases.py -b
+</code></pre>
+<p>to download the necessary previous release binaries.</p>
+<p>By default, up to 4 tests will be run in parallel by test_runner. To specify
+how many jobs to run, append <code>--jobs=n</code></p>
+<p>The individual tests and the test_runner harness have many command-line
+options. Run <code>build/test/functional/test_runner.py -h</code> to see them all.</p>
+<h4 id="speed-up-test-runs-with-a-ram-disk"><a class="header" href="#speed-up-test-runs-with-a-ram-disk">Speed up test runs with a RAM disk</a></h4>
+<p>If you have available RAM on your system you can create a RAM disk to use as the <code>cache</code> and <code>tmp</code> directories for the functional tests in order to speed them up.
+Speed-up amount varies on each system (and according to your RAM speed and other variables), but a 2-3x speed-up is not uncommon.</p>
+<p><strong>Linux</strong></p>
+<p>To create a 4 GiB RAM disk at <code>/mnt/tmp/</code>:</p>
+<pre><code class="language-bash">sudo mkdir -p /mnt/tmp
+sudo mount -t tmpfs -o size=4g tmpfs /mnt/tmp/
+</code></pre>
+<p>Configure the size of the RAM disk using the <code>size=</code> option.
+The size of the RAM disk needed is relative to the number of concurrent jobs the test suite runs.
+For example running the test suite with <code>--jobs=100</code> might need a 4 GiB RAM disk, but running with <code>--jobs=32</code> will only need a 2.5 GiB RAM disk.</p>
+<p>To use, run the test suite specifying the RAM disk as the <code>cachedir</code> and <code>tmpdir</code>:</p>
+<pre><code class="language-bash">build/test/functional/test_runner.py --cachedir=/mnt/tmp/cache --tmpdir=/mnt/tmp
+</code></pre>
+<p>Once finished with the tests and the disk, and to free the RAM, simply unmount the disk:</p>
+<pre><code class="language-bash">sudo umount /mnt/tmp
+</code></pre>
+<p><strong>macOS</strong></p>
+<p>To create a 4 GiB RAM disk named "ramdisk" at <code>/Volumes/ramdisk/</code>:</p>
+<pre><code class="language-bash">diskutil erasevolume HFS+ ramdisk $(hdiutil attach -nomount ram://8388608)
+</code></pre>
+<p>Configure the RAM disk size, expressed as the number of blocks, at the end of the command
+(<code>4096 MiB * 2048 blocks/MiB = 8388608 blocks</code> for 4 GiB). To run the tests using the RAM disk:</p>
+<pre><code class="language-bash">build/test/functional/test_runner.py --cachedir=/Volumes/ramdisk/cache --tmpdir=/Volumes/ramdisk/tmp
+</code></pre>
+<p>To unmount:</p>
+<pre><code class="language-bash">umount /Volumes/ramdisk
+</code></pre>
+<h4 id="troubleshooting-and-debugging-test-failures"><a class="header" href="#troubleshooting-and-debugging-test-failures">Troubleshooting and debugging test failures</a></h4>
+<h5 id="resource-contention"><a class="header" href="#resource-contention">Resource contention</a></h5>
+<p>The P2P and RPC ports used by the bitcoind nodes-under-test are chosen to make
+conflicts with other processes unlikely. However, if there is another bitcoind
+process running on the system (perhaps from a previous test which hasn't successfully
+killed all its bitcoind nodes), then there may be a port conflict which will
+cause the test to fail. It is recommended that you run the tests on a system
+where no other bitcoind processes are running.</p>
+<p>On linux, the test framework will warn if there is another
+bitcoind process running when the tests are started.</p>
+<p>If there are zombie bitcoind processes after test failure, you can kill them
+by running the following commands. <strong>Note that these commands will kill all
+bitcoind processes running on the system, so should not be used if any non-test
+bitcoind processes are being run.</strong></p>
+<pre><code class="language-bash">killall bitcoind
+</code></pre>
+<p>or</p>
+<pre><code class="language-bash">pkill -9 bitcoind
+</code></pre>
+<h5 id="data-directory-cache"><a class="header" href="#data-directory-cache">Data directory cache</a></h5>
+<p>A pre-mined blockchain with 200 blocks is generated the first time a
+functional test is run and is stored in build/test/cache. This speeds up
+test startup times since new blockchains don't need to be generated for
+each test. However, the cache may get into a bad state, in which case
+tests will fail. If this happens, remove the cache directory (and make
+sure bitcoind processes are stopped as above):</p>
+<pre><code class="language-bash">rm -rf build/test/cache
+killall bitcoind
+</code></pre>
+<h5 id="test-logging"><a class="header" href="#test-logging">Test logging</a></h5>
+<p>The tests contain logging at five different levels (DEBUG, INFO, WARNING, ERROR
+and CRITICAL). From within your functional tests you can log to these different
+levels using the logger included in the test_framework, e.g.
+<code>self.log.debug(object)</code>. By default:</p>
+<ul>
+<li>when run through the test_runner harness, <em>all</em> logs are written to
+<code>test_framework.log</code> and no logs are output to the console.</li>
+<li>when run directly, <em>all</em> logs are written to <code>test_framework.log</code> and INFO
+level and above are output to the console.</li>
+<li>when run by <a href="/ci/README.html">our CI (Continuous Integration)</a>, no logs are output to the console. However, if a test
+fails, the <code>test_framework.log</code> and bitcoind <code>debug.log</code>s will all be dumped
+to the console to help troubleshooting.</li>
+</ul>
+<p>These log files can be located under the test data directory (which is always
+printed in the first line of test output):</p>
+<ul>
+<li><code>&lt;test data directory&gt;/test_framework.log</code></li>
+<li><code>&lt;test data directory&gt;/node&lt;node number&gt;/regtest/debug.log</code>.</li>
+</ul>
+<p>The node number identifies the relevant test node, starting from <code>node0</code>, which
+corresponds to its position in the nodes list of the specific test,
+e.g. <code>self.nodes[0]</code>.</p>
+<p>To change the level of logs output to the console, use the <code>-l</code> command line
+argument.</p>
+<p><code>test_framework.log</code> and bitcoind <code>debug.log</code>s can be combined into a single
+aggregate log by running the <code>combine_logs.py</code> script. The output can be plain
+text, colorized text or html. For example:</p>
+<pre><code>build/test/functional/combine_logs.py -c &lt;test data directory&gt; | less -r
+</code></pre>
+<p>will pipe the colorized logs from the test into less.</p>
+<p>Use <code>--tracerpc</code> to trace out all the RPC calls and responses to the console. For
+some tests (eg any that use <code>submitblock</code> to submit a full block over RPC),
+this can result in a lot of screen output.</p>
+<p>By default, the test data directory will be deleted after a successful run.
+Use <code>--nocleanup</code> to leave the test data directory intact. The test data
+directory is never deleted after a failed test.</p>
+<h5 id="attaching-a-debugger"><a class="header" href="#attaching-a-debugger">Attaching a debugger</a></h5>
+<p>A python debugger can be attached to tests at any point. Just add the line:</p>
+<pre><code class="language-py">import pdb; pdb.set_trace()
+</code></pre>
+<p>anywhere in the test. You will then be able to inspect variables, as well as
+call methods that interact with the bitcoind nodes-under-test.</p>
+<p>If further introspection of the bitcoind instances themselves becomes
+necessary, this can be accomplished by first setting a pdb breakpoint
+at an appropriate location, running the test to that point, then using
+<code>gdb</code> (or <code>lldb</code> on macOS) to attach to the process and debug.</p>
+<p>For instance, to attach to <code>self.node[1]</code> during a run you can get
+the pid of the node within <code>pdb</code>.</p>
+<pre><code>(pdb) self.node[1].process.pid
+</code></pre>
+<p>Alternatively, you can find the pid by inspecting the temp folder for the specific test
+you are running. The path to that folder is printed at the beginning of every
+test run:</p>
+<pre><code class="language-bash">2017-06-27 14:13:56.686000 TestFramework (INFO): Initializing test directory /tmp/user/1000/testo9vsdjo3
+</code></pre>
+<p>Use the path to find the pid file in the temp folder:</p>
+<pre><code class="language-bash">cat /tmp/user/1000/testo9vsdjo3/node1/regtest/bitcoind.pid
+</code></pre>
+<p>Then you can use the pid to start <code>gdb</code>:</p>
+<pre><code class="language-bash">gdb /home/example/bitcoind &lt;pid&gt;
+</code></pre>
+<p>Note: gdb attach step may require ptrace_scope to be modified, or <code>sudo</code> preceding the <code>gdb</code>.
+See this link for considerations: https://www.kernel.org/doc/Documentation/security/Yama.txt</p>
+<p>Often while debugging RPC calls in functional tests, the test might time out before the
+process can return a response. Use <code>--timeout-factor 0</code> to disable all RPC timeouts for that particular
+functional test. Ex: <code>build/test/functional/wallet_hd.py --timeout-factor 0</code>.</p>
+<h5 id="profiling"><a class="header" href="#profiling">Profiling</a></h5>
+<p>An easy way to profile node performance during functional tests is provided
+for Linux platforms using <code>perf</code>.</p>
+<p>Perf will sample the running node and will generate profile data in the node's
+datadir. The profile data can then be presented using <code>perf report</code> or a graphical
+tool like <a href="https://github.com/KDAB/hotspot">hotspot</a>.</p>
+<p>To generate a profile during test suite runs, use the <code>--perf</code> flag.</p>
+<p>To see render the output to text, run</p>
+<pre><code class="language-sh">perf report -i /path/to/datadir/send-big-msgs.perf.data.xxxx --stdio | c++filt | less
+</code></pre>
+<p>For ways to generate more granular profiles, see the README in
+<a href="/test/functional">test/functional</a>.</p>
+<h3 id="util-tests"><a class="header" href="#util-tests">Util tests</a></h3>
+<p>Util tests can be run locally by running <code>build/test/util/test_runner.py</code>.
+Use the <code>-v</code> option for verbose output.</p>
+<h3 id="lint-tests"><a class="header" href="#lint-tests">Lint tests</a></h3>
+<p>See the README in <a href="/test/lint">test/lint</a>.</p>
+<h1 id="writing-functional-tests"><a class="header" href="#writing-functional-tests">Writing functional tests</a></h1>
+<p>You are encouraged to write functional tests for new or existing features.
+Further information about the functional test framework and individual
+tests is found in <a href="/test/functional">test/functional</a>.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../src/test/util/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../test/functional/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../src/test/util/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../test/functional/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

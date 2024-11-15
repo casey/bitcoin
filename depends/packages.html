@@ -1,0 +1,381 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>packages - Bitcoin Core Developer Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bitcoin Core Developer Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <p>Each recipe consists of 3 main parts: defining identifiers, setting build
+variables, and defining build commands.</p>
+<p>The package "mylib" will be used here as an example</p>
+<p>General tips:</p>
+<ul>
+<li>mylib_foo is written as $(package)_foo in order to make recipes more similar.</li>
+<li>Secondary dependency packages relative to the bitcoin binaries/libraries (i.e.
+those not in <code>ALLOWED_LIBRARIES</code> in <code>contrib/devtools/symbol-check.py</code>) don't
+need to be shared and should be built statically whenever possible. See
+<a href="#secondary-dependencies">below</a> for more details.</li>
+</ul>
+<h2 id="identifiers"><a class="header" href="#identifiers">Identifiers</a></h2>
+<p>Each package is required to define at least these variables:</p>
+<pre><code>$(package)_version:
+Version of the upstream library or program. If there is no version, a
+placeholder such as 1.0 can be used.
+
+$(package)_download_path:
+Location of the upstream source, without the file-name. Usually http, https
+or ftp. Secure transmission options like https should be preferred if
+available.
+
+$(package)_file_name:
+The upstream source filename available at the download path.
+
+$(package)_sha256_hash:
+The sha256 hash of the upstream file
+</code></pre>
+<p>These variables are optional:</p>
+<pre><code>$(package)_build_subdir:
+cd to this dir before running configure/build/stage commands.
+
+$(package)_download_file:
+The file-name of the upstream source if it differs from how it should be
+stored locally. This can be used to avoid storing file-names with strange
+characters.
+
+$(package)_dependencies:
+Names of any other packages that this one depends on.
+
+$(package)_patches:
+Filenames of any patches needed to build the package
+
+$(package)_extra_sources:
+Any extra files that will be fetched via $(package)_fetch_cmds. These are
+specified so that they can be fetched and verified via 'make download'.
+</code></pre>
+<h2 id="build-variables"><a class="header" href="#build-variables">Build Variables:</a></h2>
+<p>After defining the main identifiers, build variables may be added or customized
+before running the build commands. They should be added to a function called
+$(package)_set_vars. For example:</p>
+<pre><code>define $(package)_set_vars
+...
+endef
+</code></pre>
+<p>Most variables can be prefixed with the host, architecture, or both, to make
+the modifications specific to that case. For example:</p>
+<pre><code>Universal:     $(package)_cc=gcc
+Linux only:    $(package)_linux_cc=gcc
+x86_64 only:       $(package)_x86_64_cc = gcc
+x86_64 linux only: $(package)_x86_64_linux_cc = gcc
+</code></pre>
+<p>These variables may be set to override or append their default values.</p>
+<pre><code>$(package)_cc
+$(package)_cxx
+$(package)_objc
+$(package)_objcxx
+$(package)_ar
+$(package)_ranlib
+$(package)_nm
+$(package)_cflags
+$(package)_cxxflags
+$(package)_ldflags
+$(package)_cppflags
+$(package)_config_env
+$(package)_build_env
+$(package)_stage_env
+$(package)_build_opts
+$(package)_config_opts
+</code></pre>
+<p>The *_env variables are used to add environment variables to the respective
+commands.</p>
+<p>Many variables respect a debug/release suffix as well, in order to use them for
+only the appropriate build config. For example:</p>
+<pre><code>$(package)_cflags_release = -O3
+$(package)_cflags_i686_debug = -g
+$(package)_config_opts_release = --disable-debug
+</code></pre>
+<p>These will be used in addition to the options that do not specify
+debug/release. All builds are considered to be release unless DEBUG=1 is set by
+the user. Other variables may be defined as needed.</p>
+<h2 id="build-commands"><a class="header" href="#build-commands">Build commands:</a></h2>
+<p>For each build, a unique build dir and staging dir are created. For example,
+<code>work/build/mylib/1.0-1adac830f6e</code> and <code>work/staging/mylib/1.0-1adac830f6e</code>.</p>
+<p>The following build commands are available for each recipe:</p>
+<pre><code>$(package)_fetch_cmds:
+Runs from: build dir
+Fetch the source file. If undefined, it will be fetched and verified
+against its hash.
+
+$(package)_extract_cmds:
+Runs from: build dir
+Verify the source file against its hash and extract it. If undefined, the
+source is assumed to be a tarball.
+
+$(package)_preprocess_cmds:
+Runs from: build dir/$(package)_build_subdir
+Preprocess the source as necessary. If undefined, does nothing.
+
+$(package)_config_cmds:
+Runs from: build dir/$(package)_build_subdir
+Configure the source. If undefined, does nothing.
+
+$(package)_build_cmds:
+Runs from: build dir/$(package)_build_subdir
+Build the source. If undefined, does nothing.
+
+$(package)_stage_cmds:
+Runs from: build dir/$(package)_build_subdir
+Stage the build results. If undefined, does nothing.
+</code></pre>
+<p>The following variables are available for each recipe:</p>
+<pre><code>$(1)_staging_dir: package's destination sysroot path
+$(1)_staging_prefix_dir: prefix path inside of the package's staging dir
+$(1)_extract_dir: path to the package's extracted sources
+$(1)_build_dir: path where configure/build/stage commands will be run
+$(1)_patch_dir: path where the package's patches (if any) are found
+</code></pre>
+<p>Notes on build commands:</p>
+<p>For packages built with autotools, $($(package)_autoconf) can be used in the
+configure step to (usually) correctly configure automatically. Any
+$($(package)_config_opts) will be appended.</p>
+<p>Most autotools projects can be properly staged using:</p>
+<pre><code>$(MAKE) DESTDIR=$($(package)_staging_dir) install
+</code></pre>
+<h2 id="build-outputs"><a class="header" href="#build-outputs">Build outputs:</a></h2>
+<p>In general, the output of a depends package should not contain any libtool
+archives. Instead, the package should output <code>.pc</code> (<code>pkg-config</code>) files where
+possible.</p>
+<p>From the <a href="https://wiki.gentoo.org/wiki/Project:Quality_Assurance/Handling_Libtool_Archives">Gentoo Wiki entry</a>:</p>
+<blockquote>
+<p>Libtool pulls in all direct and indirect dependencies into the .la files it
+creates. This leads to massive overlinking, which is toxic to the Gentoo
+ecosystem, as it leads to a massive number of unnecessary rebuilds.</p>
+</blockquote>
+<p>Where possible, packages are built with Position Independent Code. Either using
+the Autotools <code>--with-pic</code> flag, or <code>CMAKE_POSITION_INDEPENDENT_CODE</code> with CMake.</p>
+<h2 id="secondary-dependencies"><a class="header" href="#secondary-dependencies">Secondary dependencies:</a></h2>
+<p>Secondary dependency packages relative to the bitcoin binaries/libraries (i.e.
+those not in <code>ALLOWED_LIBRARIES</code> in <code>contrib/devtools/symbol-check.py</code>) don't
+need to be shared and should be built statically whenever possible. This
+improves general build reliability as illustrated by the following example:</p>
+<p>When linking an executable against a shared library <code>libprimary</code> that has its
+own shared dependency <code>libsecondary</code>, we may need to specify the path to
+<code>libsecondary</code> on the link command using the <code>-rpath/-rpath-link</code> options, it is
+not sufficient to just say <code>libprimary</code>.</p>
+<p>For us, it's much easier to just link a static <code>libsecondary</code> into a shared
+<code>libprimary</code>. Especially because in our case, we are linking against a dummy
+<code>libprimary</code> anyway that we'll throw away. We don't care if the end-user has a
+static or dynamic <code>libsecondary</code>, that's not our concern. With a static
+<code>libsecondary</code>, when we need to link <code>libprimary</code> into our executable, there's no
+dependency chain to worry about as <code>libprimary</code> has all the symbols.</p>
+<h2 id="build-targets"><a class="header" href="#build-targets">Build targets:</a></h2>
+<p>To build an individual package (useful for debugging), following build targets are available.</p>
+<pre><code>make ${package}
+make ${package}_fetched
+make ${package}_extracted
+make ${package}_preprocessed
+make ${package}_configured
+make ${package}_built
+make ${package}_staged
+make ${package}_postprocessed
+make ${package}_cached
+make ${package}_cached_checksum
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../depends/description.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../doc/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../depends/description.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../doc/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>qt - Bitcoin Core Developer Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../../highlight.css">
+        <link rel="stylesheet" href="../../tomorrow-night.css">
+        <link rel="stylesheet" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bitcoin Core Developer Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <p>This directory contains the source code for the Bitcoin Core graphical user interface (GUI). It uses the <a href="https://www1.qt.io/developers/">Qt</a> cross-platform framework.</p>
+<p>The current precise version for Qt 5 is specified in <a href="/depends/packages/qt.mk">qt.mk</a>.</p>
+<h2 id="compile-and-run"><a class="header" href="#compile-and-run">Compile and run</a></h2>
+<p>See build instructions: <a href="/doc/build-unix.html">Unix</a>, <a href="/doc/build-osx.html">macOS</a>, <a href="/doc/build-windows-msvc.html">Windows</a>, <a href="/doc/build-freebsd.html">FreeBSD</a>, <a href="/doc/build-netbsd.html">NetBSD</a>, <a href="/doc/build-openbsd.html">OpenBSD</a></p>
+<p>When following your systems build instructions, make sure to install the <code>Qt</code> dependencies.</p>
+<p>To run:</p>
+<pre><code class="language-sh">./build/src/qt/bitcoin-qt
+</code></pre>
+<h2 id="files-and-directories"><a class="header" href="#files-and-directories">Files and Directories</a></h2>
+<h4 id="forms"><a class="header" href="#forms">forms/</a></h4>
+<ul>
+<li>A directory that contains <a href="https://doc.qt.io/qt-5.9/designer-using-a-ui-file.html">Designer UI</a> files. These files specify the characteristics of form elements in XML. Qt UI files can be edited with <a href="#using-qt-creator-as-ide">Qt Creator</a> or using any text editor.</li>
+</ul>
+<h4 id="locale"><a class="header" href="#locale">locale/</a></h4>
+<ul>
+<li>Contains translations. They are periodically updated and an effort is made to support as many languages as possible. The process of contributing translations is described in <a href="/doc/translation_process.html">doc/translation_process.md</a>.</li>
+</ul>
+<h4 id="res"><a class="header" href="#res">res/</a></h4>
+<ul>
+<li>Contains graphical resources used to enhance the UI experience.</li>
+</ul>
+<h4 id="test"><a class="header" href="#test">test/</a></h4>
+<ul>
+<li>Functional tests used to ensure proper functionality of the GUI. Significant changes to the GUI code normally require new or updated tests.</li>
+</ul>
+<h4 id="bitcoinguihcpp"><a class="header" href="#bitcoinguihcpp">bitcoingui.(h/cpp)</a></h4>
+<ul>
+<li>Represents the main window of the Bitcoin UI.</li>
+</ul>
+<h4 id="modelhcpp"><a class="header" href="#modelhcpp">*model.(h/cpp)</a></h4>
+<ul>
+<li>The model. When it has a corresponding controller, it generally inherits from  <a href="https://doc.qt.io/qt-5/qabstracttablemodel.html">QAbstractTableModel</a>. Models that are used by controllers as helpers inherit from other Qt classes like <a href="https://doc.qt.io/qt-5/qvalidator.html">QValidator</a>.</li>
+<li>ClientModel is used by the main application <code>bitcoingui</code> and several models like <code>peertablemodel</code>.</li>
+</ul>
+<h4 id="pagehcpp"><a class="header" href="#pagehcpp">*page.(h/cpp)</a></h4>
+<ul>
+<li>A controller. <code>:NAMEpage.cpp</code> generally includes <code>:NAMEmodel.h</code> and <code>forms/:NAME.page.ui</code> with a similar <code>:NAME</code>.</li>
+</ul>
+<h4 id="dialoghcpp"><a class="header" href="#dialoghcpp">*dialog.(h/cpp)</a></h4>
+<ul>
+<li>Various dialogs, e.g. to open a URL. Inherit from <a href="https://doc.qt.io/qt-5/qdialog.html">QDialog</a>.</li>
+</ul>
+<h4 id="paymentserverhcpp"><a class="header" href="#paymentserverhcpp">paymentserver.(h/cpp)</a></h4>
+<ul>
+<li>(Deprecated) Used to process BIP21 payment URI requests. Also handles URI-based application switching (e.g. when following a bitcoin:... link from a browser).</li>
+</ul>
+<h4 id="walletviewhcpp"><a class="header" href="#walletviewhcpp">walletview.(h/cpp)</a></h4>
+<ul>
+<li>Represents the view to a single wallet.</li>
+</ul>
+<h4 id="other-hcpp-files"><a class="header" href="#other-hcpp-files">Other .h/cpp files</a></h4>
+<ul>
+<li>UI elements like BitcoinAmountField, which inherit from QWidget.</li>
+<li><code>bitcoinstrings.cpp</code>: automatically generated</li>
+<li><code>bitcoinunits.(h/cpp)</code>: BTC / mBTC / etc. handling</li>
+<li><code>callback.h</code></li>
+<li><code>guiconstants.h</code>: UI colors, app name, etc.</li>
+<li><code>guiutil.h</code>: several helper functions</li>
+<li><code>macdockiconhandler.(h/mm)</code>: macOS dock icon handler</li>
+<li><code>macnotificationhandler.(h/mm)</code>: display notifications in macOS</li>
+</ul>
+<h2 id="contribute"><a class="header" href="#contribute">Contribute</a></h2>
+<p>See <a href="/CONTRIBUTING.html">CONTRIBUTING.md</a> for general guidelines.</p>
+<p><strong>Note:</strong> Do not change <code>local/bitcoin_en.ts</code>. It is updated <a href="/doc/translation_process.html#writing-code-with-translations">automatically</a>.</p>
+<h2 id="using-qt-creator-as-an-ide"><a class="header" href="#using-qt-creator-as-an-ide">Using Qt Creator as an IDE</a></h2>
+<p><a href="https://www.qt.io/product/development-tools">Qt Creator</a> is a powerful tool which packages a UI designer tool (Qt Designer) and a C++ IDE into one application. This is especially useful if you want to change the UI layout.</p>
+<h4 id="download-qt-creator"><a class="header" href="#download-qt-creator">Download Qt Creator</a></h4>
+<p>On Unix and macOS, Qt Creator can be installed through your package manager. Alternatively, you can download a binary from the <a href="https://www.qt.io/download/">Qt Website</a>.</p>
+<p><strong>Note:</strong> If installing from a binary grabbed from the Qt Website: During the installation process, uncheck everything except for <code>Qt Creator</code>.</p>
+<h5 id="macos"><a class="header" href="#macos">macOS</a></h5>
+<pre><code class="language-sh">brew install qt-creator
+</code></pre>
+<h5 id="ubuntu--debian"><a class="header" href="#ubuntu--debian">Ubuntu &amp; Debian</a></h5>
+<pre><code class="language-sh">sudo apt-get install qtcreator
+</code></pre>
+<h4 id="setup-qt-creator"><a class="header" href="#setup-qt-creator">Setup Qt Creator</a></h4>
+<ol>
+<li>Make sure you've installed all dependencies specified in your systems build instructions</li>
+<li>Follow the compile instructions for your system, adding the <code>-DCMAKE_BUILD_TYPE=Debug</code> build flag</li>
+<li>Start Qt Creator. At the start page, do: <code>New</code> -&gt; <code>Import Project</code> -&gt; <code>Import Existing Project</code></li>
+<li>Enter <code>bitcoin-qt</code> as the Project Name and enter the absolute path to <code>src/qt</code> as Location</li>
+<li>Check over the file selection, you may need to select the <code>forms</code> directory (necessary if you intend to edit *.ui files)</li>
+<li>Confirm the <code>Summary</code> page</li>
+<li>In the <code>Projects</code> tab, select <code>Manage Kits...</code></li>
+</ol>
+<p><strong>macOS</strong></p>
+<ul>
+<li>Under <code>Kits</code>: select the default "Desktop" kit</li>
+<li>Under <code>Compilers</code>: select <code>"Clang (x86 64bit in /usr/bin)"</code></li>
+<li>Under <code>Debuggers</code>: select <code>"LLDB"</code> as debugger (you might need to set the path to your LLDB installation)</li>
+</ul>
+<p><strong>Ubuntu &amp; Debian</strong></p>
+<p>Note: Some of these options may already be set</p>
+<ul>
+<li>Under <code>Kits</code>: select the default "Desktop" kit</li>
+<li>Under <code>Compilers</code>: select <code>"GCC (x86 64bit in /usr/bin)"</code></li>
+<li>Under <code>Debuggers</code>: select <code>"GDB"</code> as debugger</li>
+</ul>
+<ol start="8">
+<li>While in the <code>Projects</code> tab, ensure that you have the <code>bitcoin-qt</code> executable specified under <code>Run</code></li>
+</ol>
+<ul>
+<li>If the executable is not specified: click <code>"Choose..."</code>, navigate to <code>src/qt</code>, and select <code>bitcoin-qt</code></li>
+</ul>
+<ol start="9">
+<li>You're all set! Start developing, building, and debugging the Bitcoin Core GUI</li>
+</ol>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../src/node/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../../src/test/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../src/node/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../../src/test/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
+
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

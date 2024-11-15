@@ -1,0 +1,528 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>guix - Bitcoin Core Developer Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../../highlight.css">
+        <link rel="stylesheet" href="../../tomorrow-night.css">
+        <link rel="stylesheet" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bitcoin Core Developer Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="bootstrappable-bitcoin-core-builds"><a class="header" href="#bootstrappable-bitcoin-core-builds">Bootstrappable Bitcoin Core Builds</a></h1>
+<p>This directory contains the files necessary to perform bootstrappable Bitcoin
+Core builds.</p>
+<p><a href="https://bootstrappable.org/">Bootstrappability</a> furthers our binary security guarantees by allowing us
+to <em>audit and reproduce</em> our toolchain instead of blindly <em>trusting</em> binary
+downloads.</p>
+<p>We achieve bootstrappability by using Guix as a functional package manager.</p>
+<h1 id="requirements"><a class="header" href="#requirements">Requirements</a></h1>
+<p>Conservatively, you will need:</p>
+<ul>
+<li>16GB of free disk space on the partition that /gnu/store will reside in</li>
+<li>8GB of free disk space <strong>per platform triple</strong> you're planning on building
+(see the <code>HOSTS</code> <a href="#recognized-environment-variables">environment variable description</a>)</li>
+</ul>
+<h1 id="installation-and-setup"><a class="header" href="#installation-and-setup">Installation and Setup</a></h1>
+<p>If you don't have Guix installed and set up, please follow the instructions in
+<a href="./INSTALL.html">INSTALL.md</a></p>
+<h1 id="usage"><a class="header" href="#usage">Usage</a></h1>
+<p>If you haven't considered your security model yet, please read <a href="#choosing-your-security-model">the relevant
+section</a> before proceeding to perform a build.</p>
+<h2 id="making-the-xcode-sdk-available-for-macos-cross-compilation"><a class="header" href="#making-the-xcode-sdk-available-for-macos-cross-compilation">Making the Xcode SDK available for macOS cross-compilation</a></h2>
+<p>In order to perform a build for macOS (which is included in the default set of
+platform triples to build), you'll need to extract the macOS SDK tarball using
+tools found in the <a href="../macdeploy/README.html"><code>macdeploy</code> directory</a>.</p>
+<p>You can then either point to the SDK using the <code>SDK_PATH</code> environment variable:</p>
+<pre><code class="language-sh"># Extract the SDK tarball to /path/to/parent/dir/of/extracted/SDK/Xcode-&lt;foo&gt;-&lt;bar&gt;-extracted-SDK-with-libcxx-headers
+tar -C /path/to/parent/dir/of/extracted/SDK -xaf /path/to/Xcode-&lt;foo&gt;-&lt;bar&gt;-extracted-SDK-with-libcxx-headers.tar.gz
+
+# Indicate where to locate the SDK tarball
+export SDK_PATH=/path/to/parent/dir/of/extracted/SDK
+</code></pre>
+<p>or extract it into <code>depends/SDKs</code>:</p>
+<pre><code class="language-sh">mkdir -p depends/SDKs
+tar -C depends/SDKs -xaf /path/to/SDK/tarball
+</code></pre>
+<h2 id="building"><a class="header" href="#building">Building</a></h2>
+<p><em>The author highly recommends at least reading over the <a href="#common-guix-build-invocation-patterns-and-examples">common usage patterns
+and examples</a> section below
+before starting a build. For a full list of customization options, see the
+<a href="#recognized-environment-variables">recognized environment variables</a> section.</em></p>
+<p>To build Bitcoin Core reproducibly with all default options, invoke the
+following from the top of a clean repository:</p>
+<pre><code class="language-sh">./contrib/guix/guix-build
+</code></pre>
+<h2 id="codesigning-build-outputs"><a class="header" href="#codesigning-build-outputs">Codesigning build outputs</a></h2>
+<p>The <code>guix-codesign</code> command attaches codesignatures (produced by codesigners) to
+existing non-codesigned outputs. Please see the <a href="/doc/release-process.html">release process
+documentation</a> for more context.</p>
+<p>It respects many of the same environment variable flags as <code>guix-build</code>, with 2
+crucial differences:</p>
+<ol>
+<li>Since only Windows and macOS build outputs require codesigning, the <code>HOSTS</code>
+environment variable will have a sane default value of <code>x86_64-w64-mingw32 x86_64-apple-darwin arm64-apple-darwin</code> instead of all the platforms.</li>
+<li>The <code>guix-codesign</code> command <em><strong>requires</strong></em> a <code>DETACHED_SIGS_REPO</code> flag.
+<ul>
+<li>
+<p><em><strong>DETACHED_SIGS_REPO</strong></em></p>
+<p>Set the directory where detached codesignatures can be found for the current
+Bitcoin Core version being built.</p>
+<p><em>REQUIRED environment variable</em></p>
+</li>
+</ul>
+</li>
+</ol>
+<p>An invocation with all default options would look like:</p>
+<pre><code>env DETACHED_SIGS_REPO=&lt;path/to/bitcoin-detached-sigs&gt; ./contrib/guix/guix-codesign
+</code></pre>
+<h2 id="cleaning-intermediate-work-directories"><a class="header" href="#cleaning-intermediate-work-directories">Cleaning intermediate work directories</a></h2>
+<p>By default, <code>guix-build</code> leaves all intermediate files or "work directories"
+(e.g. <code>depends/work</code>, <code>guix-build-*/distsrc-*</code>) intact at the end of a build so
+that they are available to the user (to aid in debugging, etc.). However, these
+directories usually take up a large amount of disk space. Therefore, a
+<code>guix-clean</code> convenience script is provided which cleans the current <code>git</code>
+worktree to save disk space:</p>
+<pre><code>./contrib/guix/guix-clean
+</code></pre>
+<h2 id="attesting-to-build-outputs"><a class="header" href="#attesting-to-build-outputs">Attesting to build outputs</a></h2>
+<p>Much like how Gitian build outputs are attested to in a <code>gitian.sigs</code>
+repository, Guix build outputs are attested to in the <a href="https://github.com/bitcoin-core/guix.sigs"><code>guix.sigs</code>
+repository</a>.</p>
+<p>After you've cloned the <code>guix.sigs</code> repository, to attest to the current
+worktree's commit/tag:</p>
+<pre><code>env GUIX_SIGS_REPO=&lt;path/to/guix.sigs&gt; SIGNER=&lt;gpg-key-name&gt; ./contrib/guix/guix-attest
+</code></pre>
+<p>See <code>./contrib/guix/guix-attest --help</code> for more information on the various ways
+<code>guix-attest</code> can be invoked.</p>
+<h2 id="verifying-build-output-attestations"><a class="header" href="#verifying-build-output-attestations">Verifying build output attestations</a></h2>
+<p>After at least one other signer has uploaded their signatures to the <code>guix.sigs</code>
+repository:</p>
+<pre><code>git -C &lt;path/to/guix.sigs&gt; pull
+env GUIX_SIGS_REPO=&lt;path/to/guix.sigs&gt; ./contrib/guix/guix-verify
+</code></pre>
+<h2 id="common-guix-build-invocation-patterns-and-examples"><a class="header" href="#common-guix-build-invocation-patterns-and-examples">Common <code>guix-build</code> invocation patterns and examples</a></h2>
+<h3 id="keeping-caches-and-sdks-outside-of-the-worktree"><a class="header" href="#keeping-caches-and-sdks-outside-of-the-worktree">Keeping caches and SDKs outside of the worktree</a></h3>
+<p>If you perform a lot of builds and have a bunch of worktrees, you may find it
+more efficient to keep the depends tree's download cache, build cache, and SDKs
+outside of the worktrees to avoid duplicate downloads and unnecessary builds. To
+help with this situation, the <code>guix-build</code> script honours the <code>SOURCES_PATH</code>,
+<code>BASE_CACHE</code>, and <code>SDK_PATH</code> environment variables and will pass them on to the
+depends tree so that you can do something like:</p>
+<pre><code class="language-sh">env SOURCES_PATH="$HOME/depends-SOURCES_PATH" BASE_CACHE="$HOME/depends-BASE_CACHE" SDK_PATH="$HOME/macOS-SDKs" ./contrib/guix/guix-build
+</code></pre>
+<p>Note that the paths that these environment variables point to <strong>must be
+directories</strong>, and <strong>NOT symlinks to directories</strong>.</p>
+<p>See the <a href="#recognized-environment-variables">recognized environment variables</a> section for more
+details.</p>
+<h3 id="building-a-subset-of-platform-triples"><a class="header" href="#building-a-subset-of-platform-triples">Building a subset of platform triples</a></h3>
+<p>Sometimes you only want to build a subset of the supported platform triples, in
+which case you can override the default list by setting the space-separated
+<code>HOSTS</code> environment variable:</p>
+<pre><code class="language-sh">env HOSTS='x86_64-w64-mingw32 x86_64-apple-darwin' ./contrib/guix/guix-build
+</code></pre>
+<p>See the <a href="#recognized-environment-variables">recognized environment variables</a> section for more
+details.</p>
+<h3 id="controlling-the-number-of-threads-used-by-guix-build-commands"><a class="header" href="#controlling-the-number-of-threads-used-by-guix-build-commands">Controlling the number of threads used by <code>guix</code> build commands</a></h3>
+<p>Depending on your system's RAM capacity, you may want to decrease the number of
+threads used to decrease RAM usage or vice versa.</p>
+<p>By default, the scripts under <code>./contrib/guix</code> will invoke all <code>guix</code> build
+commands with <code>--cores="$JOBS"</code>. Note that <code>$JOBS</code> defaults to <code>$(nproc)</code> if not
+specified. However, astute manual readers will also notice that <code>guix</code> build
+commands also accept a <code>--max-jobs=</code> flag (which defaults to 1 if unspecified).</p>
+<p>Here is the difference between <code>--cores=</code> and <code>--max-jobs=</code>:</p>
+<blockquote>
+<p>Note: When I say "derivation," think "package"</p>
+</blockquote>
+<p><code>--cores=</code></p>
+<ul>
+<li>controls the number of CPU cores to build each derivation. This is the value
+passed to <code>make</code>'s <code>--jobs=</code> flag.</li>
+</ul>
+<p><code>--max-jobs=</code></p>
+<ul>
+<li>controls how many derivations can be built in parallel</li>
+<li>defaults to 1</li>
+</ul>
+<p>Therefore, the default is for <code>guix</code> build commands to build one derivation at a
+time, utilizing <code>$JOBS</code> threads.</p>
+<p>Specifying the <code>$JOBS</code> environment variable will only modify <code>--cores=</code>, but you
+can also modify the value for <code>--max-jobs=</code> by specifying
+<code>$ADDITIONAL_GUIX_COMMON_FLAGS</code>. For example, if you have a LOT of memory, you
+may want to set:</p>
+<pre><code class="language-sh">export ADDITIONAL_GUIX_COMMON_FLAGS='--max-jobs=8'
+</code></pre>
+<p>Which allows for a maximum of 8 derivations to be built at the same time, each
+utilizing <code>$JOBS</code> threads.</p>
+<p>Or, if you'd like to avoid spurious build failures caused by issues with
+parallelism within a single package, but would still like to build multiple
+packages when the dependency graph allows for it, you may want to try:</p>
+<pre><code class="language-sh">export JOBS=1 ADDITIONAL_GUIX_COMMON_FLAGS='--max-jobs=8'
+</code></pre>
+<p>See the <a href="#recognized-environment-variables">recognized environment variables</a> section for more
+details.</p>
+<h2 id="recognized-environment-variables"><a class="header" href="#recognized-environment-variables">Recognized environment variables</a></h2>
+<ul>
+<li>
+<p><em><strong>HOSTS</strong></em></p>
+<p>Override the space-separated list of platform triples for which to perform a
+bootstrappable build.</p>
+<p><em>(defaults to "x86_64-linux-gnu arm-linux-gnueabihf aarch64-linux-gnu
+riscv64-linux-gnu powerpc64-linux-gnu powerpc64le-linux-gnu
+x86_64-w64-mingw32 x86_64-apple-darwin arm64-apple-darwin")</em></p>
+</li>
+<li>
+<p><em><strong>SOURCES_PATH</strong></em></p>
+<p>Set the depends tree download cache for sources. This is passed through to the
+depends tree. Setting this to the same directory across multiple builds of the
+depends tree can eliminate unnecessary redownloading of package sources.</p>
+<p>The path that this environment variable points to <strong>must be a directory</strong>, and
+<strong>NOT a symlink to a directory</strong>.</p>
+</li>
+<li>
+<p><em><strong>BASE_CACHE</strong></em></p>
+<p>Set the depends tree cache for built packages. This is passed through to the
+depends tree. Setting this to the same directory across multiple builds of the
+depends tree can eliminate unnecessary building of packages.</p>
+<p>The path that this environment variable points to <strong>must be a directory</strong>, and
+<strong>NOT a symlink to a directory</strong>.</p>
+</li>
+<li>
+<p><em><strong>SDK_PATH</strong></em></p>
+<p>Set the path where <em>extracted</em> SDKs can be found. This is passed through to
+the depends tree. Note that this is should be set to the <em>parent</em> directory of
+the actual SDK (e.g. <code>SDK_PATH=$HOME/Downloads/macOS-SDKs</code> instead of
+<code>$HOME/Downloads/macOS-SDKs/Xcode-12.2-12B45b-extracted-SDK-with-libcxx-headers</code>).</p>
+<p>The path that this environment variable points to <strong>must be a directory</strong>, and
+<strong>NOT a symlink to a directory</strong>.</p>
+</li>
+<li>
+<p><em><strong>JOBS</strong></em></p>
+<p>Override the number of jobs to run simultaneously, you might want to do so on
+a memory-limited machine. This may be passed to:</p>
+<ul>
+<li><code>guix</code> build commands as in <code>guix shell --cores="$JOBS"</code></li>
+<li><code>make</code> as in <code>make --jobs="$JOBS"</code></li>
+<li><code>cmake</code> as in <code>cmake --build build -j "$JOBS"</code></li>
+<li><code>xargs</code> as in <code>xargs -P"$JOBS"</code></li>
+</ul>
+<p>See <a href="#controlling-the-number-of-threads-used-by-guix-build-commands">here</a> for
+more details.</p>
+<p><em>(defaults to the value of <code>nproc</code> outside the container)</em></p>
+</li>
+<li>
+<p><em><strong>SOURCE_DATE_EPOCH</strong></em></p>
+<p>Override the reference UNIX timestamp used for bit-for-bit reproducibility,
+the variable name conforms to <a href="https://reproducible-builds.org/docs/source-date-epoch/">standard</a>.</p>
+<p><em>(defaults to the output of <code>$(git log --format=%at -1)</code>)</em></p>
+</li>
+<li>
+<p><em><strong>V</strong></em></p>
+<p>If non-empty, will pass <code>V=1</code> to all <code>make</code> invocations, making <code>make</code> output
+verbose.</p>
+<p>Note that any given value is ignored. The variable is only checked for
+emptiness. More concretely, this means that <code>V=</code> (setting <code>V</code> to the empty
+string) is interpreted the same way as not setting <code>V</code> at all, and that <code>V=0</code>
+has the same effect as <code>V=1</code>.</p>
+</li>
+<li>
+<p><em><strong>SUBSTITUTE_URLS</strong></em></p>
+<p>A whitespace-delimited list of URLs from which to download pre-built packages.
+A URL is only used if its signing key is authorized (refer to the <a href="#option-1-building-with-substitutes">substitute
+servers section</a> for more details).</p>
+</li>
+<li>
+<p><em><strong>ADDITIONAL_GUIX_COMMON_FLAGS</strong></em></p>
+<p>Additional flags to be passed to all <code>guix</code> commands.</p>
+</li>
+<li>
+<p><em><strong>ADDITIONAL_GUIX_TIMEMACHINE_FLAGS</strong></em></p>
+<p>Additional flags to be passed to <code>guix time-machine</code>.</p>
+</li>
+<li>
+<p><em><strong>ADDITIONAL_GUIX_ENVIRONMENT_FLAGS</strong></em></p>
+<p>Additional flags to be passed to the invocation of <code>guix shell</code> inside
+<code>guix time-machine</code>.</p>
+</li>
+</ul>
+<h1 id="choosing-your-security-model"><a class="header" href="#choosing-your-security-model">Choosing your security model</a></h1>
+<p>No matter how you installed Guix, you need to decide on your security model for
+building packages with Guix.</p>
+<p>Guix allows us to achieve better binary security by using our CPU time to build
+everything from scratch. However, it doesn't sacrifice user choice in pursuit of
+this: users can decide whether or not to use <strong>substitutes</strong> (pre-built
+packages).</p>
+<h2 id="option-1-building-with-substitutes"><a class="header" href="#option-1-building-with-substitutes">Option 1: Building with substitutes</a></h2>
+<h3 id="step-1-authorize-the-signing-keys"><a class="header" href="#step-1-authorize-the-signing-keys">Step 1: Authorize the signing keys</a></h3>
+<p>Depending on the installation procedure you followed, you may have already
+authorized the Guix build farm key. In particular, the official shell installer
+script asks you if you want the key installed, and the debian distribution
+package authorized the key during installation.</p>
+<p>You can check the current list of authorized keys at <code>/etc/guix/acl</code>.</p>
+<p>At the time of writing, a <code>/etc/guix/acl</code> with just the Guix build farm key
+authorized looks something like:</p>
+<pre><code class="language-lisp">(acl
+ (entry
+  (public-key
+   (ecc
+    (curve Ed25519)
+    (q #8D156F295D24B0D9A86FA5741A840FF2D24F60F7B6C4134814AD55625971B394#)
+    )
+   )
+  (tag
+   (guix import)
+   )
+  )
+ )
+</code></pre>
+<p>If you've determined that the official Guix build farm key hasn't been
+authorized, and you would like to authorize it, run the following as root:</p>
+<pre><code>guix archive --authorize &lt; /var/guix/profiles/per-user/root/current-guix/share/guix/ci.guix.gnu.org.pub
+</code></pre>
+<p>If
+<code>/var/guix/profiles/per-user/root/current-guix/share/guix/ci.guix.gnu.org.pub</code>
+doesn't exist, try:</p>
+<pre><code class="language-sh">guix archive --authorize &lt; &lt;PREFIX&gt;/share/guix/ci.guix.gnu.org.pub
+</code></pre>
+<p>Where <code>&lt;PREFIX&gt;</code> is likely:</p>
+<ul>
+<li><code>/usr</code> if you installed from a distribution package</li>
+<li><code>/usr/local</code> if you installed Guix from source and didn't supply any
+prefix-modifying flags to Guix's <code>./configure</code></li>
+</ul>
+<p>For dongcarl's substitute server at https://guix.carldong.io, run as root:</p>
+<pre><code class="language-sh">wget -qO- 'https://guix.carldong.io/signing-key.pub' | guix archive --authorize
+</code></pre>
+<h4 id="removing-authorized-keys"><a class="header" href="#removing-authorized-keys">Removing authorized keys</a></h4>
+<p>To remove previously authorized keys, simply edit <code>/etc/guix/acl</code> and remove the
+<code>(entry (public-key ...))</code> entry.</p>
+<h3 id="step-2-specify-the-substitute-servers"><a class="header" href="#step-2-specify-the-substitute-servers">Step 2: Specify the substitute servers</a></h3>
+<p>Once its key is authorized, the official Guix build farm at
+https://ci.guix.gnu.org is automatically used unless the <code>--no-substitutes</code> flag
+is supplied. This default list of substitute servers is overridable both on a
+<code>guix-daemon</code> level and when you invoke <code>guix</code> commands. See examples below for
+the various ways of adding dongcarl's substitute server after having <a href="#step-1-authorize-the-signing-keys">authorized
+his signing key</a>.</p>
+<p>Change the <strong>default list</strong> of substitute servers by starting <code>guix-daemon</code> with
+the <code>--substitute-urls</code> option (you will likely need to edit your init script):</p>
+<pre><code class="language-sh">guix-daemon &lt;cmd&gt; --substitute-urls='https://guix.carldong.io https://ci.guix.gnu.org'
+</code></pre>
+<p>Override the default list of substitute servers by passing the
+<code>--substitute-urls</code> option for invocations of <code>guix</code> commands:</p>
+<pre><code class="language-sh">guix &lt;cmd&gt; --substitute-urls='https://guix.carldong.io https://ci.guix.gnu.org'
+</code></pre>
+<p>For scripts under <code>./contrib/guix</code>, set the <code>SUBSTITUTE_URLS</code> environment
+variable:</p>
+<pre><code class="language-sh">export SUBSTITUTE_URLS='https://guix.carldong.io https://ci.guix.gnu.org'
+</code></pre>
+<h2 id="option-2-disabling-substitutes-on-an-ad-hoc-basis"><a class="header" href="#option-2-disabling-substitutes-on-an-ad-hoc-basis">Option 2: Disabling substitutes on an ad-hoc basis</a></h2>
+<p>If you prefer not to use any substitutes, make sure to supply <code>--no-substitutes</code>
+like in the following snippet. The first build will take a while, but the
+resulting packages will be cached for future builds.</p>
+<p>For direct invocations of <code>guix</code>:</p>
+<pre><code class="language-sh">guix &lt;cmd&gt; --no-substitutes
+</code></pre>
+<p>For the scripts under <code>./contrib/guix/</code>:</p>
+<pre><code class="language-sh">export ADDITIONAL_GUIX_COMMON_FLAGS='--no-substitutes'
+</code></pre>
+<h2 id="option-3-disabling-substitutes-by-default"><a class="header" href="#option-3-disabling-substitutes-by-default">Option 3: Disabling substitutes by default</a></h2>
+<p><code>guix-daemon</code> accepts a <code>--no-substitutes</code> flag, which will make sure that,
+unless otherwise overridden by a command line invocation, no substitutes will be
+used.</p>
+<p>If you start <code>guix-daemon</code> using an init script, you can edit said script to
+supply this flag.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../contrib/devtools/bitcoin-tidy/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../../contrib/guix/INSTALL.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../contrib/devtools/bitcoin-tidy/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../../contrib/guix/INSTALL.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
+
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

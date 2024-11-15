@@ -1,0 +1,327 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>libraries - Bitcoin Core Developer Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../../highlight.css">
+        <link rel="stylesheet" href="../../tomorrow-night.css">
+        <link rel="stylesheet" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bitcoin Core Developer Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="libraries"><a class="header" href="#libraries">Libraries</a></h1>
+<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Description</th></tr></thead><tbody>
+<tr><td><em>libbitcoin_cli</em></td><td>RPC client functionality used by <em>bitcoin-cli</em> executable</td></tr>
+<tr><td><em>libbitcoin_common</em></td><td>Home for common functionality shared by different executables and libraries. Similar to <em>libbitcoin_util</em>, but higher-level (see <a href="#dependencies">Dependencies</a>).</td></tr>
+<tr><td><em>libbitcoin_consensus</em></td><td>Consensus functionality used by <em>libbitcoin_node</em> and <em>libbitcoin_wallet</em>.</td></tr>
+<tr><td><em>libbitcoin_crypto</em></td><td>Hardware-optimized functions for data encryption, hashing, message authentication, and key derivation.</td></tr>
+<tr><td><em>libbitcoin_kernel</em></td><td>Consensus engine and support library used for validation by <em>libbitcoin_node</em>.</td></tr>
+<tr><td><em>libbitcoinqt</em></td><td>GUI functionality used by <em>bitcoin-qt</em> and <em>bitcoin-gui</em> executables.</td></tr>
+<tr><td><em>libbitcoin_ipc</em></td><td>IPC functionality used by <em>bitcoin-node</em>, <em>bitcoin-wallet</em>, <em>bitcoin-gui</em> executables to communicate when <a href="multiprocess.html"><code>-DWITH_MULTIPROCESS=ON</code></a> is used.</td></tr>
+<tr><td><em>libbitcoin_node</em></td><td>P2P and RPC server functionality used by <em>bitcoind</em> and <em>bitcoin-qt</em> executables.</td></tr>
+<tr><td><em>libbitcoin_util</em></td><td>Home for common functionality shared by different executables and libraries. Similar to <em>libbitcoin_common</em>, but lower-level (see <a href="#dependencies">Dependencies</a>).</td></tr>
+<tr><td><em>libbitcoin_wallet</em></td><td>Wallet functionality used by <em>bitcoind</em> and <em>bitcoin-wallet</em> executables.</td></tr>
+<tr><td><em>libbitcoin_wallet_tool</em></td><td>Lower-level wallet functionality used by <em>bitcoin-wallet</em> executable.</td></tr>
+<tr><td><em>libbitcoin_zmq</em></td><td><a href="../zmq.html">ZeroMQ</a> functionality used by <em>bitcoind</em> and <em>bitcoin-qt</em> executables.</td></tr>
+</tbody></table>
+</div>
+<h2 id="conventions"><a class="header" href="#conventions">Conventions</a></h2>
+<ul>
+<li>
+<p>Most libraries are internal libraries and have APIs which are completely unstable! There are few or no restrictions on backwards compatibility or rules about external dependencies. An exception is <em>libbitcoin_kernel</em>, which, at some future point, will have a documented external interface.</p>
+</li>
+<li>
+<p>Generally each library should have a corresponding source directory and namespace. Source code organization is a work in progress, so it is true that some namespaces are applied inconsistently, and if you look at <a href="../../src/CMakeLists.txt"><code>add_library(bitcoin_* ...)</code></a> lists you can see that many libraries pull in files from outside their source directory. But when working with libraries, it is good to follow a consistent pattern like:</p>
+<ul>
+<li><em>libbitcoin_node</em> code lives in <code>src/node/</code> in the <code>node::</code> namespace</li>
+<li><em>libbitcoin_wallet</em> code lives in <code>src/wallet/</code> in the <code>wallet::</code> namespace</li>
+<li><em>libbitcoin_ipc</em> code lives in <code>src/ipc/</code> in the <code>ipc::</code> namespace</li>
+<li><em>libbitcoin_util</em> code lives in <code>src/util/</code> in the <code>util::</code> namespace</li>
+<li><em>libbitcoin_consensus</em> code lives in <code>src/consensus/</code> in the <code>Consensus::</code> namespace</li>
+</ul>
+</li>
+</ul>
+<h2 id="dependencies"><a class="header" href="#dependencies">Dependencies</a></h2>
+<ul>
+<li>Libraries should minimize what other libraries they depend on, and only reference symbols following the arrows shown in the dependency graph below:</li>
+</ul>
+<table><tr><td>
+<pre><code class="language-mermaid">
+%%{ init : { "flowchart" : { "curve" : "basis" }}}%%
+
+graph TD;
+
+bitcoin-cli[bitcoin-cli]--&gt;libbitcoin_cli;
+
+bitcoind[bitcoind]--&gt;libbitcoin_node;
+bitcoind[bitcoind]--&gt;libbitcoin_wallet;
+
+bitcoin-qt[bitcoin-qt]--&gt;libbitcoin_node;
+bitcoin-qt[bitcoin-qt]--&gt;libbitcoinqt;
+bitcoin-qt[bitcoin-qt]--&gt;libbitcoin_wallet;
+
+bitcoin-wallet[bitcoin-wallet]--&gt;libbitcoin_wallet;
+bitcoin-wallet[bitcoin-wallet]--&gt;libbitcoin_wallet_tool;
+
+libbitcoin_cli--&gt;libbitcoin_util;
+libbitcoin_cli--&gt;libbitcoin_common;
+
+libbitcoin_consensus--&gt;libbitcoin_crypto;
+
+libbitcoin_common--&gt;libbitcoin_consensus;
+libbitcoin_common--&gt;libbitcoin_crypto;
+libbitcoin_common--&gt;libbitcoin_util;
+
+libbitcoin_kernel--&gt;libbitcoin_consensus;
+libbitcoin_kernel--&gt;libbitcoin_crypto;
+libbitcoin_kernel--&gt;libbitcoin_util;
+
+libbitcoin_node--&gt;libbitcoin_consensus;
+libbitcoin_node--&gt;libbitcoin_crypto;
+libbitcoin_node--&gt;libbitcoin_kernel;
+libbitcoin_node--&gt;libbitcoin_common;
+libbitcoin_node--&gt;libbitcoin_util;
+
+libbitcoinqt--&gt;libbitcoin_common;
+libbitcoinqt--&gt;libbitcoin_util;
+
+libbitcoin_util--&gt;libbitcoin_crypto;
+
+libbitcoin_wallet--&gt;libbitcoin_common;
+libbitcoin_wallet--&gt;libbitcoin_crypto;
+libbitcoin_wallet--&gt;libbitcoin_util;
+
+libbitcoin_wallet_tool--&gt;libbitcoin_wallet;
+libbitcoin_wallet_tool--&gt;libbitcoin_util;
+
+classDef bold stroke-width:2px, font-weight:bold, font-size: smaller;
+class bitcoin-qt,bitcoind,bitcoin-cli,bitcoin-wallet bold
+</code></pre>
+</td></tr><tr><td>
+<p><strong>Dependency graph</strong>. Arrows show linker symbol dependencies. <em>Crypto</em> lib depends on nothing. <em>Util</em> lib is depended on by everything. <em>Kernel</em> lib depends only on consensus, crypto, and util.</p>
+</td></tr></table>
+<ul>
+<li>
+<p>The graph shows what <em>linker symbols</em> (functions and variables) from each library other libraries can call and reference directly, but it is not a call graph. For example, there is no arrow connecting <em>libbitcoin_wallet</em> and <em>libbitcoin_node</em> libraries, because these libraries are intended to be modular and not depend on each other's internal implementation details. But wallet code is still able to call node code indirectly through the <code>interfaces::Chain</code> abstract class in <a href="../../src/interfaces/chain.h"><code>interfaces/chain.h</code></a> and node code calls wallet code through the <code>interfaces::ChainClient</code> and <code>interfaces::Chain::Notifications</code> abstract classes in the same file. In general, defining abstract classes in <a href="../../src/interfaces/"><code>src/interfaces/</code></a> can be a convenient way of avoiding unwanted direct dependencies or circular dependencies between libraries.</p>
+</li>
+<li>
+<p><em>libbitcoin_crypto</em> should be a standalone dependency that any library can depend on, and it should not depend on any other libraries itself.</p>
+</li>
+<li>
+<p><em>libbitcoin_consensus</em> should only depend on <em>libbitcoin_crypto</em>, and all other libraries besides <em>libbitcoin_crypto</em> should be allowed to depend on it.</p>
+</li>
+<li>
+<p><em>libbitcoin_util</em> should be a standalone dependency that any library can depend on, and it should not depend on other libraries except <em>libbitcoin_crypto</em>. It provides basic utilities that fill in gaps in the C++ standard library and provide lightweight abstractions over platform-specific features. Since the util library is distributed with the kernel and is usable by kernel applications, it shouldn't contain functions that external code shouldn't call, like higher level code targeted at the node or wallet. (<em>libbitcoin_common</em> is a better place for higher level code, or code that is meant to be used by internal applications only.)</p>
+</li>
+<li>
+<p><em>libbitcoin_common</em> is a home for miscellaneous shared code used by different Bitcoin Core applications. It should not depend on anything other than <em>libbitcoin_util</em>, <em>libbitcoin_consensus</em>, and <em>libbitcoin_crypto</em>.</p>
+</li>
+<li>
+<p><em>libbitcoin_kernel</em> should only depend on <em>libbitcoin_util</em>, <em>libbitcoin_consensus</em>, and <em>libbitcoin_crypto</em>.</p>
+</li>
+<li>
+<p>The only thing that should depend on <em>libbitcoin_kernel</em> internally should be <em>libbitcoin_node</em>. GUI and wallet libraries <em>libbitcoinqt</em> and <em>libbitcoin_wallet</em> in particular should not depend on <em>libbitcoin_kernel</em> and the unneeded functionality it would pull in, like block validation. To the extent that GUI and wallet code need scripting and signing functionality, they should be get able it from <em>libbitcoin_consensus</em>, <em>libbitcoin_common</em>, <em>libbitcoin_crypto</em>, and <em>libbitcoin_util</em>, instead of <em>libbitcoin_kernel</em>.</p>
+</li>
+<li>
+<p>GUI, node, and wallet code internal implementations should all be independent of each other, and the <em>libbitcoinqt</em>, <em>libbitcoin_node</em>, <em>libbitcoin_wallet</em> libraries should never reference each other's symbols. They should only call each other through <a href="../../src/interfaces/"><code>src/interfaces/</code></a> abstract interfaces.</p>
+</li>
+</ul>
+<h2 id="work-in-progress"><a class="header" href="#work-in-progress">Work in progress</a></h2>
+<ul>
+<li>Validation code is moving from <em>libbitcoin_node</em> to <em>libbitcoin_kernel</em> as part of <a href="https://github.com/bitcoin/bitcoin/issues/27587">The libbitcoinkernel Project #27587</a></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../doc/design/assumeutxo.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../../doc/design/multiprocess.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../doc/design/assumeutxo.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../../doc/design/multiprocess.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
+
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

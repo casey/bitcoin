@@ -1,0 +1,310 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>init - Bitcoin Core Developer Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bitcoin Core Developer Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="sample-init-scripts-and-service-configuration-for-bitcoind"><a class="header" href="#sample-init-scripts-and-service-configuration-for-bitcoind">Sample init scripts and service configuration for bitcoind</a></h1>
+<p>Sample scripts and configuration files for systemd, Upstart and OpenRC
+can be found in the contrib/init folder.</p>
+<pre><code>contrib/init/bitcoind.service:    systemd service unit configuration
+contrib/init/bitcoind.openrc:     OpenRC compatible SysV style init script
+contrib/init/bitcoind.openrcconf: OpenRC conf.d file
+contrib/init/bitcoind.conf:       Upstart service configuration file
+contrib/init/bitcoind.init:       CentOS compatible SysV style init script
+</code></pre>
+<h2 id="service-user"><a class="header" href="#service-user">Service User</a></h2>
+<p>All three Linux startup configurations assume the existence of a "bitcoin" user
+and group.  They must be created before attempting to use these scripts.
+The macOS configuration assumes bitcoind will be set up for the current user.</p>
+<h2 id="configuration"><a class="header" href="#configuration">Configuration</a></h2>
+<p>Running bitcoind as a daemon does not require any manual configuration. You may
+set the <code>rpcauth</code> setting in the <code>bitcoin.conf</code> configuration file to override
+the default behaviour of using a special cookie for authentication.</p>
+<p>This password does not have to be remembered or typed as it is mostly used
+as a fixed token that bitcoind and client programs read from the configuration
+file, however it is recommended that a strong and secure password be used
+as this password is security critical to securing the wallet should the
+wallet be enabled.</p>
+<p>If bitcoind is run with the "-server" flag (set by default), and no rpcpassword is set,
+it will use a special cookie file for authentication. The cookie is generated with random
+content when the daemon starts, and deleted when it exits. Read access to this file
+controls who can access it through RPC.</p>
+<p>By default the cookie is stored in the data directory, but its location can be
+overridden with the option <code>-rpccookiefile</code>. Default file permissions for the
+cookie are "owner" (i.e. user read/writeable) via default application-wide file
+umask of <code>0077</code>, but these can be overridden with the <code>-rpccookieperms</code> option.</p>
+<p>This allows for running bitcoind without having to do any manual configuration.</p>
+<p><code>conf</code>, <code>pid</code>, and <code>wallet</code> accept relative paths which are interpreted as
+relative to the data directory. <code>wallet</code> <em>only</em> supports relative paths.</p>
+<p>To generate an example configuration file that describes the configuration settings,
+see <a href="../contrib/devtools/README.html#gen-bitcoin-confsh">contrib/devtools/README.md</a>.</p>
+<h2 id="paths"><a class="header" href="#paths">Paths</a></h2>
+<h3 id="linux"><a class="header" href="#linux">Linux</a></h3>
+<p>All three configurations assume several paths that might need to be adjusted.</p>
+<pre><code>Binary:              /usr/bin/bitcoind
+Configuration file:  /etc/bitcoin/bitcoin.conf
+Data directory:      /var/lib/bitcoind
+PID file:            /var/run/bitcoind/bitcoind.pid (OpenRC and Upstart) or
+                     /run/bitcoind/bitcoind.pid (systemd)
+Lock file:           /var/lock/subsys/bitcoind (CentOS)
+</code></pre>
+<p>The PID directory (if applicable) and data directory should both be owned by the
+bitcoin user and group. It is advised for security reasons to make the
+configuration file and data directory only readable by the bitcoin user and
+group. Access to bitcoin-cli and other bitcoind rpc clients can then be
+controlled by group membership.</p>
+<p>NOTE: When using the systemd .service file, the creation of the aforementioned
+directories and the setting of their permissions is automatically handled by
+systemd. Directories are given a permission of 710, giving the bitcoin group
+access to files under it <em>if</em> the files themselves give permission to the
+bitcoin group to do so. This does not allow
+for the listing of files under the directory.</p>
+<p>NOTE: It is not currently possible to override <code>datadir</code> in
+<code>/etc/bitcoin/bitcoin.conf</code> with the current systemd, OpenRC, and Upstart init
+files out-of-the-box. This is because the command line options specified in the
+init files take precedence over the configurations in
+<code>/etc/bitcoin/bitcoin.conf</code>. However, some init systems have their own
+configuration mechanisms that would allow for overriding the command line
+options specified in the init files (e.g. setting <code>BITCOIND_DATADIR</code> for
+OpenRC).</p>
+<h3 id="macos"><a class="header" href="#macos">macOS</a></h3>
+<pre><code>Binary:              /usr/local/bin/bitcoind
+Configuration file:  ~/Library/Application Support/Bitcoin/bitcoin.conf
+Data directory:      ~/Library/Application Support/Bitcoin
+Lock file:           ~/Library/Application Support/Bitcoin/.lock
+</code></pre>
+<h2 id="installing-service-configuration"><a class="header" href="#installing-service-configuration">Installing Service Configuration</a></h2>
+<h3 id="systemd"><a class="header" href="#systemd">systemd</a></h3>
+<p>Installing this .service file consists of just copying it to
+/usr/lib/systemd/system directory, followed by the command
+<code>systemctl daemon-reload</code> in order to update running systemd configuration.</p>
+<p>To test, run <code>systemctl start bitcoind</code> and to enable for system startup run
+<code>systemctl enable bitcoind</code></p>
+<p>NOTE: When installing for systemd in Debian/Ubuntu the .service file needs to be copied to the /lib/systemd/system directory instead.</p>
+<h3 id="openrc"><a class="header" href="#openrc">OpenRC</a></h3>
+<p>Rename bitcoind.openrc to bitcoind and drop it in /etc/init.d.  Double
+check ownership and permissions and make it executable.  Test it with
+<code>/etc/init.d/bitcoind start</code> and configure it to run on startup with
+<code>rc-update add bitcoind</code></p>
+<h3 id="upstart-for-debianubuntu-based-distributions"><a class="header" href="#upstart-for-debianubuntu-based-distributions">Upstart (for Debian/Ubuntu based distributions)</a></h3>
+<p>Upstart is the default init system for Debian/Ubuntu versions older than 15.04. If you are using version 15.04 or newer and haven't manually configured upstart you should follow the systemd instructions instead.</p>
+<p>Drop bitcoind.conf in /etc/init.  Test by running <code>service bitcoind start</code>
+it will automatically start on reboot.</p>
+<p>NOTE: This script is incompatible with CentOS 5 and Amazon Linux 2014 as they
+use old versions of Upstart and do not supply the start-stop-daemon utility.</p>
+<h3 id="centos"><a class="header" href="#centos">CentOS</a></h3>
+<p>Copy bitcoind.init to /etc/init.d/bitcoind. Test by running <code>service bitcoind start</code>.</p>
+<p>Using this script, you can adjust the path and flags to the bitcoind program by
+setting the BITCOIND and FLAGS environment variables in the file
+/etc/sysconfig/bitcoind. You can also use the DAEMONOPTS environment variable here.</p>
+<h3 id="macos-1"><a class="header" href="#macos-1">macOS</a></h3>
+<p>Copy org.bitcoin.bitcoind.plist into ~/Library/LaunchAgents. Load the launch agent by
+running <code>launchctl load ~/Library/LaunchAgents/org.bitcoin.bitcoind.plist</code>.</p>
+<p>This Launch Agent will cause bitcoind to start whenever the user logs in.</p>
+<p>NOTE: This approach is intended for those wanting to run bitcoind as the current user.
+You will need to modify org.bitcoin.bitcoind.plist if you intend to use it as a
+Launch Daemon with a dedicated bitcoin user.</p>
+<h2 id="auto-respawn"><a class="header" href="#auto-respawn">Auto-respawn</a></h2>
+<p>Auto respawning is currently only configured for Upstart and systemd.
+Reasonable defaults have been chosen but YMMV.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../doc/i2p.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../doc/managing-wallets.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../doc/i2p.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../doc/managing-wallets.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

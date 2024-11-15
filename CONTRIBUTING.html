@@ -1,0 +1,551 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>CONTRIBUTING - Bitcoin Core Developer Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bitcoin Core Developer Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="contributing-to-bitcoin-core"><a class="header" href="#contributing-to-bitcoin-core">Contributing to Bitcoin Core</a></h1>
+<p>The Bitcoin Core project operates an open contributor model where anyone is
+welcome to contribute towards development in the form of peer review, testing
+and patches. This document explains the practical process and guidelines for
+contributing.</p>
+<p>First, in terms of structure, there is no particular concept of "Bitcoin Core
+developers" in the sense of privileged people. Open source often naturally
+revolves around a meritocracy where contributors earn trust from the developer
+community over time. Nevertheless, some hierarchy is necessary for practical
+purposes. As such, there are repository maintainers who are responsible for
+merging pull requests, the <a href="/doc/release-process.html">release cycle</a>, and
+moderation.</p>
+<h2 id="getting-started"><a class="header" href="#getting-started">Getting Started</a></h2>
+<p>New contributors are very welcome and needed.</p>
+<p>Reviewing and testing is highly valued and the most effective way you can contribute
+as a new contributor. It also will teach you much more about the code and
+process than opening pull requests. Please refer to the <a href="#peer-review">peer review</a>
+section below.</p>
+<p>Before you start contributing, familiarize yourself with the Bitcoin Core build
+system and tests. Refer to the documentation in the repository on how to build
+Bitcoin Core and how to run the unit tests, functional tests, and fuzz tests.</p>
+<p>There are many open issues of varying difficulty waiting to be fixed.
+If you're looking for somewhere to start contributing, check out the
+<a href="https://github.com/bitcoin/bitcoin/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22">good first issue</a>
+list or changes that are
+<a href="https://github.com/bitcoin/bitcoin/issues?utf8=%E2%9C%93&amp;q=label%3A%22Up+for+grabs%22">up for grabs</a>.
+Some of them might no longer be applicable. So if you are interested, but
+unsure, you might want to leave a comment on the issue first.</p>
+<p>You may also participate in the weekly
+<a href="https://bitcoincore.reviews/">Bitcoin Core PR Review Club</a> meeting.</p>
+<h3 id="good-first-issue-label"><a class="header" href="#good-first-issue-label">Good First Issue Label</a></h3>
+<p>The purpose of the <code>good first issue</code> label is to highlight which issues are
+suitable for a new contributor without a deep understanding of the codebase.</p>
+<p>However, good first issues can be solved by anyone. If they remain unsolved
+for a longer time, a frequent contributor might address them.</p>
+<p>You do not need to request permission to start working on an issue. However,
+you are encouraged to leave a comment if you are planning to work on it. This
+will help other contributors monitor which issues are actively being addressed
+and is also an effective way to request assistance if and when you need it.</p>
+<h2 id="communication-channels"><a class="header" href="#communication-channels">Communication Channels</a></h2>
+<p>Most communication about Bitcoin Core development happens on IRC, in the
+<code>#bitcoin-core-dev</code> channel on Libera Chat. The easiest way to participate on IRC is
+with the web client, <a href="https://web.libera.chat/#bitcoin-core-dev">web.libera.chat</a>. Chat
+history logs can be found
+on <a href="https://www.erisian.com.au/bitcoin-core-dev/">https://www.erisian.com.au/bitcoin-core-dev/</a>
+and <a href="https://gnusha.org/bitcoin-core-dev/">https://gnusha.org/bitcoin-core-dev/</a>.</p>
+<p>Discussion about codebase improvements happens in GitHub issues and pull
+requests.</p>
+<p>The developer
+<a href="https://groups.google.com/g/bitcoindev">mailing list</a>
+should be used to discuss complicated or controversial consensus or P2P protocol changes before working on
+a patch set.
+Archives can be found on <a href="https://gnusha.org/pi/bitcoindev/">https://gnusha.org/pi/bitcoindev/</a>.</p>
+<h2 id="contributor-workflow"><a class="header" href="#contributor-workflow">Contributor Workflow</a></h2>
+<p>The codebase is maintained using the "contributor workflow" where everyone
+without exception contributes patch proposals using "pull requests" (PRs). This
+facilitates social contribution, easy testing and peer review.</p>
+<p>To contribute a patch, the workflow is as follows:</p>
+<ol>
+<li>Fork repository (<a href="https://docs.github.com/en/get-started/quickstart/fork-a-repo">only for the first time</a>)</li>
+<li>Create topic branch</li>
+<li>Commit patches</li>
+</ol>
+<p>For GUI-related issues or pull requests, the https://github.com/bitcoin-core/gui repository should be used.
+For all other issues and pull requests, the https://github.com/bitcoin/bitcoin node repository should be used.</p>
+<p>The master branch for all monotree repositories is identical.</p>
+<p>As a rule of thumb, everything that only modifies <code>src/qt</code> is a GUI-only pull
+request. However:</p>
+<ul>
+<li>For global refactoring or other transversal changes the node repository
+should be used.</li>
+<li>For GUI-related build system changes, the node repository should be used
+because the change needs review by the build systems reviewers.</li>
+<li>Changes in <code>src/interfaces</code> need to go to the node repository because they
+might affect other components like the wallet.</li>
+</ul>
+<p>For large GUI changes that include build system and interface changes, it is
+recommended to first open a pull request against the GUI repository. When there
+is agreement to proceed with the changes, a pull request with the build system
+and interfaces changes can be submitted to the node repository.</p>
+<p>The project coding conventions in the <a href="doc/developer-notes.html">developer notes</a>
+must be followed.</p>
+<h3 id="committing-patches"><a class="header" href="#committing-patches">Committing Patches</a></h3>
+<p>In general, <a href="https://en.wikipedia.org/wiki/Atomic_commit#Atomic_commit_convention">commits should be atomic</a>
+and diffs should be easy to read. For this reason, do not mix any formatting
+fixes or code moves with actual code changes.</p>
+<p>Make sure each individual commit is hygienic: that it builds successfully on its
+own without warnings, errors, regressions, or test failures.</p>
+<p>Commit messages should be verbose by default consisting of a short subject line
+(50 chars max), a blank line and detailed explanatory text as separate
+paragraph(s), unless the title alone is self-explanatory (like "Correct typo
+in init.cpp") in which case a single title line is sufficient. Commit messages should be
+helpful to people reading your code in the future, so explain the reasoning for
+your decisions. Further explanation <a href="https://chris.beams.io/posts/git-commit/">here</a>.</p>
+<p>If a particular commit references another issue, please add the reference. For
+example: <code>refs #1234</code> or <code>fixes #4321</code>. Using the <code>fixes</code> or <code>closes</code> keywords
+will cause the corresponding issue to be closed when the pull request is merged.</p>
+<p>Commit messages should never contain any <code>@</code> mentions (usernames prefixed with "@").</p>
+<p>Please refer to the <a href="https://git-scm.com/doc">Git manual</a> for more information
+about Git.</p>
+<ul>
+<li>Push changes to your fork</li>
+<li>Create pull request</li>
+</ul>
+<h3 id="creating-the-pull-request"><a class="header" href="#creating-the-pull-request">Creating the Pull Request</a></h3>
+<p>The title of the pull request should be prefixed by the component or area that
+the pull request affects. Valid areas as:</p>
+<ul>
+<li><code>consensus</code> for changes to consensus critical code</li>
+<li><code>doc</code> for changes to the documentation</li>
+<li><code>qt</code> or <code>gui</code> for changes to bitcoin-qt</li>
+<li><code>log</code> for changes to log messages</li>
+<li><code>mining</code> for changes to the mining code</li>
+<li><code>net</code> or <code>p2p</code> for changes to the peer-to-peer network code</li>
+<li><code>refactor</code> for structural changes that do not change behavior</li>
+<li><code>rpc</code>, <code>rest</code> or <code>zmq</code> for changes to the RPC, REST or ZMQ APIs</li>
+<li><code>contrib</code> or <code>cli</code> for changes to the scripts and tools</li>
+<li><code>test</code>, <code>qa</code> or <code>ci</code> for changes to the unit tests, QA tests or CI code</li>
+<li><code>util</code> or <code>lib</code> for changes to the utils or libraries</li>
+<li><code>wallet</code> for changes to the wallet code</li>
+<li><code>build</code> for changes to CMake</li>
+<li><code>guix</code> for changes to the GUIX reproducible builds</li>
+</ul>
+<p>Examples:</p>
+<pre><code>consensus: Add new opcode for BIP-XXXX OP_CHECKAWESOMESIG
+net: Automatically create onion service, listen on Tor
+qt: Add feed bump button
+log: Fix typo in log message
+</code></pre>
+<p>The body of the pull request should contain sufficient description of <em>what</em> the
+patch does, and even more importantly, <em>why</em>, with justification and reasoning.
+You should include references to any discussions (for example, other issues or
+mailing list discussions).</p>
+<p>The description for a new pull request should not contain any <code>@</code> mentions. The
+PR description will be included in the commit message when the PR is merged and
+any users mentioned in the description will be annoyingly notified each time a
+fork of Bitcoin Core copies the merge. Instead, make any username mentions in a
+subsequent comment to the PR.</p>
+<h3 id="translation-changes"><a class="header" href="#translation-changes">Translation changes</a></h3>
+<p>Note that translations should not be submitted as pull requests. Please see
+<a href="https://github.com/bitcoin/bitcoin/blob/master/doc/translation_process.md">Translation Process</a>
+for more information on helping with translations.</p>
+<h3 id="work-in-progress-changes-and-requests-for-comments"><a class="header" href="#work-in-progress-changes-and-requests-for-comments">Work in Progress Changes and Requests for Comments</a></h3>
+<p>If a pull request is not to be considered for merging (yet), please
+prefix the title with [WIP] or use <a href="https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax#task-lists">Tasks Lists</a>
+in the body of the pull request to indicate tasks are pending.</p>
+<h3 id="address-feedback"><a class="header" href="#address-feedback">Address Feedback</a></h3>
+<p>At this stage, one should expect comments and review from other contributors. You
+can add more commits to your pull request by committing them locally and pushing
+to your fork.</p>
+<p>You are expected to reply to any review comments before your pull request is
+merged. You may update the code or reject the feedback if you do not agree with
+it, but you should express so in a reply. If there is outstanding feedback and
+you are not actively working on it, your pull request may be closed.</p>
+<p>Please refer to the <a href="#peer-review">peer review</a> section below for more details.</p>
+<h3 id="squashing-commits"><a class="header" href="#squashing-commits">Squashing Commits</a></h3>
+<p>If your pull request contains fixup commits (commits that change the same line of code repeatedly) or too fine-grained
+commits, you may be asked to <a href="https://git-scm.com/docs/git-rebase#_interactive_mode">squash</a> your commits
+before it will be reviewed. The basic squashing workflow is shown below.</p>
+<pre><code>git checkout your_branch_name
+git rebase -i HEAD~n
+# n is normally the number of commits in the pull request.
+# Set commits (except the one in the first line) from 'pick' to 'squash', save and quit.
+# On the next screen, edit/refine commit messages.
+# Save and quit.
+git push -f # (force push to GitHub)
+</code></pre>
+<p>Please update the resulting commit message, if needed. It should read as a
+coherent message. In most cases, this means not just listing the interim
+commits.</p>
+<p>If your change contains a merge commit, the above workflow may not work and you
+will need to remove the merge commit first. See the next section for details on
+how to rebase.</p>
+<p>Please refrain from creating several pull requests for the same change.
+Use the pull request that is already open (or was created earlier) to amend
+changes. This preserves the discussion and review that happened earlier for
+the respective change set.</p>
+<p>The length of time required for peer review is unpredictable and will vary from
+pull request to pull request.</p>
+<h3 id="rebasing-changes"><a class="header" href="#rebasing-changes">Rebasing Changes</a></h3>
+<p>When a pull request conflicts with the target branch, you may be asked to rebase it on top of the current target branch.</p>
+<pre><code>git fetch https://github.com/bitcoin/bitcoin  # Fetch the latest upstream commit
+git rebase FETCH_HEAD  # Rebuild commits on top of the new base
+</code></pre>
+<p>This project aims to have a clean git history, where code changes are only made in non-merge commits. This simplifies
+auditability because merge commits can be assumed to not contain arbitrary code changes. Merge commits should be signed,
+and the resulting git tree hash must be deterministic and reproducible. The script in
+<a href="/contrib/verify-commits">/contrib/verify-commits</a> checks that.</p>
+<p>After a rebase, reviewers are encouraged to sign off on the force push. This should be relatively straightforward with
+the <code>git range-diff</code> tool explained in the <a href="/doc/productivity.html#diff-the-diffs-with-git-range-diff">productivity
+notes</a>. To avoid needless review churn, maintainers will
+generally merge pull requests that received the most review attention first.</p>
+<h2 id="pull-request-philosophy"><a class="header" href="#pull-request-philosophy">Pull Request Philosophy</a></h2>
+<p>Patchsets should always be focused. For example, a pull request could add a
+feature, fix a bug, or refactor code; but not a mixture. Please also avoid super
+pull requests which attempt to do too much, are overly large, or overly complex
+as this makes review difficult.</p>
+<h3 id="features"><a class="header" href="#features">Features</a></h3>
+<p>When adding a new feature, thought must be given to the long term technical debt
+and maintenance that feature may require after inclusion. Before proposing a new
+feature that will require maintenance, please consider if you are willing to
+maintain it (including bug fixing). If features get orphaned with no maintainer
+in the future, they may be removed by the Repository Maintainer.</p>
+<h3 id="refactoring"><a class="header" href="#refactoring">Refactoring</a></h3>
+<p>Refactoring is a necessary part of any software project's evolution. The
+following guidelines cover refactoring pull requests for the project.</p>
+<p>There are three categories of refactoring: code-only moves, code style fixes, and
+code refactoring. In general, refactoring pull requests should not mix these
+three kinds of activities in order to make refactoring pull requests easy to
+review and uncontroversial. In all cases, refactoring PRs must not change the
+behaviour of code within the pull request (bugs must be preserved as is).</p>
+<p>Project maintainers aim for a quick turnaround on refactoring pull requests, so
+where possible keep them short, uncomplex and easy to verify.</p>
+<p>Pull requests that refactor the code should not be made by new contributors. It
+requires a certain level of experience to know where the code belongs to and to
+understand the full ramification (including rebase effort of open pull requests).</p>
+<p>Trivial pull requests or pull requests that refactor the code with no clear
+benefits may be immediately closed by the maintainers to reduce unnecessary
+workload on reviewing.</p>
+<h2 id="decision-making-process"><a class="header" href="#decision-making-process">"Decision Making" Process</a></h2>
+<p>The following applies to code changes to the Bitcoin Core project (and related
+projects such as libsecp256k1), and is not to be confused with overall Bitcoin
+Network Protocol consensus changes.</p>
+<p>Whether a pull request is merged into Bitcoin Core rests with the project merge
+maintainers.</p>
+<p>Maintainers will take into consideration if a patch is in line with the general
+principles of the project; meets the minimum standards for inclusion; and will
+judge the general consensus of contributors.</p>
+<p>In general, all pull requests must:</p>
+<ul>
+<li>Have a clear use case, fix a demonstrable bug or serve the greater good of
+the project (for example refactoring for modularisation);</li>
+<li>Be well peer-reviewed;</li>
+<li>Have unit tests, functional tests, and fuzz tests, where appropriate;</li>
+<li>Follow code style guidelines (<a href="doc/developer-notes.html">C++</a>, <a href="test/functional/README.html">functional tests</a>);</li>
+<li>Not break the existing test suite;</li>
+<li>Where bugs are fixed, where possible, there should be unit tests
+demonstrating the bug and also proving the fix. This helps prevent regression.</li>
+<li>Change relevant comments and documentation when behaviour of code changes.</li>
+</ul>
+<p>Patches that change Bitcoin consensus rules are considerably more involved than
+normal because they affect the entire ecosystem and so must be preceded by
+extensive mailing list discussions and have a numbered BIP. While each case will
+be different, one should be prepared to expend more time and effort than for
+other kinds of patches because of increased peer review and consensus building
+requirements.</p>
+<h3 id="peer-review"><a class="header" href="#peer-review">Peer Review</a></h3>
+<p>Anyone may participate in peer review which is expressed by comments in the pull
+request. Typically reviewers will review the code for obvious errors, as well as
+test out the patch set and opine on the technical merits of the patch. Project
+maintainers take into account the peer review when determining if there is
+consensus to merge a pull request (remember that discussions may have been
+spread out over GitHub, mailing list and IRC discussions).</p>
+<p>Code review is a burdensome but important part of the development process, and
+as such, certain types of pull requests are rejected. In general, if the
+<strong>improvements</strong> do not warrant the <strong>review effort</strong> required, the PR has a
+high chance of being rejected. It is up to the PR author to convince the
+reviewers that the changes warrant the review effort, and if reviewers are
+"Concept NACK'ing" the PR, the author may need to present arguments and/or do
+research backing their suggested changes.</p>
+<h4 id="conceptual-review"><a class="header" href="#conceptual-review">Conceptual Review</a></h4>
+<p>A review can be a conceptual review, where the reviewer leaves a comment</p>
+<ul>
+<li><code>Concept (N)ACK</code>, meaning "I do (not) agree with the general goal of this pull
+request",</li>
+<li><code>Approach (N)ACK</code>, meaning <code>Concept ACK</code>, but "I do (not) agree with the
+approach of this change".</li>
+</ul>
+<p>A <code>NACK</code> needs to include a rationale why the change is not worthwhile.
+NACKs without accompanying reasoning may be disregarded.</p>
+<h4 id="code-review"><a class="header" href="#code-review">Code Review</a></h4>
+<p>After conceptual agreement on the change, code review can be provided. A review
+begins with <code>ACK BRANCH_COMMIT</code>, where <code>BRANCH_COMMIT</code> is the top of the PR
+branch, followed by a description of how the reviewer did the review. The
+following language is used within pull request comments:</p>
+<ul>
+<li>"I have tested the code", involving change-specific manual testing in
+addition to running the unit, functional, or fuzz tests, and in case it is
+not obvious how the manual testing was done, it should be described;</li>
+<li>"I have not tested the code, but I have reviewed it and it looks
+OK, I agree it can be merged";</li>
+<li>A "nit" refers to a trivial, often non-blocking issue.</li>
+</ul>
+<p>Project maintainers reserve the right to weigh the opinions of peer reviewers
+using common sense judgement and may also weigh based on merit. Reviewers that
+have demonstrated a deeper commitment and understanding of the project over time
+or who have clear domain expertise may naturally have more weight, as one would
+expect in all walks of life.</p>
+<p>Where a patch set affects consensus-critical code, the bar will be much
+higher in terms of discussion and peer review requirements, keeping in mind that
+mistakes could be very costly to the wider community. This includes refactoring
+of consensus-critical code.</p>
+<p>Where a patch set proposes to change the Bitcoin consensus, it must have been
+discussed extensively on the mailing list and IRC, be accompanied by a widely
+discussed BIP and have a generally widely perceived technical consensus of being
+a worthwhile change based on the judgement of the maintainers.</p>
+<h3 id="finding-reviewers"><a class="header" href="#finding-reviewers">Finding Reviewers</a></h3>
+<p>As most reviewers are themselves developers with their own projects, the review
+process can be quite lengthy, and some amount of patience is required. If you find
+that you've been waiting for a pull request to be given attention for several
+months, there may be a number of reasons for this, some of which you can do something
+about:</p>
+<ul>
+<li>It may be because of a feature freeze due to an upcoming release. During this time,
+only bug fixes are taken into consideration. If your pull request is a new feature,
+it will not be prioritized until after the release. Wait for the release.</li>
+<li>It may be because the changes you are suggesting do not appeal to people. Rather than
+nits and critique, which require effort and means they care enough to spend time on your
+contribution, thundering silence is a good sign of widespread (mild) dislike of a given change
+(because people don't assume <em>others</em> won't actually like the proposal). Don't take
+that personally, though! Instead, take another critical look at what you are suggesting
+and see if it: changes too much, is too broad, doesn't adhere to the
+<a href="doc/developer-notes.html">developer notes</a>, is dangerous or insecure, is messily written, etc.
+Identify and address any of the issues you find. Then ask e.g. on IRC if someone could give
+their opinion on the concept itself.</li>
+<li>It may be because your code is too complex for all but a few people, and those people
+may not have realized your pull request even exists. A great way to find people who
+are qualified and care about the code you are touching is the
+<a href="https://docs.github.com/en/github/managing-files-in-a-repository/managing-files-on-github/tracking-changes-in-a-file">Git Blame feature</a>. Simply
+look up who last modified the code you are changing and see if you can find
+them and give them a nudge. Don't be incessant about the nudging, though.</li>
+<li>Finally, if all else fails, ask on IRC or elsewhere for someone to give your pull request
+a look. If you think you've been waiting for an unreasonably long time (say,
+more than a month) for no particular reason (a few lines changed, etc.),
+this is totally fine. Try to return the favor when someone else is asking
+for feedback on their code, and the universe balances out.</li>
+<li>Remember that the best thing you can do while waiting is give review to others!</li>
+</ul>
+<h2 id="backporting"><a class="header" href="#backporting">Backporting</a></h2>
+<p>Security and bug fixes can be backported from <code>master</code> to release
+branches.
+Maintainers will do backports in batches and
+use the proper <code>Needs backport (...)</code> labels
+when needed (the original author does not need to worry about it).</p>
+<p>A backport should contain the following metadata in the commit body:</p>
+<pre><code>Github-Pull: #&lt;PR number&gt;
+Rebased-From: &lt;commit hash of the original commit&gt;
+</code></pre>
+<p>Have a look at <a href="https://github.com/bitcoin/bitcoin/pull/16189">an example backport PR</a>.</p>
+<p>Also see the <a href="https://github.com/bitcoin-core/bitcoin-maintainer-tools#backport">backport.py script</a>.</p>
+<h2 id="copyright"><a class="header" href="#copyright">Copyright</a></h2>
+<p>By contributing to this repository, you agree to license your work under the
+MIT license unless specified otherwise in <code>contrib/debian/copyright</code> or at
+the top of the file itself. Any work contributed where you are not the original
+author must contain its license header with the original author(s) and source.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="INSTALL.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="INSTALL.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

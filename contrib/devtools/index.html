@@ -1,0 +1,302 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>devtools - Bitcoin Core Developer Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../../highlight.css">
+        <link rel="stylesheet" href="../../tomorrow-night.css">
+        <link rel="stylesheet" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bitcoin Core Developer Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="contents"><a class="header" href="#contents">Contents</a></h1>
+<p>This directory contains tools for developers working on this repository.</p>
+<h1 id="clang-format-diffpy"><a class="header" href="#clang-format-diffpy">clang-format-diff.py</a></h1>
+<p>A script to format unified git diffs according to <a href="../../src/.clang-format">.clang-format</a>.</p>
+<p>Requires <code>clang-format</code>, installed e.g. via <code>brew install clang-format</code> on macOS,
+or <code>sudo apt install clang-format</code> on Debian/Ubuntu.</p>
+<p>For instance, to format the last commit with 0 lines of context,
+the script should be called from the git root folder as follows.</p>
+<pre><code>git diff -U0 HEAD~1.. | ./contrib/devtools/clang-format-diff.py -p1 -i -v
+</code></pre>
+<h1 id="copyright_headerpy"><a class="header" href="#copyright_headerpy">copyright_header.py</a></h1>
+<p>Provides utilities for managing copyright headers of <code>The Bitcoin Core developers</code> in repository source files. It has three subcommands:</p>
+<pre><code>$ ./copyright_header.py report &lt;base_directory&gt; [verbose]
+$ ./copyright_header.py update &lt;base_directory&gt;
+$ ./copyright_header.py insert &lt;file&gt;
+</code></pre>
+<p>Running these subcommands without arguments displays a usage string.</p>
+<h2 id="copyright_headerpy-report-base_directory-verbose"><a class="header" href="#copyright_headerpy-report-base_directory-verbose">copyright_header.py report &lt;base_directory&gt; [verbose]</a></h2>
+<p>Produces a report of all copyright header notices found inside the source files
+of a repository. Useful to quickly visualize the state of the headers.
+Specifying <code>verbose</code> will list the full filenames of files of each category.</p>
+<h2 id="copyright_headerpy-update-base_directory-verbose"><a class="header" href="#copyright_headerpy-update-base_directory-verbose">copyright_header.py update &lt;base_directory&gt; [verbose]</a></h2>
+<p>Updates all the copyright headers of <code>The Bitcoin Core developers</code> which were
+changed in a year more recent than is listed. For example:</p>
+<pre><code>// Copyright (c) &lt;firstYear&gt;-&lt;lastYear&gt; The Bitcoin Core developers
+</code></pre>
+<p>will be updated to:</p>
+<pre><code>// Copyright (c) &lt;firstYear&gt;-&lt;lastModifiedYear&gt; The Bitcoin Core developers
+</code></pre>
+<p>where <code>&lt;lastModifiedYear&gt;</code> is obtained from the <code>git log</code> history.</p>
+<p>This subcommand also handles copyright headers that have only a single year. In
+those cases:</p>
+<pre><code>// Copyright (c) &lt;year&gt; The Bitcoin Core developers
+</code></pre>
+<p>will be updated to:</p>
+<pre><code>// Copyright (c) &lt;year&gt;-&lt;lastModifiedYear&gt; The Bitcoin Core developers
+</code></pre>
+<p>where the update is appropriate.</p>
+<h2 id="copyright_headerpy-insert-file"><a class="header" href="#copyright_headerpy-insert-file">copyright_header.py insert &lt;file&gt;</a></h2>
+<p>Inserts a copyright header for <code>The Bitcoin Core developers</code> at the top of the
+file in either Python or C++ style as determined by the file extension. If the
+file is a Python file and it has  <code>#!</code> starting the first line, the header is
+inserted in the line below it.</p>
+<p>The copyright dates will be set to be <code>&lt;year_introduced&gt;-&lt;current_year&gt;</code> where
+<code>&lt;year_introduced&gt;</code> is according to the <code>git log</code> history. If
+<code>&lt;year_introduced&gt;</code> is equal to <code>&lt;current_year&gt;</code>, it will be set as a single
+year rather than two hyphenated years.</p>
+<p>If the file already has a copyright for <code>The Bitcoin Core developers</code>, the
+script will exit.</p>
+<h1 id="gen-manpagespy"><a class="header" href="#gen-manpagespy">gen-manpages.py</a></h1>
+<p>A small script to automatically create manpages in ../../doc/man by running the release binaries with the -help option.
+This requires help2man which can be found at: https://www.gnu.org/software/help2man/</p>
+<p>With in-tree builds this tool can be run from any directory within the
+repository. To use this tool with out-of-tree builds set <code>BUILDDIR</code>. For
+example:</p>
+<pre><code class="language-bash">BUILDDIR=$PWD/build contrib/devtools/gen-manpages.py
+</code></pre>
+<h1 id="headerssync-paramspy"><a class="header" href="#headerssync-paramspy">headerssync-params.py</a></h1>
+<p>A script to generate optimal parameters for the headerssync module (src/headerssync.cpp). It takes no command-line
+options, as all its configuration is set at the top of the file. It runs many times faster inside PyPy. Invocation:</p>
+<pre><code class="language-bash">pypy3 contrib/devtools/headerssync-params.py
+</code></pre>
+<h1 id="gen-bitcoin-confsh"><a class="header" href="#gen-bitcoin-confsh">gen-bitcoin-conf.sh</a></h1>
+<p>Generates a bitcoin.conf file in <code>share/examples/</code> by parsing the output from <code>bitcoind --help</code>. This script is run during the
+release process to include a bitcoin.conf with the release binaries and can also be run by users to generate a file locally.
+When generating a file as part of the release process, make sure to commit the changes after running the script.</p>
+<p>With in-tree builds this tool can be run from any directory within the
+repository. To use this tool with out-of-tree builds set <code>BUILDDIR</code>. For
+example:</p>
+<pre><code class="language-bash">BUILDDIR=$PWD/build contrib/devtools/gen-bitcoin-conf.sh
+</code></pre>
+<h1 id="security-checkpy-and-test-security-checkpy"><a class="header" href="#security-checkpy-and-test-security-checkpy">security-check.py and test-security-check.py</a></h1>
+<p>Perform basic security checks on a series of executables.</p>
+<h1 id="symbol-checkpy"><a class="header" href="#symbol-checkpy">symbol-check.py</a></h1>
+<p>A script to check that release executables only contain
+certain symbols and are only linked against allowed libraries.</p>
+<p>For Linux this means checking for allowed gcc, glibc and libstdc++ version symbols.
+This makes sure they are still compatible with the minimum supported distribution versions.</p>
+<p>For macOS and Windows we check that the executables are only linked against libraries we allow.</p>
+<p>Example usage:</p>
+<pre><code>find ../path/to/executables -type f -executable | xargs python3 contrib/devtools/symbol-check.py
+</code></pre>
+<p>If no errors occur the return value will be 0 and the output will be empty.</p>
+<p>If there are any errors the return value will be 1 and output like this will be printed:</p>
+<pre><code>.../64/test_bitcoin: symbol memcpy from unsupported version GLIBC_2.14
+.../64/test_bitcoin: symbol __fdelt_chk from unsupported version GLIBC_2.15
+.../64/test_bitcoin: symbol std::out_of_range::~out_of_range() from unsupported version GLIBCXX_3.4.15
+.../64/test_bitcoin: symbol _ZNSt8__detail15_List_nod from unsupported version GLIBCXX_3.4.15
+</code></pre>
+<h1 id="circular-dependenciespy"><a class="header" href="#circular-dependenciespy">circular-dependencies.py</a></h1>
+<p>Run this script from the root of the source tree (<code>src/</code>) to find circular dependencies in the source code.
+This looks only at which files include other files, treating the <code>.cpp</code> and <code>.h</code> file as one unit.</p>
+<p>Example usage:</p>
+<pre><code>cd .../src
+../contrib/devtools/circular-dependencies.py {*,*/*,*/*/*}.{h,cpp}
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../contrib/asmap/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../../contrib/devtools/bitcoin-tidy/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../contrib/asmap/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../../contrib/devtools/bitcoin-tidy/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
+
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

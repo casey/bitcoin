@@ -1,0 +1,854 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>INSTALL - Bitcoin Core Developer Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../../highlight.css">
+        <link rel="stylesheet" href="../../tomorrow-night.css">
+        <link rel="stylesheet" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bitcoin Core Developer Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="guix-installation-and-setup"><a class="header" href="#guix-installation-and-setup">Guix Installation and Setup</a></h1>
+<p>This only needs to be done once per machine. If you have already completed the
+installation and setup, please proceed to <a href="./README.html">perform a build</a>.</p>
+<p>Otherwise, you may choose from one of the following options to install Guix:</p>
+<ol>
+<li>Using the official <strong>shell installer script</strong> <a href="#options-1-and-2-using-the-official-shell-installer-script-or-binary-tarball">⤓ skip to section</a>
+<ul>
+<li>Maintained by Guix developers</li>
+<li>Easiest (automatically performs <em>most</em> setup)</li>
+<li>Works on nearly all Linux distributions</li>
+<li>Only installs latest release</li>
+<li>Binary installation only, requires high level of trust</li>
+<li>Note: The script needs to be run as root, so it should be inspected before it's run</li>
+</ul>
+</li>
+<li>Using the official <strong>binary tarball</strong> <a href="#options-1-and-2-using-the-official-shell-installer-script-or-binary-tarball">⤓ skip to section</a>
+<ul>
+<li>Maintained by Guix developers</li>
+<li>Normal difficulty (full manual setup required)</li>
+<li>Works on nearly all Linux distributions</li>
+<li>Installs any release</li>
+<li>Binary installation only, requires high level of trust</li>
+</ul>
+</li>
+<li>Using fanquake's <strong>Docker image</strong> <a href="#option-3-using-fanquakes-docker-image">↗︎ external instructions</a>
+<ul>
+<li>Maintained by fanquake</li>
+<li>Easy (automatically performs <em>some</em> setup)</li>
+<li>Works wherever Docker images work</li>
+<li>Installs any release</li>
+<li>Binary installation only, requires high level of trust</li>
+</ul>
+</li>
+<li>Using a <strong>distribution-maintained package</strong> <a href="#option-4-using-a-distribution-maintained-package">⤓ skip to section</a>
+<ul>
+<li>Maintained by distribution's Guix package maintainer</li>
+<li>Normal difficulty (manual setup required)</li>
+<li>Works only on distributions with Guix packaged, see: https://repology.org/project/guix/versions</li>
+<li>Installs a release decided on by package maintainer</li>
+<li>Source or binary installation depending on the distribution</li>
+</ul>
+</li>
+<li>Building <strong>from source</strong> <a href="#option-5-building-from-source">⤓ skip to section</a>
+<ul>
+<li>Maintained by you</li>
+<li>Hard, but rewarding</li>
+<li>Can be made to work on most Linux distributions</li>
+<li>Installs any commit (more granular)</li>
+<li>Source installation, requires lower level of trust</li>
+</ul>
+</li>
+</ol>
+<h2 id="options-1-and-2-using-the-official-shell-installer-script-or-binary-tarball"><a class="header" href="#options-1-and-2-using-the-official-shell-installer-script-or-binary-tarball">Options 1 and 2: Using the official shell installer script or binary tarball</a></h2>
+<p>The installation instructions for both the official shell installer script and
+the binary tarballs can be found in the GNU Guix Manual's <a href="https://guix.gnu.org/manual/en/html_node/Binary-Installation.html">Binary Installation
+section</a>.</p>
+<p>Note that running through the binary tarball installation steps is largely
+equivalent to manually performing what the shell installer script does.</p>
+<p>Note that at the time of writing (July 5th, 2021), the shell installer script
+automatically creates an <code>/etc/profile.d</code> entry which the binary tarball
+installation instructions do not ask you to create. However, you will likely
+need this entry for better desktop integration. Please see <a href="#add-an-etcprofiled-entry">this
+section</a> for instructions on how to add a
+<code>/etc/profile.d/guix.sh</code> entry.</p>
+<p>Regardless of which installation option you chose, the changes to
+<code>/etc/profile.d</code> will not take effect until the next shell or desktop session,
+so you should log out and log back in.</p>
+<h2 id="option-3-using-fanquakes-docker-image"><a class="header" href="#option-3-using-fanquakes-docker-image">Option 3: Using fanquake's Docker image</a></h2>
+<p>Please refer to fanquake's instructions
+<a href="https://github.com/fanquake/core-review/tree/master/guix">here</a>.</p>
+<h2 id="option-4-using-a-distribution-maintained-package"><a class="header" href="#option-4-using-a-distribution-maintained-package">Option 4: Using a distribution-maintained package</a></h2>
+<p>Note that this section is based on the distro packaging situation at the time of
+writing (July 2021). Guix is expected to be more widely packaged over time. For
+an up-to-date view on Guix's package status/version across distros, please see:
+https://repology.org/project/guix/versions</p>
+<h3 id="debian--ubuntu"><a class="header" href="#debian--ubuntu">Debian / Ubuntu</a></h3>
+<p>Guix is available as a distribution package in <a href="https://packages.debian.org/search?keywords=guix">Debian
+</a> and <a href="https://packages.ubuntu.com/search?keywords=guix">Ubuntu
+</a>.</p>
+<p>To install:</p>
+<pre><code class="language-sh">sudo apt install guix
+</code></pre>
+<h3 id="arch-linux"><a class="header" href="#arch-linux">Arch Linux</a></h3>
+<p>Guix is available in the AUR as
+<a href="https://aur.archlinux.org/packages/guix/"><code>guix</code></a>, please follow the
+installation instructions in the Arch Linux Wiki (<a href="https://wiki.archlinux.org/index.php/Guix#AUR_Package_Installation">live
+link</a>,
+<a href="https://wiki.archlinux.org/index.php?title=Guix&amp;oldid=637559#AUR_Package_Installation">2021/03/30
+permalink</a>)
+to install Guix.</p>
+<p>At the time of writing (2021/03/30), the <code>check</code> phase will fail if the path to
+guix's build directory is longer than 36 characters due to an anachronistic
+character limit on the shebang line. Since the <code>check</code> phase happens after the
+<code>build</code> phase, which may take quite a long time, it is recommended that users
+either:</p>
+<ol>
+<li>Skip the <code>check</code> phase
+<ul>
+<li>For <code>makepkg</code>: <code>makepkg --nocheck ...</code></li>
+<li>For <code>yay</code>: <code>yay --mflags="--nocheck" ...</code></li>
+<li>For <code>paru</code>: <code>paru --nocheck ...</code></li>
+</ul>
+</li>
+<li>Or, check their build directory's length beforehand
+<ul>
+<li>For those building with <code>makepkg</code>: <code>pwd | wc -c</code></li>
+</ul>
+</li>
+</ol>
+<h2 id="option-5-building-from-source"><a class="header" href="#option-5-building-from-source">Option 5: Building from source</a></h2>
+<p>Building Guix from source is a rather involved process but a rewarding one for
+those looking to minimize trust and maximize customizability (e.g. building a
+particular commit of Guix). Previous experience with using autotools-style build
+systems to build packages from source will be helpful. <em>hic sunt dracones.</em></p>
+<p>I strongly urge you to at least skim through the entire section once before you
+start issuing commands, as it will save you a lot of unnecessary pain and
+anguish.</p>
+<h3 id="installing-common-build-tools"><a class="header" href="#installing-common-build-tools">Installing common build tools</a></h3>
+<p>There are a few basic build tools that are required for most things we'll build,
+so let's install them now:</p>
+<p>Text transformation/i18n:</p>
+<ul>
+<li><code>autopoint</code> (sometimes packaged in <code>gettext</code>)</li>
+<li><code>help2man</code></li>
+<li><code>po4a</code></li>
+<li><code>texinfo</code></li>
+</ul>
+<p>Build system tools:</p>
+<ul>
+<li><code>g++</code> w/ C++11 support</li>
+<li><code>libtool</code></li>
+<li><code>autoconf</code></li>
+<li><code>automake</code></li>
+<li><code>pkg-config</code> (sometimes packaged as <code>pkgconf</code>)</li>
+<li><code>make</code></li>
+<li><code>cmake</code></li>
+</ul>
+<p>Miscellaneous:</p>
+<ul>
+<li><code>git</code></li>
+<li><code>gnupg</code></li>
+<li><code>python3</code></li>
+</ul>
+<h3 id="building-and-installing-guixs-dependencies"><a class="header" href="#building-and-installing-guixs-dependencies">Building and Installing Guix's dependencies</a></h3>
+<p>In order to build Guix itself from source, we need to first make sure that the
+necessary dependencies are installed and discoverable. The most up-to-date list
+of Guix's dependencies is kept in the <a href="https://guix.gnu.org/manual/en/html_node/Requirements.html">"Requirements"
+section</a> of the Guix
+Reference Manual.</p>
+<p>Depending on your distribution, most or all of these dependencies may already be
+packaged and installable without manually building and installing.</p>
+<p>For reference, the graphic below outlines Guix v1.3.0's dependency graph:</p>
+<p><img src="https://user-images.githubusercontent.com/6399679/125064185-a9a59880-e0b0-11eb-82c1-9b8e5dc9950d.png" alt="bootstrap map" /></p>
+<p>If you do not care about building each dependency from source, and Guix is
+already packaged for your distribution, you can easily install only the build
+dependencies of Guix. For example, to enable deb-src and install the Guix build
+dependencies on Ubuntu/Debian:</p>
+<pre><code class="language-sh">sed -i 's|# deb-src|deb-src|g' /etc/apt/sources.list
+apt update
+apt-get build-dep -y guix
+</code></pre>
+<p>If this succeeded, you can likely skip to section
+<a href="#building-and-installing-guix-itself">"Building and Installing Guix itself"</a>.</p>
+<h4 id="guile"><a class="header" href="#guile">Guile</a></h4>
+<h6 id="corner-case-multiple-versions-of-guile-on-one-system"><a class="header" href="#corner-case-multiple-versions-of-guile-on-one-system">Corner case: Multiple versions of Guile on one system</a></h6>
+<p>It is recommended to only install the required version of Guile, so that build systems do
+not get confused about which Guile to use.</p>
+<p>However, if you insist on having more versions of Guile installed on
+your system, then you need to <strong>consistently</strong> specify
+<code>GUILE_EFFECTIVE_VERSION=3.0</code> to all
+<code>./configure</code> invocations for Guix and its dependencies.</p>
+<h5 id="installing-guile"><a class="header" href="#installing-guile">Installing Guile</a></h5>
+<p>If your distribution splits packages into <code>-dev</code>-suffixed and
+non-<code>-dev</code>-suffixed sub-packages (as is the case for Debian-derived
+distributions), please make sure to install both. For example, to install Guile
+v3.0 on Debian/Ubuntu:</p>
+<pre><code class="language-sh">apt install guile-3.0 guile-3.0-dev
+</code></pre>
+<h4 id="mixing-distribution-packages-and-source-built-packages"><a class="header" href="#mixing-distribution-packages-and-source-built-packages">Mixing distribution packages and source-built packages</a></h4>
+<p>At the time of writing, most distributions have <em>some</em> of Guix's dependencies
+packaged, but not all. This means that you may want to install the distribution
+package for some dependencies, and manually build-from-source for others.</p>
+<p>Distribution packages usually install to <code>/usr</code>, which is different from the
+default <code>./configure</code> prefix of source-built packages: <code>/usr/local</code>.</p>
+<p>This means that if you mix-and-match distribution packages and source-built
+packages and do not specify exactly <code>--prefix=/usr</code> to <code>./configure</code> for
+source-built packages, you will need to augment the <code>GUILE_LOAD_PATH</code> and
+<code>GUILE_LOAD_COMPILED_PATH</code> environment variables so that Guile will look
+under the right prefix and find your source-built packages.</p>
+<p>For example, if you are using Guile v3.0, and have Guile packages in the
+<code>/usr/local</code> prefix, either add the following lines to your <code>.profile</code> or
+<code>.bash_profile</code> so that the environment variable is properly set for all future
+shell logins, or paste the lines into a POSIX-style shell to temporarily modify
+the environment variables of your current shell session.</p>
+<pre><code class="language-sh"># Help Guile v3.0.x find packages in /usr/local
+export GUILE_LOAD_PATH="/usr/local/share/guile/site/3.0${GUILE_LOAD_PATH:+:}$GUILE_LOAD_PATH"
+export GUILE_LOAD_COMPILED_PATH="/usr/local/lib/guile/3.0/site-ccache${GUILE_LOAD_COMPILED_PATH:+:}$GUILE_COMPILED_LOAD_PATH"
+</code></pre>
+<p>Note that these environment variables are used to check for packages during
+<code>./configure</code>, so they should be set as soon as possible should you want to use
+a prefix other than <code>/usr</code>.</p>
+<h4 id="building-and-installing-source-built-packages"><a class="header" href="#building-and-installing-source-built-packages">Building and installing source-built packages</a></h4>
+<p><em><strong>IMPORTANT</strong>: A few dependencies have non-obvious quirks/errata which are
+documented in the sub-sections immediately below. Please read these sections
+before proceeding to build and install these packages.</em></p>
+<p>Although you should always refer to the README or INSTALL files for the most
+accurate information, most of these dependencies use autoconf-style build
+systems (check if there's a <code>configure.ac</code> file), and will likely do the right
+thing with the following:</p>
+<p>Clone the repository and check out the latest release:</p>
+<pre><code class="language-sh">git clone &lt;git-repo-of-dependency&gt;/&lt;dependency&gt;.git
+cd &lt;dependency&gt;
+git tag -l  # check for the latest release
+git checkout &lt;latest-release&gt;
+</code></pre>
+<p>For autoconf-based build systems (if <code>./autogen.sh</code> or <code>configure.ac</code> exists at
+the root of the repository):</p>
+<pre><code class="language-sh">./autogen.sh || autoreconf -vfi
+./configure --prefix=&lt;prefix&gt;
+make
+sudo make install
+</code></pre>
+<p>For CMake-based build systems (if <code>CMakeLists.txt</code> exists at the root of the
+repository):</p>
+<pre><code class="language-sh">mkdir build &amp;&amp; cd build
+cmake .. -DCMAKE_INSTALL_PREFIX=&lt;prefix&gt;
+sudo cmake --build . --target install
+</code></pre>
+<p>If you choose not to specify exactly <code>--prefix=/usr</code> to <code>./configure</code>, please
+make sure you've carefully read the [previous section] on mixing distribution
+packages and source-built packages.</p>
+<h5 id="binding-packages-require--dev-suffixed-packages"><a class="header" href="#binding-packages-require--dev-suffixed-packages">Binding packages require <code>-dev</code>-suffixed packages</a></h5>
+<p>Relevant for:</p>
+<ul>
+<li>Everyone</li>
+</ul>
+<p>When building bindings, the <code>-dev</code>-suffixed version of the original package
+needs to be installed. For example, building <code>Guile-zlib</code> on Debian-derived
+distributions requires that <code>zlib1g-dev</code> is installed.</p>
+<p>When using bindings, the <code>-dev</code>-suffixed version of the original package still
+needs to be installed. This is particularly problematic when distribution
+packages are mispackaged like <code>guile-sqlite3</code> is in Ubuntu Focal such that
+installing <code>guile-sqlite3</code> does not automatically install <code>libsqlite3-dev</code> as a
+dependency.</p>
+<p>Below is a list of relevant Guile bindings and their corresponding <code>-dev</code>
+packages in Debian at the time of writing.</p>
+<div class="table-wrapper"><table><thead><tr><th>Guile binding package</th><th>-dev Debian package</th></tr></thead><tbody>
+<tr><td>guile-gcrypt</td><td>libgcrypt-dev</td></tr>
+<tr><td>guile-git</td><td>libgit2-dev</td></tr>
+<tr><td>guile-gnutls</td><td>(none)</td></tr>
+<tr><td>guile-json</td><td>(none)</td></tr>
+<tr><td>guile-lzlib</td><td>liblz-dev</td></tr>
+<tr><td>guile-ssh</td><td>libssh-dev</td></tr>
+<tr><td>guile-sqlite3</td><td>libsqlite3-dev</td></tr>
+<tr><td>guile-zlib</td><td>zlib1g-dev</td></tr>
+</tbody></table>
+</div>
+<h5 id="guile-git-actually-depends-on-libgit2--11"><a class="header" href="#guile-git-actually-depends-on-libgit2--11"><code>guile-git</code> actually depends on <code>libgit2 &gt;= 1.1</code></a></h5>
+<p>Relevant for:</p>
+<ul>
+<li>Those building <code>guile-git</code> from source against <code>libgit2 &lt; 1.1</code></li>
+<li>Those installing <code>guile-git</code> from their distribution where <code>guile-git</code> is
+built against <code>libgit2 &lt; 1.1</code></li>
+</ul>
+<p>As of v0.5.2, <code>guile-git</code> claims to only require <code>libgit2 &gt;= 0.28.0</code>, however,
+it actually requires <code>libgit2 &gt;= 1.1</code>, otherwise, it will be confused by a
+reference of <code>origin/keyring</code>: instead of interpreting the reference as "the
+'keyring' branch of the 'origin' remote", the reference is interpreted as "the
+branch literally named 'origin/keyring'"</p>
+<p>This is especially notable because Ubuntu Focal packages <code>libgit2 v0.28.4</code>, and
+<code>guile-git</code> is built against it.</p>
+<p>Should you be in this situation, you need to build both <code>libgit2 v1.1.x</code> and
+<code>guile-git</code> from source.</p>
+<p>Source: https://logs.guix.gnu.org/guix/2020-11-12.log#232527</p>
+<h3 id="building-and-installing-guix-itself"><a class="header" href="#building-and-installing-guix-itself">Building and Installing Guix itself</a></h3>
+<p>Start by cloning Guix:</p>
+<pre><code>git clone https://git.savannah.gnu.org/git/guix.git
+cd guix
+</code></pre>
+<p>You will likely want to build the latest release.
+At the time of writing (November 2023), the latest release was <code>v1.4.0</code>.</p>
+<pre><code>git branch -a -l 'origin/version-*'  # check for the latest release
+git checkout &lt;latest-release&gt;
+</code></pre>
+<p>Bootstrap the build system:</p>
+<pre><code>./bootstrap
+</code></pre>
+<p>Configure with the recommended <code>--localstatedir</code> flag:</p>
+<pre><code>./configure --localstatedir=/var
+</code></pre>
+<p>Note: If you intend to hack on Guix in the future, you will need to supply the
+same <code>--localstatedir=</code> flag for all future Guix <code>./configure</code> invocations. See
+the last paragraph of this
+<a href="https://guix.gnu.org/manual/en/html_node/Requirements.html">section</a> for more
+details.</p>
+<p>Build Guix (this will take a while):</p>
+<pre><code>make -j$(nproc)
+</code></pre>
+<p>Install Guix:</p>
+<pre><code>sudo make install
+</code></pre>
+<h3 id="post-build-from-source-setup"><a class="header" href="#post-build-from-source-setup">Post-"build from source" Setup</a></h3>
+<h4 id="creating-and-starting-a-guix-daemon-original-service-with-a-fixed-argv0"><a class="header" href="#creating-and-starting-a-guix-daemon-original-service-with-a-fixed-argv0">Creating and starting a <code>guix-daemon-original</code> service with a fixed <code>argv[0]</code></a></h4>
+<p>At this point, guix will be installed to <code>${bindir}</code>, which is likely
+<code>/usr/local/bin</code> if you did not override directory variables at
+<code>./configure</code>-time. More information on standard Automake directory variables
+can be found
+<a href="https://www.gnu.org/software/automake/manual/html_node/Standard-Directory-Variables.html">here</a>.</p>
+<p>However, the Guix init scripts and service configurations for Upstart, systemd,
+SysV, and OpenRC are installed (in <code>${libdir}</code>) to launch
+<code>${localstatedir}/guix/profiles/per-user/root/current-guix/bin/guix-daemon</code>,
+which does not yet exist, and will only exist after <a href="#guix-pull-as-root"><code>root</code> performs their first
+<code>guix pull</code></a>.</p>
+<p>We need to create a <code>-original</code> version of these init scripts that's pointed to
+the binaries we just built and <code>make install</code>'ed in <code>${bindir}</code> (normally,
+<code>/usr/local/bin</code>).</p>
+<p>Example for <code>systemd</code>, run as <code>root</code>:</p>
+<pre><code class="language-sh"># Create guix-daemon-original.service by modifying guix-daemon.service
+libdir=# set according to your PREFIX (default is /usr/local/lib)
+bindir="$(dirname $(command -v guix-daemon))"
+sed -E -e "s|/\S*/guix/profiles/per-user/root/current-guix/bin/guix-daemon|${bindir}/guix-daemon|" "${libdir}"/systemd/system/guix-daemon.service &gt; /etc/systemd/system/guix-daemon-original.service
+chmod 664 /etc/systemd/system/guix-daemon-original.service
+
+# Make systemd recognize the new service
+systemctl daemon-reload
+
+# Make sure that the non-working guix-daemon.service is stopped and disabled
+systemctl stop guix-daemon
+systemctl disable guix-daemon
+
+# Make sure that the working guix-daemon-original.service is started and enabled
+systemctl enable guix-daemon-original
+systemctl start guix-daemon-original
+</code></pre>
+<h4 id="creating-guix-daemon-users--groups"><a class="header" href="#creating-guix-daemon-users--groups">Creating <code>guix-daemon</code> users / groups</a></h4>
+<p>Please see the <a href="https://guix.gnu.org/manual/en/html_node/Build-Environment-Setup.html">relevant
+section</a>
+in the Guix Reference Manual for more details.</p>
+<h2 id="optional-setup"><a class="header" href="#optional-setup">Optional setup</a></h2>
+<p>At this point, you are set up to <a href="./README.html#usage">use Guix to build Bitcoin
+Core</a>. However, if you want to polish your setup a bit and
+make it "what Guix intended", then read the next few subsections.</p>
+<h3 id="add-an-etcprofiled-entry"><a class="header" href="#add-an-etcprofiled-entry">Add an <code>/etc/profile.d</code> entry</a></h3>
+<p>This section definitely does not apply to you if you installed Guix using:</p>
+<ol>
+<li>The shell installer script</li>
+<li>fanquake's Docker image</li>
+<li>Debian's <code>guix</code> package</li>
+</ol>
+<h4 id="background"><a class="header" href="#background">Background</a></h4>
+<p>Although Guix knows how to update itself and its packages, it does so in a
+non-invasive way (it does not modify <code>/usr/local/bin/guix</code>).</p>
+<p>Instead, it does the following:</p>
+<ul>
+<li>
+<p>After a <code>guix pull</code>, it updates
+<code>/var/guix/profiles/per-user/$USER/current-guix</code>, and creates a symlink
+targeting this directory at <code>$HOME/.config/guix/current</code></p>
+</li>
+<li>
+<p>After a <code>guix install</code>, it updates
+<code>/var/guix/profiles/per-user/$USER/guix-profile</code>, and creates a symlink
+targeting this directory at <code>$HOME/.guix-profile</code></p>
+</li>
+</ul>
+<p>Therefore, in order for these operations to affect your shell/desktop sessions
+(and for the principle of least astonishment to hold), their corresponding
+directories have to be added to well-known environment variables like <code>$PATH</code>,
+<code>$INFOPATH</code>, <code>$XDG_DATA_DIRS</code>, etc.</p>
+<p>In other words, if <code>$HOME/.config/guix/current/bin</code> does not exist in your
+<code>$PATH</code>, a <code>guix pull</code> will have no effect on what <code>guix</code> you are using. Same
+goes for <code>$HOME/.guix-profile/bin</code>, <code>guix install</code>, and installed packages.</p>
+<p>Helpfully, after a <code>guix pull</code> or <code>guix install</code>, a message will be printed like
+so:</p>
+<pre><code>hint: Consider setting the necessary environment variables by running:
+
+     GUIX_PROFILE="$HOME/.guix-profile"
+     . "$GUIX_PROFILE/etc/profile"
+
+Alternately, see `guix package --search-paths -p "$HOME/.guix-profile"'.
+</code></pre>
+<p>However, this is somewhat tedious to do for both <code>guix pull</code> and <code>guix install</code>
+for each user on the system that wants to properly use <code>guix</code>. I recommend that
+you instead add an entry to <code>/etc/profile.d</code> instead. This is done by default
+when installing the Debian package later than 1.2.0-4 and when using the shell
+script installer.</p>
+<h4 id="instructions"><a class="header" href="#instructions">Instructions</a></h4>
+<p>Create <code>/etc/profile.d/guix.sh</code> with the following content:</p>
+<pre><code class="language-sh"># _GUIX_PROFILE: `guix pull` profile
+_GUIX_PROFILE="$HOME/.config/guix/current"
+if [ -L $_GUIX_PROFILE ]; then
+  export PATH="$_GUIX_PROFILE/bin${PATH:+:}$PATH"
+  # Export INFOPATH so that the updated info pages can be found
+  # and read by both /usr/bin/info and/or $GUIX_PROFILE/bin/info
+  # When INFOPATH is unset, add a trailing colon so that Emacs
+  # searches 'Info-default-directory-list'.
+  export INFOPATH="$_GUIX_PROFILE/share/info:$INFOPATH"
+fi
+
+# GUIX_PROFILE: User's default profile
+GUIX_PROFILE="$HOME/.guix-profile"
+[ -L $GUIX_PROFILE ] || return
+GUIX_LOCPATH="$GUIX_PROFILE/lib/locale"
+export GUIX_PROFILE GUIX_LOCPATH
+
+[ -f "$GUIX_PROFILE/etc/profile" ] &amp;&amp; . "$GUIX_PROFILE/etc/profile"
+
+# set XDG_DATA_DIRS to include Guix installations
+export XDG_DATA_DIRS="$GUIX_PROFILE/share:${XDG_DATA_DIRS:-/usr/local/share/:/usr/share/}"
+</code></pre>
+<p>Please note that this will not take effect until the next shell or desktop
+session (log out and log back in).</p>
+<h3 id="guix-pull-as-root"><a class="header" href="#guix-pull-as-root"><code>guix pull</code> as root</a></h3>
+<p>Before you do this, you need to read the section on <a href="./README.html#choosing-your-security-model">choosing your security
+model</a> and adjust <code>guix</code> and <code>guix-daemon</code> flags according to
+your choice, as invoking <code>guix pull</code> may pull substitutes from substitute
+servers (which you may not want).</p>
+<p>As mentioned in a previous section, Guix expects
+<code>${localstatedir}/guix/profiles/per-user/root/current-guix</code> to be populated with
+<code>root</code>'s Guix profile, <code>guix pull</code>-ed and built by some former version of Guix.
+However, this is not the case when we build from source. Therefore, we need to
+perform a <code>guix pull</code> as <code>root</code>:</p>
+<pre><code class="language-sh">sudo --login guix pull --branch=version-&lt;latest-release-version&gt;
+# or
+sudo --login guix pull --commit=&lt;particular-commit&gt;
+</code></pre>
+<p><code>guix pull</code> is quite a long process (especially if you're using
+<code>--no-substitutes</code>). If you encounter build problems, please refer to the
+<a href="#troubleshooting">troubleshooting section</a>.</p>
+<p>Note that running a bare <code>guix pull</code> with no commit or branch specified will
+pull the latest commit on Guix's master branch, which is likely fine, but not
+recommended.</p>
+<p>If you installed Guix from source, you may get an error like the following:</p>
+<pre><code class="language-sh">error: while creating symlink '/root/.config/guix/current' No such file or directory
+</code></pre>
+<p>To resolve this, simply:</p>
+<pre><code>sudo mkdir -p /root/.config/guix
+</code></pre>
+<p>Then try the <code>guix pull</code> command again.</p>
+<p>After the <code>guix pull</code> finishes successfully,
+<code>${localstatedir}/guix/profiles/per-user/root/current-guix</code> should be populated.</p>
+<h4 id="using-the-newly-pulled-guix-by-restarting-the-daemon"><a class="header" href="#using-the-newly-pulled-guix-by-restarting-the-daemon">Using the newly-pulled <code>guix</code> by restarting the daemon</a></h4>
+<p>Depending on how you installed Guix, you should now make sure that your init
+scripts and service configurations point to the newly-pulled <code>guix-daemon</code>.</p>
+<h5 id="if-you-built-guix-from-source"><a class="header" href="#if-you-built-guix-from-source">If you built Guix from source</a></h5>
+<p>If you followed the instructions for <a href="#creating-and-starting-a-guix-daemon-original-service-with-a-fixed-argv0">fixing argv[0]</a>, you can now
+do the following:</p>
+<pre><code class="language-sh">systemctl stop guix-daemon-original
+systemctl disable guix-daemon-original
+
+systemctl enable guix-daemon
+systemctl start guix-daemon
+</code></pre>
+<p>Remember to set <code>--no-substitutes</code> in <code>$libdir/systemd/system/guix-daemon.service</code> and other customizations if you used them for <code>guix-daemon-original.service</code>.</p>
+<h5 id="if-you-installed-guix-via-the-debianubuntu-distribution-packages"><a class="header" href="#if-you-installed-guix-via-the-debianubuntu-distribution-packages">If you installed Guix via the Debian/Ubuntu distribution packages</a></h5>
+<p>You will need to create a <code>guix-daemon-latest</code> service which points to the new
+<code>guix</code> rather than a pinned one.</p>
+<pre><code class="language-sh"># Create guix-daemon-latest.service by modifying guix-daemon.service
+sed -E -e "s|/usr/bin/guix-daemon|/var/guix/profiles/per-user/root/current-guix/bin/guix-daemon|" /etc/systemd/system/guix-daemon.service &gt; /lib/systemd/system/guix-daemon-latest.service
+chmod 664 /lib/systemd/system/guix-daemon-latest.service
+
+# Make systemd recognize the new service
+systemctl daemon-reload
+
+# Make sure that the old guix-daemon.service is stopped and disabled
+systemctl stop guix-daemon
+systemctl disable guix-daemon
+
+# Make sure that the new guix-daemon-latest.service is started and enabled
+systemctl enable guix-daemon-latest
+systemctl start guix-daemon-latest
+</code></pre>
+<h5 id="if-you-installed-guix-via-lantw44s-arch-linux-aur-package"><a class="header" href="#if-you-installed-guix-via-lantw44s-arch-linux-aur-package">If you installed Guix via lantw44's Arch Linux AUR package</a></h5>
+<p>At the time of writing (July 5th, 2021) the systemd unit for "updated Guix" is
+<code>guix-daemon-latest.service</code>, therefore, you should do the following:</p>
+<pre><code class="language-sh">systemctl stop guix-daemon
+systemctl disable guix-daemon
+
+systemctl enable guix-daemon-latest
+systemctl start guix-daemon-latest
+</code></pre>
+<h5 id="otherwise"><a class="header" href="#otherwise">Otherwise...</a></h5>
+<p>Simply do:</p>
+<pre><code class="language-sh">systemctl restart guix-daemon
+</code></pre>
+<h3 id="checking-everything"><a class="header" href="#checking-everything">Checking everything</a></h3>
+<p>If you followed all the steps above to make your Guix setup "prim and proper,"
+you can check that you did everything properly by running through this
+checklist.</p>
+<ol>
+<li>
+<p><code>/etc/profile.d/guix.sh</code> should exist and be sourced at each shell login</p>
+</li>
+<li>
+<p><code>guix describe</code> should not print <code>guix describe: error: failed to determine origin</code>, but rather something like:</p>
+<pre><code>Generation 38   Feb 22 2021 16:39:31    (current)
+  guix f350df4
+    repository URL: https://git.savannah.gnu.org/git/guix.git
+    branch: version-1.2.0
+    commit: f350df405fbcd5b9e27e6b6aa500da7f101f41e7
+</code></pre>
+</li>
+<li>
+<p><code>guix-daemon</code> should be running from <code>${localstatedir}/guix/profiles/per-user/root/current-guix</code></p>
+</li>
+</ol>
+<h1 id="troubleshooting"><a class="header" href="#troubleshooting">Troubleshooting</a></h1>
+<h2 id="derivation-failed-to-build"><a class="header" href="#derivation-failed-to-build">Derivation failed to build</a></h2>
+<p>When you see a build failure like below:</p>
+<pre><code>building /gnu/store/...-foo-3.6.12.drv...
+/ 'check' phasenote: keeping build directory `/tmp/guix-build-foo-3.6.12.drv-0'
+builder for `/gnu/store/...-foo-3.6.12.drv' failed with exit code 1
+build of /gnu/store/...-foo-3.6.12.drv failed
+View build log at '/var/log/guix/drvs/../...-foo-3.6.12.drv.bz2'.
+cannot build derivation `/gnu/store/...-qux-7.69.1.drv': 1 dependencies couldn't be built
+cannot build derivation `/gnu/store/...-bar-3.16.5.drv': 1 dependencies couldn't be built
+cannot build derivation `/gnu/store/...-baz-2.0.5.drv': 1 dependencies couldn't be built
+guix time-machine: error: build of `/gnu/store/...-baz-2.0.5.drv' failed
+</code></pre>
+<p>It means that <code>guix</code> failed to build a package named <code>foo</code>, which was a
+dependency of <code>qux</code>, <code>bar</code>, and <code>baz</code>. Importantly, note that the last "failed"
+line is not necessarily the root cause, the first "failed" line is.</p>
+<p>Most of the time, the build failure is due to a spurious test failure or the
+package's build system/test suite breaking when running multi-threaded. To
+rebuild <em>just</em> this derivation in a single-threaded fashion (please don't forget
+to add other <code>guix</code> flags like <code>--no-substitutes</code> as appropriate):</p>
+<pre><code class="language-sh">$ guix build --cores=1 /gnu/store/...-foo-3.6.12.drv
+</code></pre>
+<p>If the single-threaded rebuild did not succeed, you may need to dig deeper.
+You may view <code>foo</code>'s build logs in <code>less</code> like so (please replace paths with the
+path you see in the build failure output):</p>
+<pre><code class="language-sh">$ bzcat /var/log/guix/drvs/../...-foo-3.6.12.drv.bz2 | less
+</code></pre>
+<p><code>foo</code>'s build directory is also preserved and available at
+<code>/tmp/guix-build-foo-3.6.12.drv-0</code>. However, if you fail to build <code>foo</code> multiple
+times, it may be <code>/tmp/...drv-1</code> or <code>/tmp/...drv-2</code>. Always consult the build
+failure output for the most accurate, up-to-date information.</p>
+<h3 id="python-minimal-errno-84-invalid-or-incomplete-multibyte-or-wide-character"><a class="header" href="#python-minimal-errno-84-invalid-or-incomplete-multibyte-or-wide-character">python(-minimal): [Errno 84] Invalid or incomplete multibyte or wide character</a></h3>
+<p>This error occurs when your <code>$TMPDIR</code> (default: /tmp) exists on a filesystem
+which rejects characters not present in the UTF-8 character code set. An example
+is ZFS with the utf8only=on option set.</p>
+<p>More information: https://github.com/python/cpython/issues/81765</p>
+<h3 id="openssl-111l-and-openssl-111n"><a class="header" href="#openssl-111l-and-openssl-111n">openssl-1.1.1l and openssl-1.1.1n</a></h3>
+<p>OpenSSL includes tests that will fail once some certificate has expired.
+The workarounds from the GnuTLS section immediately below can be used.</p>
+<p>For openssl-1.1.1l use 2022-05-01 as the date.</p>
+<h3 id="gnutls-test-suite-fail-status-request-revoked"><a class="header" href="#gnutls-test-suite-fail-status-request-revoked">GnuTLS: test-suite FAIL: status-request-revoked</a></h3>
+<p><em>The derivation is likely identified by: <code>/gnu/store/vhphki5sg9xkdhh2pbc8gi6vhpfzryf0-gnutls-3.6.12.drv</code></em></p>
+<p>This unfortunate error is most common for non-substitute builders who installed
+Guix v1.2.0. The problem stems from the fact that one of GnuTLS's tests uses a
+hardcoded certificate which expired on 2020-10-24.</p>
+<p>What's more unfortunate is that this GnuTLS derivation is somewhat special in
+Guix's dependency graph and is not affected by the package transformation flags
+like <code>--without-tests=</code>.</p>
+<p>The easiest solution for those encountering this problem is to install a newer
+version of Guix. However, there are ways to work around this issue:</p>
+<h4 id="workaround-1-using-substitutes-for-this-single-derivation"><a class="header" href="#workaround-1-using-substitutes-for-this-single-derivation">Workaround 1: Using substitutes for this single derivation</a></h4>
+<p>If you've authorized the official Guix build farm's key (more info
+<a href="./README.html#step-1-authorize-the-signing-keys">here</a>), then you can use
+substitutes just for this single derivation by invoking the following:</p>
+<pre><code class="language-sh">guix build --substitute-urls="https://ci.guix.gnu.org" /gnu/store/vhphki5sg9xkdhh2pbc8gi6vhpfzryf0-gnutls-3.6.12.drv
+</code></pre>
+<p>See <a href="./README.html#removing-authorized-keys">this section</a> for instructions on how
+to remove authorized keys if you don't want to keep the build farm's key
+authorized.</p>
+<h4 id="workaround-2-temporarily-setting-the-system-clock-back"><a class="header" href="#workaround-2-temporarily-setting-the-system-clock-back">Workaround 2: Temporarily setting the system clock back</a></h4>
+<p>This workaround was described <a href="https://issues.guix.gnu.org/44559#5">here</a>.</p>
+<p>Basically:</p>
+<ol>
+<li>Turn off NTP</li>
+<li>Set system time to 2020-10-01</li>
+<li>guix build --no-substitutes /gnu/store/vhphki5sg9xkdhh2pbc8gi6vhpfzryf0-gnutls-3.6.12.drv</li>
+<li>Set system time back to accurate current time</li>
+<li>Turn NTP back on</li>
+</ol>
+<p>For example,</p>
+<pre><code class="language-sh">sudo timedatectl set-ntp no
+sudo date --set "01 oct 2020 15:00:00"
+guix build /gnu/store/vhphki5sg9xkdhh2pbc8gi6vhpfzryf0-gnutls-3.6.12.drv
+sudo timedatectl set-ntp yes
+</code></pre>
+<h4 id="workaround-3-disable-the-tests-in-the-guix-source-code-for-this-single-derivation"><a class="header" href="#workaround-3-disable-the-tests-in-the-guix-source-code-for-this-single-derivation">Workaround 3: Disable the tests in the Guix source code for this single derivation</a></h4>
+<p>If all of the above workarounds fail, you can also disable the <code>tests</code> phase of
+the derivation via the <code>arguments</code> option, as described in the official
+<a href="https://guix.gnu.org/manual/en/html_node/package-Reference.html"><code>package</code>
+reference</a>.</p>
+<p>For example, to disable the openssl-1.1 check phase:</p>
+<pre><code class="language-diff">diff --git a/gnu/packages/tls.scm b/gnu/packages/tls.scm
+index f1e844b..1077c4b 100644
+--- a/gnu/packages/tls.scm
++++ b/gnu/packages/tls.scm
+@@ -494,4 +494,5 @@ (define-public openssl-1.1
+     (arguments
+      `(#:parallel-tests? #f
++       #:tests? #f
+        #:test-target "test"
+</code></pre>
+<h3 id="coreutils-fail-teststail-2inotify-dir-recreate"><a class="header" href="#coreutils-fail-teststail-2inotify-dir-recreate">coreutils: FAIL: tests/tail-2/inotify-dir-recreate</a></h3>
+<p>The inotify-dir-create test fails on "remote" filesystems such as overlayfs
+(Docker's default filesystem) due to the filesystem being mistakenly recognized
+as non-remote.</p>
+<p>A relatively easy workaround to this is to make sure that a somewhat traditional
+filesystem is mounted at <code>/tmp</code> (where <code>guix-daemon</code> performs its builds). For
+Docker users, this might mean <a href="https://docs.docker.com/storage/volumes/">using a volume</a>, <a href="https://docs.docker.com/storage/bind-mounts/">binding
+mounting</a> from host, or (for those with enough RAM and swap)
+<a href="https://docs.docker.com/storage/tmpfs/">mounting a tmpfs</a> using the <code>--tmpfs</code> flag.</p>
+<p>Please see the following links for more details:</p>
+<ul>
+<li>An upstream coreutils bug has been filed: <a href="https://debbugs.gnu.org/cgi/bugreport.cgi?bug=47940">debbugs#47940</a></li>
+<li>A Guix bug detailing the underlying problem has been filed: <a href="https://issues.guix.gnu.org/47935">guix-issues#47935</a>, <a href="https://issues.guix.gnu.org/49985#5">guix-issues#49985</a></li>
+<li>A commit to skip this test in Guix has been merged into the core-updates branch:
+<a href="https://git.savannah.gnu.org/cgit/guix.git/commit/?id=6ba1058df0c4ce5611c2367531ae5c3cdc729ab4">savannah/guix@6ba1058</a></li>
+</ul>
+<h1 id="purginguninstalling-guix"><a class="header" href="#purginguninstalling-guix">Purging/Uninstalling Guix</a></h1>
+<p>In the extraordinarily rare case where you messed up your Guix installation in
+an irreversible way, you may want to completely purge Guix from your system and
+start over.</p>
+<ol>
+<li>
+<p>Uninstall Guix itself according to the way you installed it (e.g. <code>sudo apt purge guix</code> for Ubuntu packaging, <code>sudo make uninstall</code> for a build from source).</p>
+</li>
+<li>
+<p>Remove all build users and groups</p>
+<p>You may check for relevant users and groups using:</p>
+<pre><code>getent passwd | grep guix
+getent group | grep guix
+</code></pre>
+<p>Then, you may remove users and groups using:</p>
+<pre><code>sudo userdel &lt;user&gt;
+sudo groupdel &lt;group&gt;
+</code></pre>
+</li>
+<li>
+<p>Remove all possible Guix-related directories</p>
+<ul>
+<li><code>/var/guix/</code></li>
+<li><code>/var/log/guix/</code></li>
+<li><code>/gnu/</code></li>
+<li><code>/etc/guix/</code></li>
+<li><code>/home/*/.config/guix/</code></li>
+<li><code>/home/*/.cache/guix/</code></li>
+<li><code>/home/*/.guix-profile/</code></li>
+<li><code>/root/.config/guix/</code></li>
+<li><code>/root/.cache/guix/</code></li>
+<li><code>/root/.guix-profile/</code></li>
+</ul>
+</li>
+</ol>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../contrib/guix/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../../contrib/init/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../contrib/guix/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../../contrib/init/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
+
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

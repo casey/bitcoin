@@ -1,0 +1,273 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>lint - Bitcoin Core Developer Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../../highlight.css">
+        <link rel="stylesheet" href="../../tomorrow-night.css">
+        <link rel="stylesheet" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bitcoin Core Developer Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <p>This folder contains lint scripts.</p>
+<h1 id="running-locally"><a class="header" href="#running-locally">Running locally</a></h1>
+<p>To run linters locally with the same versions as the CI environment, use the included
+Dockerfile:</p>
+<pre><code class="language-sh">DOCKER_BUILDKIT=1 docker build -t bitcoin-linter --file "./ci/lint_imagefile" ./ &amp;&amp; docker run --rm -v $(pwd):/bitcoin -it bitcoin-linter
+</code></pre>
+<p>Building the container can be done every time, because it is fast when the
+result is cached and it prevents issues when the image changes.</p>
+<h1 id="test-runner"><a class="header" href="#test-runner">test runner</a></h1>
+<p>To run all the lint checks in the test runner outside the docker you first need
+to install the rust toolchain using your package manager of choice or
+<a href="https://www.rust-lang.org/tools/install">rustup</a>.</p>
+<p>Then you can use:</p>
+<pre><code class="language-sh">( cd ./test/lint/test_runner/ &amp;&amp; cargo fmt &amp;&amp; cargo clippy &amp;&amp; RUST_BACKTRACE=1 cargo run )
+</code></pre>
+<p>If you wish to run individual lint checks, run the test_runner with
+<code>--lint=TEST_TO_RUN</code> arguments. If running with <code>cargo run</code>, arguments after
+<code>--</code> are passed to the binary you are running e.g.:</p>
+<pre><code class="language-sh">( cd ./test/lint/test_runner/ &amp;&amp; RUST_BACKTRACE=1 cargo run -- --lint=doc --lint=trailing_whitespace )
+</code></pre>
+<p>To see a list of all individual lint checks available in test_runner, use <code>-h</code>
+or <code>--help</code>:</p>
+<pre><code class="language-sh">( cd ./test/lint/test_runner/ &amp;&amp; RUST_BACKTRACE=1 cargo run -- --help )
+</code></pre>
+<h4 id="dependencies"><a class="header" href="#dependencies">Dependencies</a></h4>
+<div class="table-wrapper"><table><thead><tr><th>Lint test</th><th style="text-align: center">Dependency</th></tr></thead><tbody>
+<tr><td><a href="/test/lint/lint-python.py"><code>lint-python.py</code></a></td><td style="text-align: center"><a href="https://github.com/lief-project/LIEF">lief</a></td></tr>
+<tr><td><a href="/test/lint/lint-python.py"><code>lint-python.py</code></a></td><td style="text-align: center"><a href="https://github.com/python/mypy">mypy</a></td></tr>
+<tr><td><a href="/test/lint/lint-python.py"><code>lint-python.py</code></a></td><td style="text-align: center"><a href="https://github.com/zeromq/pyzmq">pyzmq</a></td></tr>
+<tr><td><a href="/test/lint/lint-python-dead-code.py"><code>lint-python-dead-code.py</code></a></td><td style="text-align: center"><a href="https://github.com/jendrikseipp/vulture">vulture</a></td></tr>
+<tr><td><a href="/test/lint/lint-shell.py"><code>lint-shell.py</code></a></td><td style="text-align: center"><a href="https://github.com/koalaman/shellcheck">ShellCheck</a></td></tr>
+<tr><td><a href="/test/lint/lint-spelling.py"><code>lint-spelling.py</code></a></td><td style="text-align: center"><a href="https://github.com/codespell-project/codespell">codespell</a></td></tr>
+<tr><td><code>py_lint</code></td><td style="text-align: center"><a href="https://github.com/astral-sh/ruff">ruff</a></td></tr>
+<tr><td>markdown link check</td><td style="text-align: center"><a href="https://github.com/becheran/mlc">mlc</a></td></tr>
+</tbody></table>
+</div>
+<p>In use versions and install instructions are available in the <a href="../../ci/lint/04_install.sh">CI setup</a>.</p>
+<p>Please be aware that on Linux distributions all dependencies are usually available as packages, but could be outdated.</p>
+<h4 id="running-the-tests"><a class="header" href="#running-the-tests">Running the tests</a></h4>
+<p>Individual tests can be run by directly calling the test script, e.g.:</p>
+<pre><code>test/lint/lint-files.py
+</code></pre>
+<h1 id="check-docpy"><a class="header" href="#check-docpy">check-doc.py</a></h1>
+<p>Check for missing documentation of command line options.</p>
+<h1 id="commit-script-checksh"><a class="header" href="#commit-script-checksh">commit-script-check.sh</a></h1>
+<p>Verification of <a href="/doc/developer-notes.html#scripted-diffs">scripted diffs</a>.
+Scripted diffs are only assumed to run on the latest LTS release of Ubuntu. Running them on other operating systems
+might require installing GNU tools, such as GNU sed.</p>
+<h1 id="git-subtree-checksh"><a class="header" href="#git-subtree-checksh">git-subtree-check.sh</a></h1>
+<p>Run this script from the root of the repository to verify that a subtree matches the contents of
+the commit it claims to have been updated to.</p>
+<pre><code>Usage: test/lint/git-subtree-check.sh [-r] DIR [COMMIT]
+       test/lint/git-subtree-check.sh -?
+</code></pre>
+<ul>
+<li><code>DIR</code> is the prefix within the repository to check.</li>
+<li><code>COMMIT</code> is the commit to check, if it is not provided, HEAD will be used.</li>
+<li><code>-r</code> checks that subtree commit is present in repository.</li>
+</ul>
+<p>To do a full check with <code>-r</code>, make sure that you have fetched the upstream repository branch in which the subtree is
+maintained:</p>
+<ul>
+<li>for <code>src/secp256k1</code>: https://github.com/bitcoin-core/secp256k1.git (branch master)</li>
+<li>for <code>src/leveldb</code>: https://github.com/bitcoin-core/leveldb-subtree.git (branch bitcoin-fork)</li>
+<li>for <code>src/crypto/ctaes</code>: https://github.com/bitcoin-core/ctaes.git (branch master)</li>
+<li>for <code>src/crc32c</code>: https://github.com/bitcoin-core/crc32c-subtree.git (branch bitcoin-fork)</li>
+<li>for <code>src/minisketch</code>: https://github.com/sipa/minisketch.git (branch master)</li>
+</ul>
+<p>To do so, add the upstream repository as remote:</p>
+<pre><code>git remote add --fetch secp256k1 https://github.com/bitcoin-core/secp256k1.git
+</code></pre>
+<h1 id="lint_ignore_dirspy"><a class="header" href="#lint_ignore_dirspy">lint_ignore_dirs.py</a></h1>
+<p>Add list of common directories to ignore when running tests</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../test/functional/test-shell.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../test/functional/test-shell.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
+
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

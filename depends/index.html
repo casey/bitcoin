@@ -1,0 +1,326 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>depends - Bitcoin Core Developer Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bitcoin Core Developer Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h3 id="usage"><a class="header" href="#usage">Usage</a></h3>
+<p>To build dependencies for the current arch+OS:</p>
+<pre><code>make
+</code></pre>
+<p>To build for another arch/OS:</p>
+<pre><code>make HOST=host-platform-triplet
+</code></pre>
+<p>For example:</p>
+<pre><code>make HOST=x86_64-w64-mingw32 -j4
+</code></pre>
+<p><strong>When configuring Bitcoin Core, CMake by default will ignore the depends output.</strong> In
+order for it to pick up libraries, tools, and settings from the depends build,
+you must specify the toolchain file.
+In the above example, a file named <code>depends/x86_64-w64-mingw32/toolchain.cmake</code> will be
+created. To use it during configuring Bitcoin Core:</p>
+<pre><code>cmake -B build --toolchain depends/x86_64-w64-mingw32/toolchain.cmake
+</code></pre>
+<p>Common <code>host-platform-triplet</code>s for cross compilation are:</p>
+<ul>
+<li><code>i686-pc-linux-gnu</code> for Linux x86 32 bit</li>
+<li><code>x86_64-pc-linux-gnu</code> for Linux x86 64 bit</li>
+<li><code>x86_64-w64-mingw32</code> for Win64</li>
+<li><code>x86_64-apple-darwin</code> for macOS</li>
+<li><code>arm64-apple-darwin</code> for ARM macOS</li>
+<li><code>arm-linux-gnueabihf</code> for Linux ARM 32 bit</li>
+<li><code>aarch64-linux-gnu</code> for Linux ARM 64 bit</li>
+<li><code>powerpc64-linux-gnu</code> for Linux POWER 64 bit (big endian)</li>
+<li><code>powerpc64le-linux-gnu</code> for Linux POWER 64 bit (little endian)</li>
+<li><code>riscv32-linux-gnu</code> for Linux RISC-V 32 bit</li>
+<li><code>riscv64-linux-gnu</code> for Linux RISC-V 64 bit</li>
+<li><code>s390x-linux-gnu</code> for Linux S390X</li>
+</ul>
+<p>The paths are automatically configured and no other options are needed.</p>
+<h3 id="install-the-required-dependencies-ubuntu--debian"><a class="header" href="#install-the-required-dependencies-ubuntu--debian">Install the required dependencies: Ubuntu &amp; Debian</a></h3>
+<h4 id="common"><a class="header" href="#common">Common</a></h4>
+<pre><code>apt install cmake curl make patch
+</code></pre>
+<h4 id="gui"><a class="header" href="#gui">GUI</a></h4>
+<p>Skip the following packages if you don't intend to use the GUI and will build with <a href="#dependency-options"><code>NO_QT=1</code></a>:</p>
+<pre><code>apt install bison g++ pkg-config python3 xz-utils
+</code></pre>
+<h4 id="for-macos-cross-compilation"><a class="header" href="#for-macos-cross-compilation">For macOS cross compilation</a></h4>
+<pre><code>apt install clang lld llvm zip
+</code></pre>
+<p>Clang 18 or later is required. You must also obtain the macOS SDK before
+proceeding with a cross-compile. Under the depends directory, create a
+subdirectory named <code>SDKs</code>. Then, place the extracted SDK under this new directory.
+For more information, see <a href="../contrib/macdeploy/README.html#sdk-extraction">SDK Extraction</a>.</p>
+<h4 id="for-win64-cross-compilation"><a class="header" href="#for-win64-cross-compilation">For Win64 cross compilation</a></h4>
+<pre><code>apt install g++-mingw-w64-x86-64-posix
+</code></pre>
+<h4 id="for-linux-including-i386-arm-cross-compilation"><a class="header" href="#for-linux-including-i386-arm-cross-compilation">For linux (including i386, ARM) cross compilation</a></h4>
+<p>Common linux dependencies:</p>
+<pre><code>sudo apt-get install g++-multilib binutils
+</code></pre>
+<p>For linux ARM cross compilation:</p>
+<pre><code>sudo apt-get install g++-arm-linux-gnueabihf binutils-arm-linux-gnueabihf
+</code></pre>
+<p>For linux AARCH64 cross compilation:</p>
+<pre><code>sudo apt-get install g++-aarch64-linux-gnu binutils-aarch64-linux-gnu
+</code></pre>
+<p>For linux POWER 64-bit cross compilation (there are no packages for 32-bit):</p>
+<pre><code>sudo apt-get install g++-powerpc64-linux-gnu binutils-powerpc64-linux-gnu g++-powerpc64le-linux-gnu binutils-powerpc64le-linux-gnu
+</code></pre>
+<p>For linux RISC-V 64-bit cross compilation (there are no packages for 32-bit):</p>
+<pre><code>sudo apt-get install g++-riscv64-linux-gnu binutils-riscv64-linux-gnu
+</code></pre>
+<p>For linux S390X cross compilation:</p>
+<pre><code>sudo apt-get install g++-s390x-linux-gnu binutils-s390x-linux-gnu
+</code></pre>
+<h3 id="install-the-required-dependencies-freebsd"><a class="header" href="#install-the-required-dependencies-freebsd">Install the required dependencies: FreeBSD</a></h3>
+<pre><code>pkg install bash
+</code></pre>
+<h3 id="install-the-required-dependencies-netbsd"><a class="header" href="#install-the-required-dependencies-netbsd">Install the required dependencies: NetBSD</a></h3>
+<pre><code>pkgin install bash gmake
+</code></pre>
+<h3 id="install-the-required-dependencies-openbsd"><a class="header" href="#install-the-required-dependencies-openbsd">Install the required dependencies: OpenBSD</a></h3>
+<pre><code>pkg_add bash gmake gtar
+</code></pre>
+<h3 id="dependency-options"><a class="header" href="#dependency-options">Dependency Options</a></h3>
+<p>The following can be set when running make: <code>make FOO=bar</code></p>
+<ul>
+<li><code>SOURCES_PATH</code>: Downloaded sources will be placed here</li>
+<li><code>BASE_CACHE</code>: Built packages will be placed here</li>
+<li><code>SDK_PATH</code>: Path where SDKs can be found (used by macOS)</li>
+<li><code>FALLBACK_DOWNLOAD_PATH</code>: If a source file can't be fetched, try here before giving up</li>
+<li><code>C_STANDARD</code>: Set the C standard version used. Defaults to <code>c11</code>.</li>
+<li><code>CXX_STANDARD</code>: Set the C++ standard version used. Defaults to <code>c++20</code>.</li>
+<li><code>NO_BOOST</code>: Don't download/build/cache Boost</li>
+<li><code>NO_LIBEVENT</code>: Don't download/build/cache Libevent</li>
+<li><code>NO_QT</code>: Don't download/build/cache Qt and its dependencies</li>
+<li><code>NO_QR</code>: Don't download/build/cache packages needed for enabling qrencode</li>
+<li><code>NO_ZMQ</code>: Don't download/build/cache packages needed for enabling ZeroMQ</li>
+<li><code>NO_WALLET</code>: Don't download/build/cache libs needed to enable the wallet</li>
+<li><code>NO_BDB</code>: Don't download/build/cache BerkeleyDB</li>
+<li><code>NO_SQLITE</code>: Don't download/build/cache SQLite</li>
+<li><code>NO_USDT</code>: Don't download/build/cache packages needed for enabling USDT tracepoints</li>
+<li><code>MULTIPROCESS</code>: Build libmultiprocess (experimental)</li>
+<li><code>DEBUG</code>: Disable some optimizations and enable more runtime checking</li>
+<li><code>HOST_ID_SALT</code>: Optional salt to use when generating host package ids</li>
+<li><code>BUILD_ID_SALT</code>: Optional salt to use when generating build package ids</li>
+<li><code>LOG</code>: Use file-based logging for individual packages. During a package build its log file
+resides in the <code>depends</code> directory, and the log file is printed out automatically in case
+of build error. After successful build log files are moved along with package archives</li>
+<li><code>LTO</code>: Enable options needed for LTO. Does not add <code>-flto</code> related options to *FLAGS.</li>
+<li><code>NO_HARDEN=1</code>: Don't use hardening options when building packages</li>
+</ul>
+<p>If some packages are not built, for example <code>make NO_WALLET=1</code>, the appropriate CMake cache
+variables will be set when generating the Bitcoin Core buildsystem. In this case, <code>-DENABLE_WALLET=OFF</code>.</p>
+<h3 id="additional-targets"><a class="header" href="#additional-targets">Additional targets</a></h3>
+<pre><code>download: run 'make download' to fetch all sources without building them
+download-osx: run 'make download-osx' to fetch all sources needed for macOS builds
+download-win: run 'make download-win' to fetch all sources needed for win builds
+download-linux: run 'make download-linux' to fetch all sources needed for linux builds
+</code></pre>
+<h3 id="other-documentation"><a class="header" href="#other-documentation">Other documentation</a></h3>
+<ul>
+<li><a href="description.html">description.md</a>: General description of the depends system</li>
+<li><a href="packages.html">packages.md</a>: Steps for adding packages</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../contrib/verify-commits/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../depends/description.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../contrib/verify-commits/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../depends/description.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

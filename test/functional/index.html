@@ -1,0 +1,383 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>functional - Bitcoin Core Developer Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../../highlight.css">
+        <link rel="stylesheet" href="../../tomorrow-night.css">
+        <link rel="stylesheet" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bitcoin Core Developer Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="functional-tests"><a class="header" href="#functional-tests">Functional tests</a></h1>
+<h3 id="writing-functional-tests"><a class="header" href="#writing-functional-tests">Writing Functional Tests</a></h3>
+<h4 id="example-test"><a class="header" href="#example-test">Example test</a></h4>
+<p>The file <a href="example_test.py">test/functional/example_test.py</a> is a heavily commented example
+of a test case that uses both the RPC and P2P interfaces. If you are writing your first test, copy
+that file and modify to fit your needs.</p>
+<h4 id="coverage"><a class="header" href="#coverage">Coverage</a></h4>
+<p>Assuming the build directory is <code>build</code>,
+running <code>build/test/functional/test_runner.py</code> with the <code>--coverage</code> argument tracks which RPCs are
+called by the tests and prints a report of uncovered RPCs in the summary. This
+can be used (along with the <code>--extended</code> argument) to find out which RPCs we
+don't have test cases for.</p>
+<h4 id="style-guidelines"><a class="header" href="#style-guidelines">Style guidelines</a></h4>
+<ul>
+<li>Where possible, try to adhere to <a href="https://www.python.org/dev/peps/pep-0008/">PEP-8 guidelines</a></li>
+<li>Use a python linter like flake8 before submitting PRs to catch common style
+nits (eg trailing whitespace, unused imports, etc)</li>
+<li>The oldest supported Python version is specified in <a href="/doc/dependencies.html">doc/dependencies.md</a>.
+Consider using <a href="https://github.com/pyenv/pyenv">pyenv</a>, which checks <a href="/.python-version">.python-version</a>,
+to prevent accidentally introducing modern syntax from an unsupported Python version.
+The CI linter job also checks this, but <a href="https://github.com/bitcoin/bitcoin/pull/14884#discussion_r239585126">possibly not in all cases</a>.</li>
+<li>See <a href="/test/lint/lint-python.py">the python lint script</a> that checks for violations that
+could lead to bugs and issues in the test code.</li>
+<li>Use <a href="https://docs.python.org/3/library/typing.html">type hints</a> in your code to improve code readability
+and to detect possible bugs earlier.</li>
+<li>Avoid wildcard imports.</li>
+<li>If more than one name from a module is needed, use lexicographically sorted multi-line imports
+in order to reduce the possibility of potential merge conflicts.</li>
+<li>Use a module-level docstring to describe what the test is testing, and how it
+is testing it.</li>
+<li>When subclassing the BitcoinTestFramework, place overrides for the
+<code>set_test_params()</code>, <code>add_options()</code> and <code>setup_xxxx()</code> methods at the top of
+the subclass, then locally-defined helper methods, then the <code>run_test()</code> method.</li>
+<li>Use <code>f'{x}'</code> for string formatting in preference to <code>'{}'.format(x)</code> or <code>'%s' % x</code>.</li>
+<li>Use <code>platform.system()</code> for detecting the running operating system and <code>os.name</code> to
+check whether it's a POSIX system (see also the <code>skip_if_platform_not_{linux,posix}</code>
+methods in the <code>BitcoinTestFramework</code> class, which can be used to skip a whole test
+depending on the platform).</li>
+</ul>
+<h4 id="naming-guidelines"><a class="header" href="#naming-guidelines">Naming guidelines</a></h4>
+<ul>
+<li>Name the test <code>&lt;area&gt;_test.py</code>, where area can be one of the following:
+<ul>
+<li><code>feature</code> for tests for full features that aren't wallet/mining/mempool, eg <code>feature_rbf.py</code></li>
+<li><code>interface</code> for tests for other interfaces (REST, ZMQ, etc), eg <code>interface_rest.py</code></li>
+<li><code>mempool</code> for tests for mempool behaviour, eg <code>mempool_reorg.py</code></li>
+<li><code>mining</code> for tests for mining features, eg <code>mining_prioritisetransaction.py</code></li>
+<li><code>p2p</code> for tests that explicitly test the p2p interface, eg <code>p2p_disconnect_ban.py</code></li>
+<li><code>rpc</code> for tests for individual RPC methods or features, eg <code>rpc_listtransactions.py</code></li>
+<li><code>tool</code> for tests for tools, eg <code>tool_wallet.py</code></li>
+<li><code>wallet</code> for tests for wallet features, eg <code>wallet_keypool.py</code></li>
+</ul>
+</li>
+<li>Use an underscore to separate words
+<ul>
+<li>exception: for tests for specific RPCs or command line options which don't include underscores, name the test after the exact RPC or argument name, eg <code>rpc_decodescript.py</code>, not <code>rpc_decode_script.py</code></li>
+</ul>
+</li>
+<li>Don't use the redundant word <code>test</code> in the name, eg <code>interface_zmq.py</code>, not <code>interface_zmq_test.py</code></li>
+</ul>
+<h4 id="general-test-writing-advice"><a class="header" href="#general-test-writing-advice">General test-writing advice</a></h4>
+<ul>
+<li>Instead of inline comments or no test documentation at all, log the comments to the test log, e.g.
+<code>self.log.info('Create enough transactions to fill a block')</code>. Logs make the test code easier to read and the test
+logic easier <a href="/test/README.html#test-logging">to debug</a>.</li>
+<li>Set <code>self.num_nodes</code> to the minimum number of nodes necessary for the test.
+Having additional unrequired nodes adds to the execution time of the test as
+well as memory/CPU/disk requirements (which is important when running tests in
+parallel).</li>
+<li>Avoid stop-starting the nodes multiple times during the test if possible. A
+stop-start takes several seconds, so doing it several times blows up the
+runtime of the test.</li>
+<li>Set the <code>self.setup_clean_chain</code> variable in <code>set_test_params()</code> to <code>True</code> to
+initialize an empty blockchain and start from the Genesis block, rather than
+load a premined blockchain from cache with the default value of <code>False</code>. The
+cached data directories contain a 200-block pre-mined blockchain with the
+spendable mining rewards being split between four nodes. Each node has 25
+mature block subsidies (25x50=1250 BTC) in its wallet. Using them is much more
+efficient than mining blocks in your test.</li>
+<li>When calling RPCs with lots of arguments, consider using named keyword
+arguments instead of positional arguments to make the intent of the call
+clear to readers.</li>
+<li>Many of the core test framework classes such as <code>CBlock</code> and <code>CTransaction</code>
+don't allow new attributes to be added to their objects at runtime like
+typical Python objects allow. This helps prevent unpredictable side effects
+from typographical errors or usage of the objects outside of their intended
+purpose.</li>
+</ul>
+<h4 id="rpc-and-p2p-definitions"><a class="header" href="#rpc-and-p2p-definitions">RPC and P2P definitions</a></h4>
+<p>Test writers may find it helpful to refer to the definitions for the RPC and
+P2P messages. These can be found in the following source files:</p>
+<ul>
+<li><code>/src/rpc/*</code> for RPCs</li>
+<li><code>/src/wallet/rpc*</code> for wallet RPCs</li>
+<li><code>ProcessMessage()</code> in <code>/src/net_processing.cpp</code> for parsing P2P messages</li>
+</ul>
+<h4 id="using-the-p2p-interface"><a class="header" href="#using-the-p2p-interface">Using the P2P interface</a></h4>
+<ul>
+<li>
+<p><code>P2P</code>s can be used to test specific P2P protocol behavior.
+<a href="test_framework/p2p.py">p2p.py</a> contains test framework p2p objects and
+<a href="test_framework/messages.py">messages.py</a> contains all the definitions for objects passed
+over the network (<code>CBlock</code>, <code>CTransaction</code>, etc, along with the network-level
+wrappers for them, <code>msg_block</code>, <code>msg_tx</code>, etc).</p>
+</li>
+<li>
+<p>P2P tests have two threads. One thread handles all network communication
+with the bitcoind(s) being tested in a callback-based event loop; the other
+implements the test logic.</p>
+</li>
+<li>
+<p><code>P2PConnection</code> is the class used to connect to a bitcoind.  <code>P2PInterface</code>
+contains the higher level logic for processing P2P payloads and connecting to
+the Bitcoin Core node application logic. For custom behaviour, subclass the
+P2PInterface object and override the callback methods.</p>
+</li>
+</ul>
+<p><code>P2PConnection</code>s can be used as such:</p>
+<pre><code class="language-python">p2p_conn = node.add_p2p_connection(P2PInterface())
+p2p_conn.send_and_ping(msg)
+</code></pre>
+<p>They can also be referenced by indexing into a <code>TestNode</code>'s <code>p2ps</code> list, which
+contains the list of test framework <code>p2p</code> objects connected to itself
+(it does not include any <code>TestNode</code>s):</p>
+<pre><code class="language-python">node.p2ps[0].sync_with_ping()
+</code></pre>
+<p>More examples can be found in <a href="p2p_unrequested_blocks.py">p2p_unrequested_blocks.py</a>,
+<a href="p2p_compactblocks.py">p2p_compactblocks.py</a>.</p>
+<h4 id="prototyping-tests"><a class="header" href="#prototyping-tests">Prototyping tests</a></h4>
+<p>The <a href="test-shell.html"><code>TestShell</code></a> class exposes the BitcoinTestFramework
+functionality to interactive Python3 environments and can be used to prototype
+tests. This may be especially useful in a REPL environment with session logging
+utilities, such as
+<a href="https://ipython.readthedocs.io/en/stable/interactive/reference.html#session-logging-and-restoring">IPython</a>.
+The logs of such interactive sessions can later be adapted into permanent test
+cases.</p>
+<h3 id="test-framework-modules"><a class="header" href="#test-framework-modules">Test framework modules</a></h3>
+<p>The following are useful modules for test developers. They are located in
+<a href="test_framework">test/functional/test_framework/</a>.</p>
+<h4 id="authproxypy"><a class="header" href="#authproxypy"><a href="test_framework/authproxy.py">authproxy.py</a></a></h4>
+<p>Taken from the <a href="https://github.com/jgarzik/python-bitcoinrpc">python-bitcoinrpc repository</a>.</p>
+<h4 id="test_frameworkpy"><a class="header" href="#test_frameworkpy"><a href="test_framework/test_framework.py">test_framework.py</a></a></h4>
+<p>Base class for functional tests.</p>
+<h4 id="utilpy"><a class="header" href="#utilpy"><a href="test_framework/util.py">util.py</a></a></h4>
+<p>Generally useful functions.</p>
+<h4 id="p2ppy"><a class="header" href="#p2ppy"><a href="test_framework/p2p.py">p2p.py</a></a></h4>
+<p>Test objects for interacting with a bitcoind node over the p2p interface.</p>
+<h4 id="scriptpy"><a class="header" href="#scriptpy"><a href="test_framework/script.py">script.py</a></a></h4>
+<p>Utilities for manipulating transaction scripts (originally from python-bitcoinlib)</p>
+<h4 id="keypy"><a class="header" href="#keypy"><a href="test_framework/key.py">key.py</a></a></h4>
+<p>Test-only secp256k1 elliptic curve implementation</p>
+<h4 id="blocktoolspy"><a class="header" href="#blocktoolspy"><a href="test_framework/blocktools.py">blocktools.py</a></a></h4>
+<p>Helper functions for creating blocks and transactions.</p>
+<h3 id="benchmarking-with-perf"><a class="header" href="#benchmarking-with-perf">Benchmarking with perf</a></h3>
+<p>An easy way to profile node performance during functional tests is provided
+for Linux platforms using <code>perf</code>.</p>
+<p>Perf will sample the running node and will generate profile data in the node's
+datadir. The profile data can then be presented using <code>perf report</code> or a graphical
+tool like <a href="https://github.com/KDAB/hotspot">hotspot</a>.</p>
+<p>There are two ways of invoking perf: one is to use the <code>--perf</code> flag when
+running tests, which will profile each node during the entire test run: perf
+begins to profile when the node starts and ends when it shuts down. The other
+way is the use the <code>profile_with_perf</code> context manager, e.g.</p>
+<pre><code class="language-python">with node.profile_with_perf("send-big-msgs"):
+    # Perform activity on the node you're interested in profiling, e.g.:
+    for _ in range(10000):
+        node.p2ps[0].send_message(some_large_message)
+</code></pre>
+<p>To see useful textual output, run</p>
+<pre><code class="language-sh">perf report -i /path/to/datadir/send-big-msgs.perf.data.xxxx --stdio | c++filt | less
+</code></pre>
+<h4 id="see-also"><a class="header" href="#see-also">See also:</a></h4>
+<ul>
+<li><a href="https://askubuntu.com/q/50145">Installing perf</a></li>
+<li><a href="https://www.brendangregg.com/perf.html">Perf examples</a></li>
+<li><a href="https://github.com/KDAB/hotspot">Hotspot</a>: a GUI for perf output analysis</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../test/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../../test/functional/test-shell.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../test/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../../test/functional/test-shell.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
+
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

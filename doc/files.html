@@ -1,0 +1,343 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>files - Bitcoin Core Developer Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bitcoin Core Developer Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="bitcoin-core-file-system"><a class="header" href="#bitcoin-core-file-system">Bitcoin Core file system</a></h1>
+<p><strong>Contents</strong></p>
+<ul>
+<li>
+<p><a href="#data-directory-location">Data directory location</a></p>
+</li>
+<li>
+<p><a href="#data-directory-layout">Data directory layout</a></p>
+</li>
+<li>
+<p><a href="#multi-wallet-environment">Multi-wallet environment</a></p>
+<ul>
+<li>
+<p><a href="#berkeley-db-database-based-wallets">Berkeley DB database based wallets</a></p>
+</li>
+<li>
+<p><a href="#sqlite-database-based-wallets">SQLite database based wallets</a></p>
+</li>
+</ul>
+</li>
+<li>
+<p><a href="#gui-settings">GUI settings</a></p>
+</li>
+<li>
+<p><a href="#legacy-subdirectories-and-files">Legacy subdirectories and files</a></p>
+</li>
+<li>
+<p><a href="#notes">Notes</a></p>
+</li>
+</ul>
+<h2 id="data-directory-location"><a class="header" href="#data-directory-location">Data directory location</a></h2>
+<p>The data directory is the default location where the Bitcoin Core files are stored.</p>
+<ol>
+<li>The default data directory paths for supported platforms are:</li>
+</ol>
+<div class="table-wrapper"><table><thead><tr><th>Platform</th><th>Data directory path</th></tr></thead><tbody>
+<tr><td>Linux</td><td><code>$HOME/.bitcoin/</code></td></tr>
+<tr><td>macOS</td><td><code>$HOME/Library/Application Support/Bitcoin/</code></td></tr>
+<tr><td>Windows</td><td><code>%LOCALAPPDATA%\Bitcoin\</code> <sup><a href="#note1">[1]</a></sup></td></tr>
+</tbody></table>
+</div>
+<ol start="2">
+<li>
+<p>A custom data directory path can be specified with the <code>-datadir</code> option.</p>
+</li>
+<li>
+<p>All content of the data directory, except for <code>bitcoin.conf</code> file, is chain-specific. This means the actual data directory paths for non-mainnet cases differ:</p>
+</li>
+</ol>
+<div class="table-wrapper"><table><thead><tr><th>Chain option</th><th>Data directory path</th></tr></thead><tbody>
+<tr><td><code>-chain=main</code> (default)</td><td><em>path_to_datadir</em><code>/</code></td></tr>
+<tr><td><code>-chain=test</code> or <code>-testnet</code></td><td><em>path_to_datadir</em><code>/testnet3/</code></td></tr>
+<tr><td><code>-chain=testnet4</code> or <code>-testnet4</code></td><td><em>path_to_datadir</em><code>/testnet4/</code></td></tr>
+<tr><td><code>-chain=signet</code> or <code>-signet</code></td><td><em>path_to_datadir</em><code>/signet/</code></td></tr>
+<tr><td><code>-chain=regtest</code> or <code>-regtest</code></td><td><em>path_to_datadir</em><code>/regtest/</code></td></tr>
+</tbody></table>
+</div>
+<h2 id="data-directory-layout"><a class="header" href="#data-directory-layout">Data directory layout</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>Subdirectory</th><th>File(s)</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>blocks/</code></td><td></td><td>Blocks directory; can be specified by <code>-blocksdir</code> option (except for <code>blocks/index/</code>)</td></tr>
+<tr><td><code>blocks/index/</code></td><td>LevelDB database</td><td>Block index; <code>-blocksdir</code> option does not affect this path</td></tr>
+<tr><td><code>blocks/</code></td><td><code>blkNNNNN.dat</code><sup><a href="#note2">[2]</a></sup></td><td>Actual Bitcoin blocks (dumped in network format, 128 MiB per file)</td></tr>
+<tr><td><code>blocks/</code></td><td><code>revNNNNN.dat</code><sup><a href="#note2">[2]</a></sup></td><td>Block undo data (custom format)</td></tr>
+<tr><td><code>blocks/</code></td><td><code>xor.dat</code></td><td>Rolling XOR pattern for block and undo data files</td></tr>
+<tr><td><code>chainstate/</code></td><td>LevelDB database</td><td>Blockchain state (a compact representation of all currently unspent transaction outputs (UTXOs) and metadata about the transactions they are from)</td></tr>
+<tr><td><code>indexes/txindex/</code></td><td>LevelDB database</td><td>Transaction index; <em>optional</em>, used if <code>-txindex=1</code></td></tr>
+<tr><td><code>indexes/blockfilter/basic/db/</code></td><td>LevelDB database</td><td>Blockfilter index LevelDB database for the basic filtertype; <em>optional</em>, used if <code>-blockfilterindex=basic</code></td></tr>
+<tr><td><code>indexes/blockfilter/basic/</code></td><td><code>fltrNNNNN.dat</code><sup><a href="#note2">[2]</a></sup></td><td>Blockfilter index filters for the basic filtertype; <em>optional</em>, used if <code>-blockfilterindex=basic</code></td></tr>
+<tr><td><code>indexes/coinstats/db/</code></td><td>LevelDB database</td><td>Coinstats index; <em>optional</em>, used if <code>-coinstatsindex=1</code></td></tr>
+<tr><td><code>wallets/</code></td><td></td><td><a href="#multi-wallet-environment">Contains wallets</a>; can be specified by <code>-walletdir</code> option; if <code>wallets/</code> subdirectory does not exist, wallets reside in the <a href="#data-directory-location">data directory</a></td></tr>
+<tr><td><code>./</code></td><td><code>anchors.dat</code></td><td>Anchor IP address database, created on shutdown and deleted at startup. Anchors are last known outgoing block-relay-only peers that are tried to re-connect to on startup</td></tr>
+<tr><td><code>./</code></td><td><code>banlist.json</code></td><td>Stores the addresses/subnets of banned nodes.</td></tr>
+<tr><td><code>./</code></td><td><code>bitcoin.conf</code></td><td>User-defined <a href="bitcoin-conf.html">configuration settings</a> for <code>bitcoind</code> or <code>bitcoin-qt</code>. File is not written to by the software and must be created manually. Path can be specified by <code>-conf</code> option</td></tr>
+<tr><td><code>./</code></td><td><code>bitcoind.pid</code></td><td>Stores the process ID (PID) of <code>bitcoind</code> or <code>bitcoin-qt</code> while running; created at start and deleted on shutdown; can be specified by <code>-pid</code> option</td></tr>
+<tr><td><code>./</code></td><td><code>debug.log</code></td><td>Contains debug information and general logging generated by <code>bitcoind</code> or <code>bitcoin-qt</code>; can be specified by <code>-debuglogfile</code> option</td></tr>
+<tr><td><code>./</code></td><td><code>fee_estimates.dat</code></td><td>Stores statistics used to estimate minimum transaction fees required for confirmation</td></tr>
+<tr><td><code>./</code></td><td><code>guisettings.ini.bak</code></td><td>Backup of former <a href="#gui-settings">GUI settings</a> after <code>-resetguisettings</code> option is used</td></tr>
+<tr><td><code>./</code></td><td><code>ip_asn.map</code></td><td>IP addresses to Autonomous System Numbers (ASNs) mapping used for bucketing of the peers; path can be specified with the <code>-asmap</code> option</td></tr>
+<tr><td><code>./</code></td><td><code>mempool.dat</code></td><td>Dump of the mempool's transactions</td></tr>
+<tr><td><code>./</code></td><td><code>onion_v3_private_key</code></td><td>Cached Tor onion service private key for <code>-listenonion</code> option</td></tr>
+<tr><td><code>./</code></td><td><code>i2p_private_key</code></td><td>Private key that corresponds to our I2P address. When <code>-i2psam=</code> is specified the contents of this file is used to identify ourselves for making outgoing connections to I2P peers and possibly accepting incoming ones. Automatically generated if it does not exist.</td></tr>
+<tr><td><code>./</code></td><td><code>peers.dat</code></td><td>Peer IP address database (custom format)</td></tr>
+<tr><td><code>./</code></td><td><code>settings.json</code></td><td>Read-write settings set through GUI or RPC interfaces, augmenting manual settings from <a href="bitcoin-conf.html">bitcoin.conf</a>. File is created automatically if read-write settings storage is not disabled with <code>-nosettings</code> option. Path can be specified with <code>-settings</code> option</td></tr>
+<tr><td><code>./</code></td><td><code>.cookie</code></td><td>Session RPC authentication cookie; if used, created at start and deleted on shutdown; can be specified by <code>-rpccookiefile</code> option</td></tr>
+<tr><td><code>./</code></td><td><code>.lock</code></td><td>Data directory lock file</td></tr>
+</tbody></table>
+</div>
+<h2 id="multi-wallet-environment"><a class="header" href="#multi-wallet-environment">Multi-wallet environment</a></h2>
+<p>Wallets are Berkeley DB (BDB) or SQLite databases.</p>
+<ol>
+<li>
+<p>Each user-defined wallet named "wallet_name" resides in the <code>wallets/wallet_name/</code> subdirectory.</p>
+</li>
+<li>
+<p>The default (unnamed) wallet resides in <code>wallets/</code> subdirectory; if the latter does not exist, the wallet resides in the data directory.</p>
+</li>
+<li>
+<p>A wallet database path can be specified with the <code>-wallet</code> option.</p>
+</li>
+<li>
+<p><code>wallet.dat</code> files must not be shared across different node instances, as that can result in key-reuse and double-spends due the lack of synchronization between instances.</p>
+</li>
+<li>
+<p>Any copy or backup of the wallet should be done through a <code>backupwallet</code> call in order to update and lock the wallet, preventing any file corruption caused by updates during the copy.</p>
+</li>
+</ol>
+<h3 id="berkeley-db-database-based-wallets"><a class="header" href="#berkeley-db-database-based-wallets">Berkeley DB database based wallets</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>Subdirectory</th><th>File(s)</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>database/</code></td><td>BDB logging files</td><td>Part of BDB environment; created at start and deleted on shutdown; a user <em>must keep it as safe</em> as personal wallet <code>wallet.dat</code></td></tr>
+<tr><td><code>./</code></td><td><code>db.log</code></td><td>BDB error file</td></tr>
+<tr><td><code>./</code></td><td><code>wallet.dat</code></td><td>Personal wallet (a BDB database) with keys and transactions</td></tr>
+<tr><td><code>./</code></td><td><code>.walletlock</code></td><td>BDB wallet lock file</td></tr>
+</tbody></table>
+</div>
+<h3 id="sqlite-database-based-wallets"><a class="header" href="#sqlite-database-based-wallets">SQLite database based wallets</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>Subdirectory</th><th>File</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>./</code></td><td><code>wallet.dat</code></td><td>Personal wallet (a SQLite database) with keys and transactions</td></tr>
+<tr><td><code>./</code></td><td><code>wallet.dat-journal</code></td><td>SQLite Rollback Journal file for <code>wallet.dat</code>. Usually created at start and deleted on shutdown. A user <em>must keep it as safe</em> as the <code>wallet.dat</code> file.</td></tr>
+</tbody></table>
+</div>
+<h2 id="gui-settings"><a class="header" href="#gui-settings">GUI settings</a></h2>
+<p><code>bitcoin-qt</code> uses <a href="https://doc.qt.io/qt-5/qsettings.html"><code>QSettings</code></a> class; this implies platform-specific <a href="https://doc.qt.io/qt-5/qsettings.html#locations-where-application-settings-are-stored">locations where application settings are stored</a>.</p>
+<h2 id="legacy-subdirectories-and-files"><a class="header" href="#legacy-subdirectories-and-files">Legacy subdirectories and files</a></h2>
+<p>These subdirectories and files are no longer used by Bitcoin Core:</p>
+<div class="table-wrapper"><table><thead><tr><th>Path</th><th>Description</th><th>Repository notes</th></tr></thead><tbody>
+<tr><td><code>banlist.dat</code></td><td>Stores the addresses/subnets of banned nodes; superseded by <code>banlist.json</code> in 22.0 and completely ignored in 23.0</td><td><a href="https://github.com/bitcoin/bitcoin/pull/20966">PR #20966</a>, <a href="https://github.com/bitcoin/bitcoin/pull/22570">PR #22570</a></td></tr>
+<tr><td><code>blktree/</code></td><td>Blockchain index; replaced by <code>blocks/index/</code> in <a href="https://github.com/bitcoin/bitcoin/blob/master/doc/release-notes/release-notes-0.8.0.md#improvements">0.8.0</a></td><td><a href="https://github.com/bitcoin/bitcoin/pull/2231">PR #2231</a>, <a href="https://github.com/bitcoin/bitcoin/commit/8fdc94cc8f0341e96b1edb3a5b56811c0b20bd15"><code>8fdc94cc</code></a></td></tr>
+<tr><td><code>coins/</code></td><td>Unspent transaction output database; replaced by <code>chainstate/</code> in 0.8.0</td><td><a href="https://github.com/bitcoin/bitcoin/pull/2231">PR #2231</a>, <a href="https://github.com/bitcoin/bitcoin/commit/8fdc94cc8f0341e96b1edb3a5b56811c0b20bd15"><code>8fdc94cc</code></a></td></tr>
+<tr><td><code>blkindex.dat</code></td><td>Blockchain index BDB database; replaced by {<code>chainstate/</code>, <code>blocks/index/</code>, <code>blocks/revNNNNN.dat</code><sup><a href="#note2">[2]</a></sup>} in 0.8.0</td><td><a href="https://github.com/bitcoin/bitcoin/pull/1677">PR #1677</a></td></tr>
+<tr><td><code>blk000?.dat</code></td><td>Block data (custom format, 2 GiB per file); replaced by <code>blocks/blkNNNNN.dat</code><sup><a href="#note2">[2]</a></sup> in 0.8.0</td><td><a href="https://github.com/bitcoin/bitcoin/pull/1677">PR #1677</a></td></tr>
+<tr><td><code>addr.dat</code></td><td>Peer IP address BDB database; replaced by <code>peers.dat</code> in <a href="https://github.com/bitcoin/bitcoin/blob/master/doc/release-notes/release-notes-0.7.0.md">0.7.0</a></td><td><a href="https://github.com/bitcoin/bitcoin/pull/1198">PR #1198</a>, <a href="https://github.com/bitcoin/bitcoin/commit/928d3a011cc66c7f907c4d053f674ea77dc611cc"><code>928d3a01</code></a></td></tr>
+<tr><td><code>onion_private_key</code></td><td>Cached Tor onion service private key for <code>-listenonion</code> option. Was used for Tor v2 services; replaced by <code>onion_v3_private_key</code> in <a href="https://github.com/bitcoin/bitcoin/blob/master/doc/release-notes/release-notes-0.21.0.md">0.21.0</a></td><td><a href="https://github.com/bitcoin/bitcoin/pull/19954">PR #19954</a></td></tr>
+</tbody></table>
+</div>
+<h2 id="notes"><a class="header" href="#notes">Notes</a></h2>
+<p><a name="note1">1</a>. The <code>/</code> (slash, U+002F) is used as the platform-independent path component separator in this document.</p>
+<p><a name="note2">2</a>. <code>NNNNN</code> matches <code>[0-9]{5}</code> regex.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../doc/external-signer.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../doc/fuzzing.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../doc/external-signer.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../doc/fuzzing.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
