@@ -33,6 +33,7 @@ jobs:
     - name: Build docs
       run: |
         cargo run --package book
+        mdbook build contrib/book/build
 
     - name: Deploy Pages
       uses: peaceiris/actions-gh-pages@v3
