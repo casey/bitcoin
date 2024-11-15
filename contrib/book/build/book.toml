@@ -6,4 +6,5 @@ src = "src"
 title = "Bitcoin Core Developer Documentation"
 
 [build]
+build-dir = "html"
 create-missing = false

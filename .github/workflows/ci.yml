@@ -256,3 +256,32 @@ jobs:
           path: ${{ env.CCACHE_DIR }}
           # https://github.com/actions/cache/blob/main/tips-and-workarounds.md#update-a-cache
           key: ${{ github.job }}-ccache-${{ github.run_id }}
+
+  book:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install Rust Toolchain Components
+      uses: actions-rs/toolchain@v1
+      with:
+        override: true
+        toolchain: stable
+
+    - uses: Swatinem/rust-cache@v2
+
+    - uses: peaceiris/actions-mdbook@v1
+      with:
+        mdbook-version: latest
+
+    - name: Build docs
+      run: |
+        cargo run --package book
+
+    - name: Deploy Pages
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.ref == 'refs/heads/master'
+      with:
+        github_token: ${{secrets.GITHUB_TOKEN}}
+        publish_branch: gh-pages
+        publish_dir: contrib/book/build/html
