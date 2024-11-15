@@ -26,3 +26,7 @@ test: build
 
 watch:
   watchexec 'just build'
+
+book:
+  cargo run --package book
+  mdbook serve --open contrib/book/build

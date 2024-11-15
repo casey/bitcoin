@@ -1,0 +1,10 @@
+[book]
+authors = ["The Bitcoin Core developers"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Bitcoin Core Developer Documentation"
+
+[build]
+build-dir = "html"
+create-missing = false
