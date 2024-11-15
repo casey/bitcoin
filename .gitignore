@@ -24,3 +24,7 @@
 
 # ignore so users can symlink `contrib/justfile` into root
 /justfile
+
+# generated mdbook output and build
+/contrib/book/build/book
+/contrib/book/build/src

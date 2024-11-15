@@ -1,2 +1,3 @@
 [workspace]
-members = ["test/lint/test_runner"]
+resolver = "2"
+members = [ "contrib/book","test/lint/test_runner"]
