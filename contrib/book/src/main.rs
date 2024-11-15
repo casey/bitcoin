@@ -54,7 +54,7 @@ fn main() {
 
     let src = build.join("src");
 
-    fs::remove_dir_all(&src).unwrap();
+    fs::remove_dir_all(&src).ok();
 
     for (chapter, files) in chapters {
         let readme = if files.contains(README) {
