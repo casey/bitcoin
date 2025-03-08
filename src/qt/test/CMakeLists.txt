@@ -2,6 +2,8 @@
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or https://opensource.org/license/mit/.
 
+set(CMAKE_AUTOMOC_MOC_OPTIONS "-p${CMAKE_CURRENT_SOURCE_DIR}")
+
 add_executable(test_bitcoin-qt
   apptests.cpp
   optiontests.cpp
@@ -43,6 +45,4 @@ if(WIN32 AND VCPKG_TARGET_TRIPLET)
   )
 endif()
 
-install(TARGETS test_bitcoin-qt
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
+install_binary_component(test_bitcoin-qt)

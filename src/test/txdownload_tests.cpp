@@ -58,7 +58,6 @@ struct Behaviors {
 // Txid and Wtxid are assumed to be different here. For a nonsegwit transaction, use the wtxid results.
 static std::map<TxValidationResult, Behaviors> expected_behaviors{
     {TxValidationResult::TX_CONSENSUS,               {/*txid_rejects*/0,/*wtxid_rejects*/1,/*txid_recon*/0,/*wtxid_recon*/0,/*keep*/1,/*txid_inv*/0,/*wtxid_inv*/1}},
-    {TxValidationResult::TX_RECENT_CONSENSUS_CHANGE, {                0,                 1,              0,               0,        1,            0,             1}},
     {TxValidationResult::TX_INPUTS_NOT_STANDARD,     {                1,                 1,              0,               0,        1,            1,             1}},
     {TxValidationResult::TX_NOT_STANDARD,            {                0,                 1,              0,               0,        1,            0,             1}},
     {TxValidationResult::TX_MISSING_INPUTS,          {                0,                 0,              0,               0,        1,            0,             1}},
@@ -147,8 +146,8 @@ BOOST_FIXTURE_TEST_CASE(tx_rejection_types, TestChain100Setup)
                     /*txid_recon=*/txdownload_impl.RecentRejectsReconsiderableFilter().contains(parent_txid),
                     /*wtxid_recon=*/txdownload_impl.RecentRejectsReconsiderableFilter().contains(parent_wtxid),
                     /*keep=*/keep,
-                    /*txid_inv=*/txdownload_impl.AddTxAnnouncement(nodeid, GenTxid::Txid(parent_txid), now, /*p2p_inv=*/true),
-                    /*wtxid_inv=*/txdownload_impl.AddTxAnnouncement(nodeid, GenTxid::Wtxid(parent_wtxid), now, /*p2p_inv=*/true),
+                    /*txid_inv=*/txdownload_impl.AddTxAnnouncement(nodeid, GenTxid::Txid(parent_txid), now),
+                    /*wtxid_inv=*/txdownload_impl.AddTxAnnouncement(nodeid, GenTxid::Wtxid(parent_wtxid), now),
                 };
                 BOOST_TEST_MESSAGE("Testing behavior for " << result << (segwit_parent ? " segwit " : " nonsegwit"));
                 actual_behavior.CheckEqual(expected_behavior, /*segwit=*/segwit_parent);
@@ -232,10 +231,14 @@ BOOST_FIXTURE_TEST_CASE(handle_missing_inputs, TestChain100Setup)
         // it's in RecentRejectsFilter. Specifically, the parent is allowed to be in
         // RecentRejectsReconsiderableFilter, but it cannot be in RecentRejectsFilter.
         const bool expect_keep_orphan = !parent_recent_rej;
+        const unsigned int expected_parents = parent_recent_rej || parent_recent_conf || parent_in_mempool ? 0 : 1;
+        // If we don't expect to keep the orphan then expected_parents is 0.
+        // !expect_keep_orphan => (expected_parents == 0)
+        BOOST_CHECK(expect_keep_orphan || expected_parents == 0);
         const auto ret_1p1c = txdownload_impl.MempoolRejectedTx(orphan, state_orphan, nodeid, /*first_time_failure=*/true);
         std::string err_msg;
         const bool ok = CheckOrphanBehavior(txdownload_impl, orphan, ret_1p1c, err_msg,
-                                            /*expect_orphan=*/expect_keep_orphan, /*expect_keep=*/true, /*expected_parents=*/expect_keep_orphan ? 1 : 0);
+                                            /*expect_orphan=*/expect_keep_orphan, /*expect_keep=*/true, /*expected_parents=*/expected_parents);
         BOOST_CHECK_MESSAGE(ok, err_msg);
     }
 
@@ -279,11 +282,12 @@ BOOST_FIXTURE_TEST_CASE(handle_missing_inputs, TestChain100Setup)
             for (int32_t i = 1; i < num_parents; ++i) {
                 txdownload_impl.RecentConfirmedTransactionsFilter().insert(parents[i]->GetHash().ToUint256());
             }
+            const unsigned int expected_parents = 1;
 
             const auto ret_1recon_conf = txdownload_impl.MempoolRejectedTx(orphan, state_orphan, nodeid, /*first_time_failure=*/true);
             std::string err_msg;
             const bool ok = CheckOrphanBehavior(txdownload_impl, orphan, ret_1recon_conf, err_msg,
-                                                /*expect_orphan=*/true, /*expect_keep=*/true, /*expected_parents=*/num_parents);
+                                                /*expect_orphan=*/true, /*expect_keep=*/true, /*expected_parents=*/expected_parents);
             BOOST_CHECK_MESSAGE(ok, err_msg);
         }
 

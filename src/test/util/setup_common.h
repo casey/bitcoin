@@ -6,6 +6,7 @@
 #define BITCOIN_TEST_UTIL_SETUP_COMMON_H
 
 #include <common/args.h> // IWYU pragma: export
+#include <kernel/caches.h>
 #include <kernel/context.h>
 #include <key.h>
 #include <node/caches.h>
@@ -44,6 +45,9 @@ extern const std::function<std::vector<const char*>()> G_TEST_COMMAND_LINE_ARGUM
 extern const std::function<std::string()> G_TEST_GET_FULL_NAME;
 
 static constexpr CAmount CENT{1000000};
+
+/** Register common test args. Shared across binaries that rely on the test framework. */
+void SetupCommonTestArgs(ArgsManager& argsman);
 
 struct TestOpts {
     std::vector<const char*> extra_args{};
@@ -100,7 +104,7 @@ struct BasicTestingSetup {
  * initialization behaviour.
  */
 struct ChainTestingSetup : public BasicTestingSetup {
-    node::CacheSizes m_cache_sizes{};
+    kernel::CacheSizes m_kernel_cache_sizes{node::CalculateCacheSizes(m_args).kernel};
     bool m_coins_db_in_memory{true};
     bool m_block_tree_db_in_memory{true};
     std::function<void()> m_make_chainman{};

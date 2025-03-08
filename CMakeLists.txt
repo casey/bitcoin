@@ -9,8 +9,14 @@
 #  - CMake 3.26.5, https://mirror.stream.centos.org/9-stream/AppStream/x86_64/os/Packages/
 cmake_minimum_required(VERSION 3.22)
 
-if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   message(FATAL_ERROR "In-source builds are not allowed.")
+endif()
+
+if(POLICY CMP0171)
+  # `codegen` is a reserved target name.
+  # See: https://cmake.org/cmake/help/latest/policy/CMP0171.html
+  cmake_policy(SET CMP0171 NEW)
 endif()
 
 #=============================
@@ -22,7 +28,7 @@ set(CLIENT_VERSION_MINOR 99)
 set(CLIENT_VERSION_BUILD 0)
 set(CLIENT_VERSION_RC 0)
 set(CLIENT_VERSION_IS_RELEASE "false")
-set(COPYRIGHT_YEAR "2024")
+set(COPYRIGHT_YEAR "2025")
 
 # During the enabling of the CXX and CXXOBJ languages, we modify
 # CMake's compiler/linker invocation strings by appending the content
@@ -70,6 +76,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/module)
+include(ProcessConfigurations)
+
+# Flatten static lib dependencies.
+# Without this, if libfoo.a depends on libbar.a, libfoo's objects can't begin
+# to be compiled until libbar.a has been created.
+if (NOT DEFINED CMAKE_OPTIMIZE_DEPENDENCIES)
+  set(CMAKE_OPTIMIZE_DEPENDENCIES TRUE)
+endif()
 
 #=============================
 # Configurable options
@@ -143,8 +157,8 @@ cmake_dependent_option(WITH_DBUS "Enable DBus support." ON "CMAKE_SYSTEM_NAME ST
 
 option(WITH_MULTIPROCESS "Build multiprocess bitcoin-node and bitcoin-gui executables in addition to monolithic bitcoind and bitcoin-qt executables. Requires libmultiprocess library. Experimental." OFF)
 if(WITH_MULTIPROCESS)
-  find_package(Libmultiprocess COMPONENTS Lib)
-  find_package(LibmultiprocessNative COMPONENTS Bin
+  find_package(Libmultiprocess REQUIRED COMPONENTS Lib)
+  find_package(LibmultiprocessNative REQUIRED COMPONENTS Bin
     NAMES Libmultiprocess
   )
 endif()
@@ -186,16 +200,8 @@ string(APPEND CMAKE_CXX_LINK_EXECUTABLE " ${APPEND_LDFLAGS}")
 
 set(configure_warnings)
 
-include(CheckPIESupported)
-check_pie_supported(OUTPUT_VARIABLE check_pie_output LANGUAGES CXX)
-if(CMAKE_CXX_LINK_PIE_SUPPORTED)
-  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-elseif(NOT WIN32)
-  # The warning is superfluous for Windows.
-  message(WARNING "PIE is not supported at link time: ${check_pie_output}")
-  list(APPEND configure_warnings "Position independent code disabled.")
-endif()
-unset(check_pie_output)
+include(CheckLinkerSupportsPIE)
+check_linker_supports_pie(configure_warnings)
 
 # The core_interface library aims to encapsulate common build flags.
 # It is a usage requirement for all targets except for secp256k1, which
@@ -230,10 +236,17 @@ if(BUILD_FOR_FUZZING)
   )
 endif()
 
-include(ProcessConfigurations)
-
 include(TryAppendCXXFlags)
 include(TryAppendLinkerFlag)
+
+# Redefine/adjust per-configuration flags.
+target_compile_definitions(core_interface_debug INTERFACE
+  DEBUG
+  DEBUG_LOCKORDER
+  DEBUG_LOCKCONTENTION
+  RPC_DOC_CHECK
+  ABORT_ON_FAILED_ASSUME
+)
 
 if(WIN32)
   #[=[
@@ -253,8 +266,8 @@ if(WIN32)
   ]=]
 
   target_compile_definitions(core_interface INTERFACE
-    _WIN32_WINNT=0x0601
-    _WIN32_IE=0x0501
+    _WIN32_WINNT=0x0A00
+    _WIN32_IE=0x0A00
     WIN32_LEAN_AND_MEAN
     NOMINMAX
   )
@@ -292,9 +305,20 @@ if(WIN32)
     # See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=54412.
     try_append_cxx_flags("-Wa,-muse-unaligned-vector-move" TARGET core_interface SKIP_LINK)
     try_append_linker_flag("-static" TARGET core_interface)
-    # We require Windows 7 (NT 6.1) or later.
+    # We support Windows 10+, however it's not possible to set these values accordingly,
+    # due to a bug in mingw-w64. See https://sourceforge.net/p/mingw-w64/bugs/968/.
+    # As a best effort, target Windows 8.
     try_append_linker_flag("-Wl,--major-subsystem-version,6" TARGET core_interface)
-    try_append_linker_flag("-Wl,--minor-subsystem-version,1" TARGET core_interface)
+    try_append_linker_flag("-Wl,--minor-subsystem-version,2" TARGET core_interface)
+  endif()
+
+  # Workaround producing large object files, which cannot be handled by the assembler.
+  # More likely to happen with no, or lower levels of optimisation.
+  # See discussion in https://github.com/bitcoin/bitcoin/issues/28109.
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    try_append_cxx_flags("/bigobj" TARGET core_interface_debug SKIP_LINK)
+  else()
+    try_append_cxx_flags("-Wa,-mbig-obj" TARGET core_interface_debug SKIP_LINK)
   endif()
 endif()
 
@@ -360,13 +384,16 @@ endif()
 target_link_options(sanitize_interface INTERFACE ${SANITIZER_LDFLAGS})
 
 if(BUILD_FUZZ_BINARY)
-  include(CheckSourceCompilesAndLinks)
-  check_cxx_source_links_with_flags("${SANITIZER_LDFLAGS}" "
+  target_link_libraries(core_interface INTERFACE ${FUZZ_LIBS})
+  include(CheckSourceCompilesWithFlags)
+  check_cxx_source_compiles_with_flags("
       #include <cstdint>
       #include <cstddef>
       extern \"C\" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) { return 0; }
       // No main() function.
     " FUZZ_BINARY_LINKS_WITHOUT_MAIN_FUNCTION
+    LDFLAGS ${SANITIZER_LDFLAGS}
+    LINK_LIBRARIES ${FUZZ_LIBS}
   )
 endif()
 
@@ -386,6 +413,7 @@ target_link_libraries(core_interface INTERFACE warn_interface)
 if(MSVC)
   try_append_cxx_flags("/W3" TARGET warn_interface SKIP_LINK)
   try_append_cxx_flags("/wd4018" TARGET warn_interface SKIP_LINK)
+  try_append_cxx_flags("/wd4146" TARGET warn_interface SKIP_LINK)
   try_append_cxx_flags("/wd4244" TARGET warn_interface SKIP_LINK)
   try_append_cxx_flags("/wd4267" TARGET warn_interface SKIP_LINK)
   try_append_cxx_flags("/wd4715" TARGET warn_interface SKIP_LINK)
@@ -417,6 +445,7 @@ else()
   try_append_cxx_flags("-Wunreachable-code" TARGET warn_interface SKIP_LINK)
   try_append_cxx_flags("-Wdocumentation" TARGET warn_interface SKIP_LINK)
   try_append_cxx_flags("-Wself-assign" TARGET warn_interface SKIP_LINK)
+  try_append_cxx_flags("-Wbidi-chars=any" TARGET warn_interface SKIP_LINK)
   try_append_cxx_flags("-Wundef" TARGET warn_interface SKIP_LINK)
 
   # Some compilers (gcc) ignore unknown -Wno-* options, but warn about all
@@ -430,13 +459,22 @@ endif()
 configure_file(cmake/script/Coverage.cmake Coverage.cmake USE_SOURCE_PERMISSIONS COPYONLY)
 configure_file(cmake/script/CoverageFuzz.cmake CoverageFuzz.cmake USE_SOURCE_PERMISSIONS COPYONLY)
 configure_file(cmake/script/CoverageInclude.cmake.in CoverageInclude.cmake USE_SOURCE_PERMISSIONS @ONLY)
+configure_file(cmake/script/cov_tool_wrapper.sh.in cov_tool_wrapper.sh.in USE_SOURCE_PERMISSIONS COPYONLY)
 configure_file(contrib/filter-lcov.py filter-lcov.py USE_SOURCE_PERMISSIONS COPYONLY)
 
 # Don't allow extended (non-ASCII) symbols in identifiers. This is easier for code review.
 try_append_cxx_flags("-fno-extended-identifiers" TARGET core_interface SKIP_LINK)
 
-try_append_cxx_flags("-ffile-prefix-map=A=B" TARGET core_interface SKIP_LINK
-  IF_CHECK_PASSED "-ffile-prefix-map=${PROJECT_SOURCE_DIR}/src=."
+# Avoiding the `-ffile-prefix-map` compiler option because it implies
+# `-fcoverage-prefix-map` on Clang or `-fprofile-prefix-map` on GCC,
+# which can cause issues with coverage builds, particularly when using
+# Clang in the OSS-Fuzz environment due to its use of other options
+# and a third party script, or with GCC.
+try_append_cxx_flags("-fdebug-prefix-map=A=B" TARGET core_interface SKIP_LINK
+  IF_CHECK_PASSED "-fdebug-prefix-map=${PROJECT_SOURCE_DIR}/src=."
+)
+try_append_cxx_flags("-fmacro-prefix-map=A=B" TARGET core_interface SKIP_LINK
+  IF_CHECK_PASSED "-fmacro-prefix-map=${PROJECT_SOURCE_DIR}/src=."
 )
 
 # Currently all versions of gcc are subject to a class of bugs, see the
@@ -477,8 +515,7 @@ if(ENABLE_HARDENING)
     try_append_cxx_flags("-fcf-protection=full" TARGET hardening_interface)
 
     if(MINGW)
-      # stack-clash-protection doesn't compile with GCC 10 and earlier.
-      # In any case, it is a no-op for Windows.
+      # stack-clash-protection is a no-op for Windows.
       # See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90458 for more details.
     else()
       try_append_cxx_flags("-fstack-clash-protection" TARGET hardening_interface)
@@ -524,6 +561,13 @@ if(WERROR)
   unset(werror_flag)
 endif()
 
+# Prefer Unix-style package components over frameworks on macOS.
+# This improves compatibility with Python version managers.
+set(Python3_FIND_FRAMEWORK LAST CACHE STRING "")
+# Search for generic names before more specialized ones. This
+# improves compatibility with Python version managers that use shims.
+set(Python3_FIND_UNVERSIONED_NAMES FIRST CACHE STRING "")
+mark_as_advanced(Python3_FIND_FRAMEWORK Python3_FIND_UNVERSIONED_NAMES)
 find_package(Python3 3.10 COMPONENTS Interpreter)
 if(Python3_EXECUTABLE)
   set(PYTHON_COMMAND ${Python3_EXECUTABLE})
@@ -561,8 +605,13 @@ endif()
 # Relevant discussions:
 # - https://github.com/hebasto/bitcoin/pull/236#issuecomment-2183120953
 # - https://github.com/bitcoin/bitcoin/pull/30312#issuecomment-2191235833
-set(CMAKE_SKIP_BUILD_RPATH TRUE)
-set(CMAKE_SKIP_INSTALL_RPATH TRUE)
+# NetBSD always requires runtime paths to be set for executables.
+if(CMAKE_SYSTEM_NAME STREQUAL "NetBSD")
+  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+else()
+  set(CMAKE_SKIP_BUILD_RPATH TRUE)
+  set(CMAKE_SKIP_INSTALL_RPATH TRUE)
+endif()
 add_subdirectory(test)
 add_subdirectory(doc)
 
@@ -584,7 +633,12 @@ message("Configure summary")
 message("=================")
 message("Executables:")
 message("  bitcoind ............................ ${BUILD_DAEMON}")
-message("  bitcoin-node (multiprocess) ......... ${WITH_MULTIPROCESS}")
+if(BUILD_DAEMON AND WITH_MULTIPROCESS)
+  set(bitcoin_daemon_status ON)
+else()
+  set(bitcoin_daemon_status OFF)
+endif()
+message("  bitcoin-node (multiprocess) ......... ${bitcoin_daemon_status}")
 message("  bitcoin-qt (GUI) .................... ${BUILD_GUI}")
 if(BUILD_GUI AND WITH_MULTIPROCESS)
   set(bitcoin_gui_status ON)

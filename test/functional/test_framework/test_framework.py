@@ -129,7 +129,11 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
 
         try:
             self.setup()
-            self.run_test()
+            if self.options.test_methods:
+                self.run_test_methods()
+            else:
+                self.run_test()
+
         except JSONRPCException:
             self.log.exception("JSONRPC error")
             self.success = TestStatus.FAILED
@@ -155,13 +159,18 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
             exit_code = self.shutdown()
             sys.exit(exit_code)
 
+    def run_test_methods(self):
+        for method_name in self.options.test_methods:
+            self.log.info(f"Attempting to execute method: {method_name}")
+            method = getattr(self, method_name)
+            method()
+            self.log.info(f"Method '{method_name}' executed successfully.")
+
     def parse_args(self, test_file):
         previous_releases_path = os.getenv("PREVIOUS_RELEASES_DIR") or os.getcwd() + "/releases"
         parser = argparse.ArgumentParser(usage="%(prog)s [options]")
         parser.add_argument("--nocleanup", dest="nocleanup", default=False, action="store_true",
                             help="Leave bitcoinds and test.* datadir on exit or error")
-        parser.add_argument("--noshutdown", dest="noshutdown", default=False, action="store_true",
-                            help="Don't stop bitcoinds after the test execution")
         parser.add_argument("--cachedir", dest="cachedir", default=os.path.abspath(os.path.dirname(test_file) + "/../cache"),
                             help="Directory for caching pregenerated datadirs (default: %(default)s)")
         parser.add_argument("--tmpdir", dest="tmpdir", help="Root directory for datadirs (must not exist)")
@@ -194,6 +203,8 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
                             help="use BIP324 v2 connections between all nodes by default")
         parser.add_argument("--v1transport", dest="v1transport", default=False, action="store_true",
                             help="Explicitly use v1 transport (can be used to overwrite global --v2transport option)")
+        parser.add_argument("--test_methods", dest="test_methods", nargs='*',
+                            help="Run specified test methods sequentially instead of the full test. Use only for methods that do not depend on any context set up in run_test or other methods.")
 
         self.add_options(parser)
         # Running TestShell in a Jupyter notebook causes an additional -f argument
@@ -312,18 +323,15 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
 
         self.log.debug('Closing down network thread')
         self.network_thread.close()
-        if not self.options.noshutdown:
+        if self.success == TestStatus.FAILED:
+            self.log.info("Not stopping nodes as test failed. The dangling processes will be cleaned up later.")
+        else:
             self.log.info("Stopping nodes")
             if self.nodes:
                 self.stop_nodes()
-        else:
-            for node in self.nodes:
-                node.cleanup_on_exit = False
-            self.log.info("Note: bitcoinds were not stopped and may still be running")
 
         should_clean_up = (
             not self.options.nocleanup and
-            not self.options.noshutdown and
             self.success != TestStatus.FAILED and
             not self.options.perf
         )
@@ -513,6 +521,15 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
             binary = [get_bin_from_version(v, 'bitcoind', self.options.bitcoind) for v in versions]
         if binary_cli is None:
             binary_cli = [get_bin_from_version(v, 'bitcoin-cli', self.options.bitcoincli) for v in versions]
+        # Fail test if any of the needed release binaries is missing
+        bins_missing = False
+        for bin_path in binary + binary_cli:
+            if shutil.which(bin_path) is None:
+                self.log.error(f"Binary not found: {bin_path}")
+                bins_missing = True
+        if bins_missing:
+            raise AssertionError("At least one release binary is missing. "
+                                 "Previous releases binaries can be downloaded via `test/get_previous_releases.py -b`.")
         assert_equal(len(extra_confs), num_nodes)
         assert_equal(len(extra_args), num_nodes)
         assert_equal(len(versions), num_nodes)
@@ -562,15 +579,10 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
         if extra_args is None:
             extra_args = [None] * self.num_nodes
         assert_equal(len(extra_args), self.num_nodes)
-        try:
-            for i, node in enumerate(self.nodes):
-                node.start(extra_args[i], *args, **kwargs)
-            for node in self.nodes:
-                node.wait_for_rpc_connection()
-        except Exception:
-            # If one node failed to start, stop the others
-            self.stop_nodes()
-            raise
+        for i, node in enumerate(self.nodes):
+            node.start(extra_args[i], *args, **kwargs)
+        for node in self.nodes:
+            node.wait_for_rpc_connection()
 
         if self.options.coveragedir is not None:
             for node in self.nodes:
@@ -703,22 +715,22 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
         pass
 
     def generate(self, generator, *args, sync_fun=None, **kwargs):
-        blocks = generator.generate(*args, invalid_call=False, **kwargs)
+        blocks = generator.generate(*args, called_by_framework=True, **kwargs)
         sync_fun() if sync_fun else self.sync_all()
         return blocks
 
     def generateblock(self, generator, *args, sync_fun=None, **kwargs):
-        blocks = generator.generateblock(*args, invalid_call=False, **kwargs)
+        blocks = generator.generateblock(*args, called_by_framework=True, **kwargs)
         sync_fun() if sync_fun else self.sync_all()
         return blocks
 
     def generatetoaddress(self, generator, *args, sync_fun=None, **kwargs):
-        blocks = generator.generatetoaddress(*args, invalid_call=False, **kwargs)
+        blocks = generator.generatetoaddress(*args, called_by_framework=True, **kwargs)
         sync_fun() if sync_fun else self.sync_all()
         return blocks
 
     def generatetodescriptor(self, generator, *args, sync_fun=None, **kwargs):
-        blocks = generator.generatetodescriptor(*args, invalid_call=False, **kwargs)
+        blocks = generator.generatetodescriptor(*args, called_by_framework=True, **kwargs)
         sync_fun() if sync_fun else self.sync_all()
         return blocks
 
@@ -787,8 +799,8 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
         self.sync_blocks(nodes)
         self.sync_mempools(nodes)
 
-    def wait_until(self, test_function, timeout=60):
-        return wait_until_helper_internal(test_function, timeout=timeout, timeout_factor=self.options.timeout_factor)
+    def wait_until(self, test_function, timeout=60, check_interval=0.05):
+        return wait_until_helper_internal(test_function, timeout=timeout, timeout_factor=self.options.timeout_factor, check_interval=check_interval)
 
     # Private helper methods. These should not be accessed by the subclass test scripts.
 

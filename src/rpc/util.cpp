@@ -4,6 +4,7 @@
 
 #include <bitcoin-build-config.h> // IWYU pragma: keep
 
+#include <chain.h>
 #include <clientversion.h>
 #include <common/args.h>
 #include <common/messages.h>
@@ -13,6 +14,7 @@
 #include <key_io.h>
 #include <node/types.h>
 #include <outputtype.h>
+#include <pow.h>
 #include <rpc/util.h>
 #include <script/descriptor.h>
 #include <script/interpreter.h>
@@ -1592,4 +1594,21 @@ void PushWarnings(const std::vector<bilingual_str>& warnings, UniValue& obj)
 {
     if (warnings.empty()) return;
     obj.pushKV("warnings", BilingualStringsToUniValue(warnings));
+}
+
+std::vector<RPCResult> ScriptPubKeyDoc() {
+    return
+         {
+             {RPCResult::Type::STR, "asm", "Disassembly of the output script"},
+             {RPCResult::Type::STR, "desc", "Inferred descriptor for the output"},
+             {RPCResult::Type::STR_HEX, "hex", "The raw output script bytes, hex-encoded"},
+             {RPCResult::Type::STR, "address", /*optional=*/true, "The Bitcoin address (only if a well-defined address exists)"},
+             {RPCResult::Type::STR, "type", "The type (one of: " + GetAllOutputTypes() + ")"},
+         };
+}
+
+uint256 GetTarget(const CBlockIndex& blockindex, const uint256 pow_limit)
+{
+    arith_uint256 target{*CHECK_NONFATAL(DeriveTarget(blockindex.nBits, pow_limit))};
+    return ArithToUint256(target);
 }

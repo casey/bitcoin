@@ -35,6 +35,7 @@ endfunction()
 #  - https://doc.qt.io/qt-5/cmake-manual.html
 
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOMOC_MOC_OPTIONS "-p${CMAKE_CURRENT_SOURCE_DIR}")
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOUIC_SEARCH_PATHS forms)
@@ -235,7 +236,7 @@ target_link_libraries(bitcoin-qt
 )
 
 import_plugins(bitcoin-qt)
-set(installable_targets bitcoin-qt)
+install_binary_component(bitcoin-qt HAS_MANPAGE)
 if(WIN32)
   set_target_properties(bitcoin-qt PROPERTIES WIN32_EXECUTABLE TRUE)
 endif()
@@ -252,16 +253,11 @@ if(WITH_MULTIPROCESS)
     bitcoin_ipc
   )
   import_plugins(bitcoin-gui)
-  list(APPEND installable_targets bitcoin-gui)
+  install_binary_component(bitcoin-gui)
   if(WIN32)
     set_target_properties(bitcoin-gui PROPERTIES WIN32_EXECUTABLE TRUE)
   endif()
 endif()
-
-install(TARGETS ${installable_targets}
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-  COMPONENT GUI
-)
 
 if(BUILD_GUI_TESTS)
   add_subdirectory(test)
@@ -292,7 +288,13 @@ function(get_translatable_sources var)
           get_target_property(target_source_dir ${target} SOURCE_DIR)
           cmake_path(APPEND target_source_dir ${source} OUTPUT_VARIABLE source)
         endif()
-        list(APPEND result ${source})
+        get_property(is_generated
+          SOURCE  ${source} TARGET_DIRECTORY ${target}
+          PROPERTY GENERATED
+        )
+        if(NOT is_generated)
+          list(APPEND result ${source})
+        endif()
       endforeach()
     endif()
   endforeach()
